@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org/
+          scope: '@npm-workflow86'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Format Check
+        run: npm run check
+
+      - name: Publish Dry Run
+        run: npm publish --dry-run
+
+      - name: Publish canary
+        if: github.ref == 'refs/heads/main'
+        run: |
+          BASE_VERSION=$(node -p "require('./package.json').version.split('-')[0]")
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          npm version "${BASE_VERSION}-canary.${SHORT_SHA}" --no-git-tag-version
+          npm publish --tag canary --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

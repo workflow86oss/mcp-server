@@ -1,0 +1,34 @@
+{
+  "name": "@npm-workflow86/mcp-server",
+  "version": "0.1.0",
+  "main": "build/server.js",
+  "publishConfig": { "registry": "https://registry.npmjs.org/" },
+  "keywords": [],
+  "author": "Workflow86",
+  "license": "MIT",
+  "description": "MCP Server for workflow86.com",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.1",
+    "undici": "^6.21.3",
+    "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "typescript": "^5.8.3",
+    "prettier": "^3.6.0",
+    "@hey-api/openapi-ts": "^0.77.0"
+  },
+  "bin": {
+    "mcp-server": "build/server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
+    "check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
+    "genclient": "openapi-ts -i https://rest.workflow86.com/v3/api-docs -o src/client && npm run format"
+  },
+  "files": [
+    "build"
+  ]
+}

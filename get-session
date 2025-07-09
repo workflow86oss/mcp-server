@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+npm run build
+
+SESSION_ID=$1
+ARGS="{\"sessionId\":\"$SESSION_ID\"}"
+PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"get-session\",\"arguments\":${ARGS}}}"
+
+./exec.sh "$PAYLOAD"

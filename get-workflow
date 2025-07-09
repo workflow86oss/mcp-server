@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+npm run build
+
+WORKFLOW_ID=$1
+ARGS="{\"workflowId\":\"$WORKFLOW_ID\"}"
+PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"get-workflow\",\"arguments\":${ARGS}}}"
+
+./exec.sh "$PAYLOAD"
