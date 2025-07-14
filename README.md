@@ -2,7 +2,7 @@
 
 This is a fairly standard Node MCP Server implementation against the workflow86.com public API.
 
-## Standard Setup
+## Standard Setup Test Edit
 
 Normal users will only need to follow some fairly standard setup steps:
 1. Create an API Key from the [Organization page](https://app.workflow86.com/organization) of workflow86.com
