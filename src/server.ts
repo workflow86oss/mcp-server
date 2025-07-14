@@ -63,7 +63,10 @@ server.tool(
   "list-workflows",
   "List all published workflows",
   {
-    pageNumber: z.number().optional(),
+    pageNumber: z
+      .number()
+      .default(0)
+      .describe("The zero-indexed page number of the response data"),
   },
   async ({ pageNumber = 0 }) => {
     try {
@@ -173,7 +176,10 @@ server.tool(
     workflowId: z
       .string()
       .describe("The ID of the workflow to list sessions for"),
-    pageNumber: z.number().optional(),
+    pageNumber: z
+      .number()
+      .default(0)
+      .describe("The zero-indexed page number of the response data"),
   },
   async ({ workflowId, pageNumber = 0 }) => {
     try {

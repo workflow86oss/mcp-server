@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+npm run build
+
+WORKFLOW_ID=$1
+COMPONENT_ID=$2
+P_VALUES=$3
+if [[ -z "${P_VALUES}" ]]; then
+  ARGS="{\"workflowId\":\"$WORKFLOW_ID\", \"componentId\":\"$COMPONENT_ID\"}"
+else
+  ARGS="{\"workflowId\":\"$WORKFLOW_ID\", \"componentId\":\"$COMPONENT_ID\", \"placeholderValues\": ${P_VALUES}}"
+fi
+PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"run-workflow\",\"arguments\":${ARGS}}}"
+
+./exec.sh "$PAYLOAD"
