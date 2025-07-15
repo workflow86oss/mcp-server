@@ -7,12 +7,16 @@ SESSION_ID=$1
 COMPONENT_ID=$2
 THREAD_ID=$3
 
-if [ -z "$SESSION_ID" ] || [ -z "$COMPONENT_ID" ] || [ -z "$THREAD_ID" ]; then
-  echo "Usage: $0 <session_id> <component_id> <thread_id>"
+if [ -z "$SESSION_ID" ] || [ -z "$COMPONENT_ID" ]; then
+  echo "Usage: $0 <session_id> <component_id> [thread_id]"
   exit 1
 fi
 
-ARGS="{\"sessionId\":\"$SESSION_ID\",\"componentId\":\"$COMPONENT_ID\",\"threadId\":\"$THREAD_ID\"}"
+if [ -n "$THREAD_ID" ]; then
+  ARGS="{\"sessionId\":\"$SESSION_ID\",\"componentId\":\"$COMPONENT_ID\",\"threadId\":\"$THREAD_ID\"}"
+else
+  ARGS="{\"sessionId\":\"$SESSION_ID\",\"componentId\":\"$COMPONENT_ID\"}"
+fi
 
 PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"retry-failed-component\",\"arguments\":${ARGS}}}"
 
