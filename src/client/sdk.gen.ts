@@ -185,11 +185,7 @@ export const getWorkflowSession = <ThrowOnError extends boolean = false>(
 export const terminateSession = <ThrowOnError extends boolean = false>(
   options: Options<{ path: { sessionId: string }; url: string }, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).post<
-    any,
-    any,
-    ThrowOnError
-  >({
+  return (options.client ?? _heyApiClient).post<any, any, ThrowOnError>({
     security: [
       {
         name: "x-api-key",
@@ -206,17 +202,19 @@ export const terminateSession = <ThrowOnError extends boolean = false>(
  * Terminates a specific component thread in a workflow session
  */
 export const terminateComponent = <ThrowOnError extends boolean = false>(
-  options: Options<{ path: { sessionId: string; componentId: string; threadId?: string }; url: string }, ThrowOnError>,
+  options: Options<
+    {
+      path: { sessionId: string; componentId: string; threadId?: string };
+      url: string;
+    },
+    ThrowOnError
+  >,
 ) => {
-  const url = options.path.threadId 
+  const url = options.path.threadId
     ? "/v1/session/{sessionId}/terminate/{componentId}/thread/{threadId}"
     : "/v1/session/{sessionId}/terminate/{componentId}";
-  
-  return (options.client ?? _heyApiClient).post<
-    any,
-    any,
-    ThrowOnError
-  >({
+
+  return (options.client ?? _heyApiClient).post<any, any, ThrowOnError>({
     security: [
       {
         name: "x-api-key",
@@ -233,17 +231,19 @@ export const terminateComponent = <ThrowOnError extends boolean = false>(
  * Retries a failed component thread in a workflow session
  */
 export const retryFailedComponent = <ThrowOnError extends boolean = false>(
-  options: Options<{ path: { sessionId: string; componentId: string; threadId?: string }; url: string }, ThrowOnError>,
+  options: Options<
+    {
+      path: { sessionId: string; componentId: string; threadId?: string };
+      url: string;
+    },
+    ThrowOnError
+  >,
 ) => {
-  const url = options.path.threadId 
+  const url = options.path.threadId
     ? "/v1/session/{sessionId}/retry/{componentId}/thread/{threadId}"
     : "/v1/session/{sessionId}/retry/{componentId}";
-  
-  return (options.client ?? _heyApiClient).post<
-    any,
-    any,
-    ThrowOnError
-  >({
+
+  return (options.client ?? _heyApiClient).post<any, any, ThrowOnError>({
     security: [
       {
         name: "x-api-key",

@@ -267,15 +267,9 @@ server.tool(
   "terminate-component",
   "Terminate a specific component thread in a workflow session",
   {
-    sessionId: z
-      .string()
-      .describe("The ID of the workflow session"),
-    componentId: z
-      .string()
-      .describe("The ID of the component to terminate"),
-    threadId: z
-      .string()
-      .describe("The ID of the thread to terminate"),
+    sessionId: z.string().describe("The ID of the workflow session"),
+    componentId: z.string().describe("The ID of the component to terminate"),
+    threadId: z.string().describe("The ID of the thread to terminate"),
   },
   async ({ sessionId, componentId, threadId }) => {
     try {
@@ -300,15 +294,9 @@ server.tool(
   "retry-failed-component",
   "Retry a failed component thread in a workflow session",
   {
-    sessionId: z
-      .string()
-      .describe("The ID of the workflow session"),
-    componentId: z
-      .string()
-      .describe("The ID of the component to retry"),
-    threadId: z
-      .string()
-      .describe("The ID of the thread to retry"),
+    sessionId: z.string().describe("The ID of the workflow session"),
+    componentId: z.string().describe("The ID of the component to retry"),
+    threadId: z.string().describe("The ID of the thread to retry"),
   },
   async ({ sessionId, componentId, threadId }) => {
     try {
