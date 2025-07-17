@@ -269,7 +269,10 @@ server.tool(
   {
     sessionId: z.string().describe("The ID of the workflow session"),
     componentId: z.string().describe("The ID of the component to terminate"),
-    threadId: z.string().describe("The ID of the thread to terminate"),
+    threadId: z
+      .string()
+      .default("root")
+      .describe("The ID of the thread to terminate"),
   },
   async ({ sessionId, componentId, threadId }) => {
     try {
