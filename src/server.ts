@@ -8,6 +8,9 @@ import {
   listWorkflows,
   listWorkflowSessions,
   runWorkflow,
+  terminateSession,
+  terminateComponent,
+  retryFailedComponent,
 } from "./client/sdk.gen.js";
 import {
   SessionSummary,
@@ -225,6 +228,91 @@ server.tool(
         throwOnError: true,
         path: {
           sessionId: sessionId,
+        },
+      });
+
+      return jsonResponse(response.data);
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "terminate-entire-session",
+  "Terminate an entire workflow session",
+  {
+    sessionId: z
+      .string()
+      .describe("The ID of the workflow session to terminate"),
+  },
+  async ({ sessionId }) => {
+    try {
+      const response = await terminateSession({
+        client: client,
+        throwOnError: true,
+        path: {
+          sessionId: sessionId,
+        },
+      });
+
+      return jsonResponse(response.data);
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "terminate-component",
+  "Terminate a specific component thread in a workflow session",
+  {
+    sessionId: z.string().describe("The ID of the workflow session"),
+    componentId: z.string().describe("The ID of the component to terminate"),
+    threadId: z
+      .string()
+      .default("root")
+      .describe("The ID of the thread to terminate"),
+  },
+  async ({ sessionId, componentId, threadId }) => {
+    try {
+      const response = await terminateComponent({
+        client: client,
+        throwOnError: true,
+        path: {
+          sessionId: sessionId,
+          componentId: componentId,
+          threadId: threadId,
+        },
+      });
+
+      return jsonResponse(response.data);
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "retry-failed-component",
+  "Retry a failed component thread in a workflow session",
+  {
+    sessionId: z.string().describe("The ID of the workflow session"),
+    componentId: z.string().describe("The ID of the component to retry"),
+    threadId: z
+      .string()
+      .default("root")
+      .describe("The ID of the thread to retry"),
+  },
+  async ({ sessionId, componentId, threadId }) => {
+    try {
+      const response = await retryFailedComponent({
+        client: client,
+        throwOnError: true,
+        path: {
+          sessionId: sessionId,
+          componentId: componentId,
+          threadId: threadId,
         },
       });
 
