@@ -11,6 +11,7 @@ import {
   terminateSession,
   terminateComponent,
   retryFailedComponent,
+  rerunWorkflow,
 } from "./client/sdk.gen.js";
 import {
   SessionSummary,
@@ -307,6 +308,36 @@ server.tool(
   async ({ sessionId, componentId, threadId }) => {
     try {
       const response = await retryFailedComponent({
+        client: client,
+        throwOnError: true,
+        path: {
+          sessionId: sessionId,
+          componentId: componentId,
+          threadId: threadId,
+        },
+      });
+
+      return jsonResponse(response.data);
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "rerun-workflow",
+  "Rerun a workflow component thread in a session",
+  {
+    sessionId: z.string().describe("The ID of the workflow session"),
+    componentId: z.string().describe("The ID of the component to rerun"),
+    threadId: z
+      .string()
+      .default("root")
+      .describe("The ID of the thread to rerun (optional)"),
+  },
+  async ({ sessionId, componentId, threadId }) => {
+    try {
+      const response = await rerunWorkflow({
         client: client,
         throwOnError: true,
         path: {

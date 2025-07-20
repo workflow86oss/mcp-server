@@ -254,3 +254,32 @@ export const retryFailedComponent = <ThrowOnError extends boolean = false>(
     ...options,
   });
 };
+
+/**
+ * Rerun Workflow Component
+ * Reruns a workflow component thread in a session
+ */
+export const rerunWorkflow = <ThrowOnError extends boolean = false>(
+  options: Options<
+    {
+      path: { sessionId: string; componentId: string; threadId?: string };
+      url: string;
+    },
+    ThrowOnError
+  >,
+) => {
+  const url = options.path.threadId
+    ? "/v1/session/{sessionId}/rerun/{componentId}/thread/{threadId}"
+    : "/v1/session/{sessionId}/rerun/{componentId}";
+
+  return (options.client ?? _heyApiClient).post<any, any, ThrowOnError>({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url,
+    ...options,
+  });
+};
