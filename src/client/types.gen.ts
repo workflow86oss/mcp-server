@@ -9,9 +9,9 @@ export type RunWorkflowCommand = {
    */
   componentId: string;
   /**
-   * Production or Test Mode
+   * Production or Test SessionMode. New Production workflows run against the PUBLISHED workflow version. New Test workflows run against the DRAFT workflow version.
    */
-  mode?: "PROD" | "TEST";
+  sessionMode?: "PROD" | "TEST";
   /**
    * A object containing placeholder keys and values.
    * - Keys must be from the set of placeholders available to the specified component.
@@ -48,9 +48,25 @@ export type StandardWorkflow86Exception = {
  */
 export type RunWorkflowResponse = {
   /**
+   * UUID identifier of the session started
+   */
+  sessionId?: string;
+  /**
+   * The execution mode of session started
+   */
+  sessionMode?: "PROD" | "TEST";
+  /**
+   * URL to poll for session progress details
+   */
+  sessionUrl?: string;
+  /**
    * UUID identifier of the workflow started (echoed)
    */
   workflowId?: string;
+  /**
+   * The integer version of the workflow started (echoed)
+   */
+  workflowVersion?: number;
   /**
    * UUID identifier of the component started (echoed)
    */
@@ -61,14 +77,153 @@ export type RunWorkflowResponse = {
   placeholderValues?: {
     [key: string]: string;
   };
+  _links?: {
+    [key: string]: string;
+  };
+};
+
+/**
+ * Flattened representation of the component result graph
+ */
+export type ComponentResult = {
+  /**
+   * UUID id of this Component Result
+   */
+  resultId: string;
+  /**
+   * UUID id of the Component this result is for
+   */
+  componentId: string;
+  /**
+   * The type of the Component this result is for
+   */
+  componentType: string;
+  /**
+   * The name of the Component this result is for
+   */
+  componentName: string;
+  /**
+   * The thread this Component was run in - either 'root' or a UUID id
+   */
+  thread: string;
+  /**
+   * The status of the execution of this Component
+   */
+  status:
+    | "IN_PROGRESS"
+    | "SUCCESSFUL"
+    | "WAITING"
+    | "FAILED"
+    | "TERMINATED"
+    | "OUT_OF_QUOTA";
+  /**
+   * The error message generated if status=FAILED
+   */
+  errorMessage: string;
+  nodeInput: JsonNode;
+  nodeOutput: JsonNode;
+  /**
+   * The resultIds of the following results in the result graph
+   */
+  nextResults: Array<string>;
+  /**
+   * The URL of any form waiting to be submitted to complete this Component
+   */
+  pendingFormUrl?: string;
+  /**
+   * The URL of any form that has been submitted as part of this Component's execution
+   */
+  submittedFormUrl?: string;
+  startedAt?: string;
+  updatedAt?: string;
+  _links?: {
+    [key: string]: string;
+  };
+};
+
+/**
+ * The JSON result that was output from this execution
+ */
+export type JsonNode = {
+  [key: string]: unknown;
+};
+
+/**
+ * JSON representation of a Workflow Session
+ */
+export type SessionResult = {
+  /**
+   * UUID id of the session returned
+   */
+  sessionId: string;
+  /**
+   * The execution mode of this session.
+   */
+  sessionMode: "PROD" | "TEST";
+  /**
+   * The overall session status
+   */
+  status:
+    | "IN_PROGRESS"
+    | "SUCCESSFUL"
+    | "WAITING"
+    | "FAILED"
+    | "TERMINATED"
+    | "OUT_OF_QUOTA";
+  /**
+   * UUID id of the workflow this session belongs to
+   */
+  workflowId: string;
+  /**
+   * The integer version of the workflow this session belongs to
+   */
+  workflowVersion: number;
+  startedAt?: string;
+  updatedAt?: string;
+  /**
+   * Flattened representation of the component result graph
+   */
+  componentResults: Array<ComponentResult>;
+  _links?: {
+    [key: string]: string;
+  };
+};
+
+/**
+ * A response when retrying a failed component
+ */
+export type RetryWorkflowResponse = {
   /**
    * UUID identifier of the session started
    */
   sessionId?: string;
   /**
+   * The execution mode of session started
+   */
+  sessionMode?: "PROD" | "TEST";
+  /**
    * URL to poll for session progress details
    */
   sessionUrl?: string;
+  /**
+   * UUID identifier of the workflow started (echoed)
+   */
+  workflowId?: string;
+  /**
+   * The integer version of the workflow started (echoed)
+   */
+  workflowVersion?: number;
+  /**
+   * UUID identifier of the component started (echoed)
+   */
+  componentId?: string;
+  /**
+   * UUID identifier of the thread being retried. Defaults to 'root' if no thread is given or needed
+   */
+  threadId?: string;
+  _links?: {
+    [key: string]: string;
+  };
 };
 
 export type PageOfWorkflowSummary = {
@@ -109,6 +264,14 @@ export type WorkflowSummary = {
    * true if this workflow has been published, false if this workflow is still in draft
    */
   published: boolean;
+  /**
+   * The integer version of this workflows current draft
+   */
+  draftVersion: number;
+  /**
+   * The integer version of this workflows current published version, if it has been published"
+   */
+  publishedVersion?: number;
   _links: {
     [key: string]: string;
   };
@@ -146,7 +309,7 @@ export type ComponentDetails = {
   };
 };
 
-export type WorkflowVersionSummary = {
+export type WorkflowVersionResult = {
   /**
    * UUID id of this workflow
    */
@@ -199,56 +362,15 @@ export type PageOfSessionSummary = {
  */
 export type SessionSummary = {
   /**
-   * The integer version of the workflow this session belongs to
-   */
-  workflowVersion: number;
-  /**
    * UUID id of the session returned
    */
   sessionId: string;
   /**
-   * The overall workflow status
+   * The execution mode of this session.
    */
-  status:
-    | "IN_PROGRESS"
-    | "SUCCESSFUL"
-    | "WAITING"
-    | "FAILED"
-    | "TERMINATED"
-    | "OUT_OF_QUOTA";
-  startedAt?: string;
-  updatedAt?: string;
-  _links?: {
-    [key: string]: string;
-  };
-};
-
-/**
- * Flattened representation of the component result graph
- */
-export type ComponentResult = {
+  sessionMode: "PROD" | "TEST";
   /**
-   * UUID id of this Component Result
-   */
-  resultId: string;
-  /**
-   * UUID id of the Component this result is for
-   */
-  componentId: string;
-  /**
-   * The type of the Component this result is for
-   */
-  componentType: string;
-  /**
-   * The name of the Component this result is for
-   */
-  componentName: string;
-  /**
-   * The thread this Component was run in - either 'root' or a UUID id
-   */
-  thread: string;
-  /**
-   * The status of the execution of this Component
+   * The overall session status
    */
   status:
     | "IN_PROGRESS"
@@ -258,58 +380,15 @@ export type ComponentResult = {
     | "TERMINATED"
     | "OUT_OF_QUOTA";
   /**
-   * The error message generated if status=FAILED
+   * UUID id of the workflow this session belongs to
    */
-  errorMessage: string;
-  nodeInput: JsonNode;
-  nodeOutput: JsonNode;
-  /**
-   * The resultIds of the following results in the result graph
-   */
-  nextResults: Array<string>;
-  startedAt?: string;
-  updatedAt?: string;
-};
-
-/**
- * The JSON result that was output from this execution
- */
-export type JsonNode = {
-  [key: string]: unknown;
-};
-
-/**
- * JSON representation of a Workflow Session
- */
-export type SessionResult = {
+  workflowId: string;
   /**
    * The integer version of the workflow this session belongs to
    */
   workflowVersion: number;
-  /**
-   * UUID id of the session returned
-   */
-  sessionId: string;
-  /**
-   * The overall workflow status
-   */
-  status:
-    | "IN_PROGRESS"
-    | "SUCCESSFUL"
-    | "WAITING"
-    | "FAILED"
-    | "TERMINATED"
-    | "OUT_OF_QUOTA";
   startedAt?: string;
   updatedAt?: string;
-  /**
-   * The execution mode of this session
-   */
-  mode: "PROD" | "TEST";
-  /**
-   * Flattened representation of the component result graph
-   */
-  componentResults: Array<ComponentResult>;
   _links?: {
     [key: string]: string;
   };
@@ -359,6 +438,237 @@ export type RunWorkflowResponses = {
 export type RunWorkflowResponse2 =
   RunWorkflowResponses[keyof RunWorkflowResponses];
 
+export type TerminateEntireSessionData = {
+  body?: never;
+  path: {
+    sessionId: string;
+  };
+  query?: never;
+  url: "/v1/session/{sessionId}/terminate";
+};
+
+export type TerminateEntireSessionErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type TerminateEntireSessionError =
+  TerminateEntireSessionErrors[keyof TerminateEntireSessionErrors];
+
+export type TerminateEntireSessionResponses = {
+  /**
+   * OK
+   */
+  200: SessionResult;
+};
+
+export type TerminateEntireSessionResponse =
+  TerminateEntireSessionResponses[keyof TerminateEntireSessionResponses];
+
+export type TerminateComponentData = {
+  body?: never;
+  path: {
+    sessionId: string;
+    componentId: string;
+    threadId: string;
+  };
+  query?: never;
+  url: "/v1/session/{sessionId}/terminate/{componentId}/thread/{threadId}";
+};
+
+export type TerminateComponentErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type TerminateComponentError =
+  TerminateComponentErrors[keyof TerminateComponentErrors];
+
+export type TerminateComponentResponses = {
+  /**
+   * OK
+   */
+  200: ComponentResult;
+};
+
+export type TerminateComponentResponse =
+  TerminateComponentResponses[keyof TerminateComponentResponses];
+
+export type TerminateComponent1Data = {
+  body?: never;
+  path: {
+    sessionId: string;
+    componentId: string;
+  };
+  query?: never;
+  url: "/v1/session/{sessionId}/terminate/{componentId}";
+};
+
+export type TerminateComponent1Errors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type TerminateComponent1Error =
+  TerminateComponent1Errors[keyof TerminateComponent1Errors];
+
+export type TerminateComponent1Responses = {
+  /**
+   * OK
+   */
+  200: ComponentResult;
+};
+
+export type TerminateComponent1Response =
+  TerminateComponent1Responses[keyof TerminateComponent1Responses];
+
+export type RetryFailedComponentData = {
+  body?: never;
+  path: {
+    sessionId: string;
+    componentId: string;
+  };
+  query?: never;
+  url: "/v1/session/{sessionId}/retry/{componentId}";
+};
+
+export type RetryFailedComponentErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type RetryFailedComponentError =
+  RetryFailedComponentErrors[keyof RetryFailedComponentErrors];
+
+export type RetryFailedComponentResponses = {
+  /**
+   * OK
+   */
+  200: RetryWorkflowResponse;
+};
+
+export type RetryFailedComponentResponse =
+  RetryFailedComponentResponses[keyof RetryFailedComponentResponses];
+
+export type RetryFailedComponent1Data = {
+  body?: never;
+  path: {
+    sessionId: string;
+    componentId: string;
+    threadId: string;
+  };
+  query?: never;
+  url: "/v1/session/{sessionId}/retry/{componentId}/thread/{threadId}";
+};
+
+export type RetryFailedComponent1Errors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type RetryFailedComponent1Error =
+  RetryFailedComponent1Errors[keyof RetryFailedComponent1Errors];
+
+export type RetryFailedComponent1Responses = {
+  /**
+   * OK
+   */
+  200: RetryWorkflowResponse;
+};
+
+export type RetryFailedComponent1Response =
+  RetryFailedComponent1Responses[keyof RetryFailedComponent1Responses];
+
 export type ListWorkflowsData = {
   body?: never;
   path?: never;
@@ -366,7 +676,7 @@ export type ListWorkflowsData = {
     /**
      * Optional parameter to filter results by publication status
      */
-    status?: "ALL" | "PUBLISHED" | "DRAFT";
+    status?: "ALL" | "PUBLISHED";
     pageNumber?: number;
   };
   url: "/v1/workflow";
@@ -445,7 +755,7 @@ export type GetWorkflowResponses = {
   /**
    * OK
    */
-  200: WorkflowVersionSummary;
+  200: WorkflowVersionResult;
 };
 
 export type GetWorkflowResponse =
@@ -455,10 +765,13 @@ export type GetWorkflowVersionData = {
   body?: never;
   path: {
     workflowId: string;
-    version: string;
+    /**
+     * PUBLISHED, DRAFT, or an integer workflow version
+     */
+    workflowVersion: string;
   };
   query?: never;
-  url: "/v1/workflow/{workflowId}/{version}";
+  url: "/v1/workflow/{workflowId}/{workflowVersion}";
 };
 
 export type GetWorkflowVersionErrors = {
@@ -491,7 +804,7 @@ export type GetWorkflowVersionResponses = {
   /**
    * OK
    */
-  200: WorkflowVersionSummary;
+  200: WorkflowVersionResult;
 };
 
 export type GetWorkflowVersionResponse =
@@ -503,7 +816,10 @@ export type ListWorkflowSessionsData = {
     workflowId: string;
   };
   query?: {
-    mode?: "PROD" | "TEST";
+    /**
+     * Optional filter to return PROD or TEST sessions
+     */
+    sessionMode?: "PROD" | "TEST";
     pageNumber?: number;
   };
   url: "/v1/workflow/{workflowId}/sessions";

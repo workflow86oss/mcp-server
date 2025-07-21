@@ -5,6 +5,21 @@ import type {
   RunWorkflowData,
   RunWorkflowResponses,
   RunWorkflowErrors,
+  TerminateEntireSessionData,
+  TerminateEntireSessionResponses,
+  TerminateEntireSessionErrors,
+  TerminateComponentData,
+  TerminateComponentResponses,
+  TerminateComponentErrors,
+  TerminateComponent1Data,
+  TerminateComponent1Responses,
+  TerminateComponent1Errors,
+  RetryFailedComponentData,
+  RetryFailedComponentResponses,
+  RetryFailedComponentErrors,
+  RetryFailedComponent1Data,
+  RetryFailedComponent1Responses,
+  RetryFailedComponent1Errors,
   ListWorkflowsData,
   ListWorkflowsResponses,
   ListWorkflowsErrors,
@@ -64,6 +79,121 @@ export const runWorkflow = <ThrowOnError extends boolean = false>(
       "Content-Type": "application/json",
       ...options.headers,
     },
+  });
+};
+
+/**
+ * Terminate entire session
+ * Terminates the entire workflow session
+ */
+export const terminateEntireSession = <ThrowOnError extends boolean = false>(
+  options: Options<TerminateEntireSessionData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    TerminateEntireSessionResponses,
+    TerminateEntireSessionErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/session/{sessionId}/terminate",
+    ...options,
+  });
+};
+
+/**
+ * Terminate component
+ * Terminates a specific component within a workflow session
+ */
+export const terminateComponent = <ThrowOnError extends boolean = false>(
+  options: Options<TerminateComponentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    TerminateComponentResponses,
+    TerminateComponentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/session/{sessionId}/terminate/{componentId}/thread/{threadId}",
+    ...options,
+  });
+};
+
+/**
+ * Terminate component
+ * Terminates a specific component within a workflow session
+ */
+export const terminateComponent1 = <ThrowOnError extends boolean = false>(
+  options: Options<TerminateComponent1Data, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    TerminateComponent1Responses,
+    TerminateComponent1Errors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/session/{sessionId}/terminate/{componentId}",
+    ...options,
+  });
+};
+
+/**
+ * Retry failed component
+ * Retries a failed component within a workflow session
+ */
+export const retryFailedComponent = <ThrowOnError extends boolean = false>(
+  options: Options<RetryFailedComponentData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    RetryFailedComponentResponses,
+    RetryFailedComponentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/session/{sessionId}/retry/{componentId}",
+    ...options,
+  });
+};
+
+/**
+ * Retry failed component in given thread
+ * Retries a failed component within a workflow session thread
+ */
+export const retryFailedComponent1 = <ThrowOnError extends boolean = false>(
+  options: Options<RetryFailedComponent1Data, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    RetryFailedComponent1Responses,
+    RetryFailedComponent1Errors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/session/{sessionId}/retry/{componentId}/thread/{threadId}",
+    ...options,
   });
 };
 
@@ -128,7 +258,7 @@ export const getWorkflowVersion = <ThrowOnError extends boolean = false>(
         type: "apiKey",
       },
     ],
-    url: "/v1/workflow/{workflowId}/{version}",
+    url: "/v1/workflow/{workflowId}/{workflowVersion}",
     ...options,
   });
 };
@@ -174,83 +304,6 @@ export const getWorkflowSession = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/session/{sessionId}",
-    ...options,
-  });
-};
-
-/**
- * Terminate Session
- * Terminates an entire workflow session
- */
-export const terminateSession = <ThrowOnError extends boolean = false>(
-  options: Options<{ path: { sessionId: string }; url: string }, ThrowOnError>,
-) => {
-  return (options.client ?? _heyApiClient).post<any, any, ThrowOnError>({
-    security: [
-      {
-        name: "x-api-key",
-        type: "apiKey",
-      },
-    ],
-    url: "/v1/session/{sessionId}/terminate",
-    ...options,
-  });
-};
-
-/**
- * Terminate Component
- * Terminates a specific component thread in a workflow session
- */
-export const terminateComponent = <ThrowOnError extends boolean = false>(
-  options: Options<
-    {
-      path: { sessionId: string; componentId: string; threadId?: string };
-      url: string;
-    },
-    ThrowOnError
-  >,
-) => {
-  const url = options.path.threadId
-    ? "/v1/session/{sessionId}/terminate/{componentId}/thread/{threadId}"
-    : "/v1/session/{sessionId}/terminate/{componentId}";
-
-  return (options.client ?? _heyApiClient).post<any, any, ThrowOnError>({
-    security: [
-      {
-        name: "x-api-key",
-        type: "apiKey",
-      },
-    ],
-    url,
-    ...options,
-  });
-};
-
-/**
- * Retry Failed Component
- * Retries a failed component thread in a workflow session
- */
-export const retryFailedComponent = <ThrowOnError extends boolean = false>(
-  options: Options<
-    {
-      path: { sessionId: string; componentId: string; threadId?: string };
-      url: string;
-    },
-    ThrowOnError
-  >,
-) => {
-  const url = options.path.threadId
-    ? "/v1/session/{sessionId}/retry/{componentId}/thread/{threadId}"
-    : "/v1/session/{sessionId}/retry/{componentId}";
-
-  return (options.client ?? _heyApiClient).post<any, any, ThrowOnError>({
-    security: [
-      {
-        name: "x-api-key",
-        type: "apiKey",
-      },
-    ],
-    url,
     ...options,
   });
 };
