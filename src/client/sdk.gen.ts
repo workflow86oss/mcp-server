@@ -3,6 +3,7 @@
 import type { Options as ClientOptions, TDataShape, Client } from "./client";
 import type {
   RunWorkflowData,
+  RerunWorkflowData,
   RunWorkflowResponses,
   RunWorkflowErrors,
   ListWorkflowsData,
@@ -260,26 +261,24 @@ export const retryFailedComponent = <ThrowOnError extends boolean = false>(
  * Reruns a workflow component thread in a session
  */
 export const rerunWorkflow = <ThrowOnError extends boolean = false>(
-  options: Options<
-    {
-      path: { sessionId: string; componentId: string; threadId?: string };
-      url: string;
-    },
-    ThrowOnError
-  >,
+  options: Options<RerunWorkflowData, ThrowOnError>,
 ) => {
-  const url = options.path.threadId
-    ? "/v1/session/{sessionId}/rerun/{componentId}/thread/{threadId}"
-    : "/v1/session/{sessionId}/rerun/{componentId}";
-
-  return (options.client ?? _heyApiClient).post<any, any, ThrowOnError>({
+  return (options.client ?? _heyApiClient).post<
+    RunWorkflowResponses,
+    RunWorkflowErrors,
+    ThrowOnError
+  >({
     security: [
       {
         name: "x-api-key",
         type: "apiKey",
       },
     ],
-    url,
+    url: "/v1/workflow/{workflowId}/run",
     ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
