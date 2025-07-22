@@ -328,22 +328,41 @@ server.tool(
   "rerun-workflow",
   "Rerun a workflow component thread in a session",
   {
-    sessionId: z.string().describe("The ID of the workflow session"),
-    componentId: z.string().describe("The ID of the component to rerun"),
-    threadId: z
+    workflowId: z.string().describe("The ID of the workflow to rerun"),
+    sessionId: z
       .string()
-      .default("root")
-      .describe("The ID of the thread to rerun (optional)"),
+      .describe("The ID of the workflow session to copy values from"),
+    componentId: z
+      .string()
+      .describe("The ID of the component to start running from"),
+    projectVersion: z.number().describe("The project version to run"),
+    placeholderValues: z
+      .record(z.unknown())
+      .optional()
+      .describe("Optional placeholder values to override"),
   },
-  async ({ sessionId, componentId, threadId }) => {
+  async ({
+    workflowId,
+    sessionId,
+    componentId,
+    projectVersion,
+    placeholderValues,
+  }) => {
     try {
       const response = await rerunWorkflow({
         client: client,
         throwOnError: true,
         path: {
-          sessionId: sessionId,
+          workflowId: workflowId,
+        },
+        body: {
           componentId: componentId,
-          threadId: threadId,
+          projectSessionId: sessionId,
+          projectVersion: projectVersion,
+          placeholderValues: placeholderValues as unknown as Record<
+            string,
+            Record<string, unknown>
+          >,
         },
       });
 
