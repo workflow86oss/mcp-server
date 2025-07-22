@@ -3,6 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import {
+  getWorkflowHistory,
   getWorkflowSession,
   getWorkflowVersion,
   listWorkflows,
@@ -13,13 +14,16 @@ import {
   terminateEntireSession,
 } from "./client/sdk.gen.js";
 import {
+  PageOfWorkflowHistory,
   SessionSummary,
+  WorkflowHistory,
   WorkflowSummary,
   WorkflowVersionResult,
 } from "./client/types.gen.js";
 import { client } from "./client/client.gen.js";
 import {
   relinkSessionPage,
+  relinkWorkflowHistoryPage,
   relinkWorkflowPage,
   relinkWorkflowVersion,
 } from "./links.js";
@@ -62,6 +66,11 @@ const server = new McpServer({
   },
 });
 
+const zodPageNumber = z
+  .number()
+  .default(0)
+  .describe("The zero-indexed page number of the response data");
+
 server.tool(
   "list-workflows",
   "List all published workflows",
@@ -70,10 +79,7 @@ server.tool(
       .enum(["ALL", "PUBLISHED"])
       .default("ALL")
       .describe("Optional parameter to filter results by publication status"),
-    pageNumber: z
-      .number()
-      .default(0)
-      .describe("The zero-indexed page number of the response data"),
+    pageNumber: zodPageNumber,
   },
   async ({ status = "ALL", pageNumber = 0 }) => {
     try {
@@ -96,6 +102,38 @@ server.tool(
       }
 
       return jsonResponse(relinkWorkflowPage(response.data));
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "get-workflow-history",
+  "Get a workflows version history",
+  {
+    workflowId: z
+      .string()
+      .describe("The ID of the workflow to get the details of"),
+    pageNumber: zodPageNumber,
+  },
+  async ({ workflowId, pageNumber = 0 }) => {
+    try {
+      const response = await getWorkflowHistory({
+        client: client,
+        throwOnError: true,
+        path: {
+          workflowId,
+        },
+        query: {
+          pageNumber,
+        },
+      });
+
+      const workflowHistory: PageOfWorkflowHistory = response.data;
+      return jsonResponse(
+        relinkWorkflowHistoryPage(workflowId, workflowHistory),
+      );
     } catch (error) {
       return handleError(error);
     }
@@ -206,10 +244,7 @@ server.tool(
       .enum(["PROD", "TEST"])
       .default("PROD")
       .describe("Optional filter to return PROD or TEST sessions"),
-    pageNumber: z
-      .number()
-      .default(0)
-      .describe("The zero-indexed page number of the response data"),
+    pageNumber: zodPageNumber,
   },
   async ({ workflowId, sessionMode = "PROD", pageNumber = 0 }) => {
     try {

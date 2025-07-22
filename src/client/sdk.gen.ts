@@ -32,6 +32,9 @@ import type {
   ListWorkflowSessionsData,
   ListWorkflowSessionsResponses,
   ListWorkflowSessionsErrors,
+  GetWorkflowHistoryData,
+  GetWorkflowHistoryResponses,
+  GetWorkflowHistoryErrors,
   GetWorkflowSessionData,
   GetWorkflowSessionResponses,
   GetWorkflowSessionErrors,
@@ -281,6 +284,28 @@ export const listWorkflowSessions = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/sessions",
+    ...options,
+  });
+};
+
+/**
+ * Get the version history of this Workflow
+ */
+export const getWorkflowHistory = <ThrowOnError extends boolean = false>(
+  options: Options<GetWorkflowHistoryData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetWorkflowHistoryResponses,
+    GetWorkflowHistoryErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/{workflowId}/history",
     ...options,
   });
 };

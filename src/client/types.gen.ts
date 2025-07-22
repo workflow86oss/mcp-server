@@ -311,17 +311,17 @@ export type ComponentDetails = {
 
 export type WorkflowVersionResult = {
   /**
-   * UUID id of this workflow
+   * UUID id of this workflow version
    */
   workflowId: string;
   /**
-   * The integer version of this workflow
+   * The integer version of this workflow version
    */
   version: number;
   /**
-   * The lifecycle status of this workflow
+   * The lifecycle status of this workflow version
    */
-  status: "PUBLISHED" | "DRAFT" | "DELETED";
+  status: "PUBLISHED" | "DRAFT" | "ARCHIVED" | "DELETED";
   /**
    * The name of this workflow
    */
@@ -390,6 +390,49 @@ export type SessionSummary = {
   startedAt?: string;
   updatedAt?: string;
   _links?: {
+    [key: string]: string;
+  };
+};
+
+export type PageOfWorkflowHistory = {
+  /**
+   * The page of response data as an array
+   */
+  _embedded: Array<WorkflowHistory>;
+  /**
+   * The zero-indexed page number of the response data
+   */
+  _pageNumber: number;
+  /**
+   * True iff this page is the final page
+   */
+  _lastPage: boolean;
+  _links: {
+    [key: string]: string;
+  };
+};
+
+/**
+ * The page of response data as an array
+ */
+export type WorkflowHistory = {
+  /**
+   * The integer version of this workflow version
+   */
+  version: number;
+  /**
+   * The name of this workflow
+   */
+  name: string;
+  /**
+   * The description of this workflow
+   */
+  description: string;
+  /**
+   * The lifecycle status of this workflow version
+   */
+  status: "PUBLISHED" | "DRAFT" | "ARCHIVED" | "DELETED";
+  _links: {
     [key: string]: string;
   };
 };
@@ -524,7 +567,7 @@ export type TerminateComponentResponses = {
   /**
    * OK
    */
-  200: ComponentResult;
+  200: SessionResult;
 };
 
 export type TerminateComponentResponse =
@@ -570,7 +613,7 @@ export type TerminateComponent1Responses = {
   /**
    * OK
    */
-  200: ComponentResult;
+  200: SessionResult;
 };
 
 export type TerminateComponent1Response =
@@ -860,6 +903,53 @@ export type ListWorkflowSessionsResponses = {
 
 export type ListWorkflowSessionsResponse =
   ListWorkflowSessionsResponses[keyof ListWorkflowSessionsResponses];
+
+export type GetWorkflowHistoryData = {
+  body?: never;
+  path: {
+    workflowId: string;
+  };
+  query?: {
+    pageNumber?: number;
+  };
+  url: "/v1/workflow/{workflowId}/history";
+};
+
+export type GetWorkflowHistoryErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type GetWorkflowHistoryError =
+  GetWorkflowHistoryErrors[keyof GetWorkflowHistoryErrors];
+
+export type GetWorkflowHistoryResponses = {
+  /**
+   * OK
+   */
+  200: PageOfWorkflowHistory;
+};
+
+export type GetWorkflowHistoryResponse =
+  GetWorkflowHistoryResponses[keyof GetWorkflowHistoryResponses];
 
 export type GetWorkflowSessionData = {
   body?: never;
