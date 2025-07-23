@@ -417,7 +417,7 @@ server.tool(
       .describe("The ID of the component to start running from"),
     projectVersion: z.number().describe("The project version to run"),
     placeholderValues: z
-      .record(z.unknown())
+      .record(z.string(), z.string())
       .optional()
       .describe("Optional placeholder values to override"),
   },
