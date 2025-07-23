@@ -3,24 +3,28 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import {
+  getWorkflowHistory,
   getWorkflowSession,
   getWorkflowVersion,
   listWorkflows,
   listWorkflowSessions,
+  retryFailedComponent1,
   runWorkflow,
-  terminateSession,
   terminateComponent,
+  terminateEntireSession,
   retryFailedComponent,
   rerunWorkflow,
 } from "./client/sdk.gen.js";
 import {
+  PageOfWorkflowHistory,
   SessionSummary,
   WorkflowSummary,
-  WorkflowVersionSummary,
+  WorkflowVersionResult,
 } from "./client/types.gen.js";
 import { client } from "./client/client.gen.js";
 import {
   relinkSessionPage,
+  relinkWorkflowHistoryPage,
   relinkWorkflowPage,
   relinkWorkflowVersion,
 } from "./links.js";
@@ -63,21 +67,28 @@ const server = new McpServer({
   },
 });
 
+const zodPageNumber = z
+  .number()
+  .default(0)
+  .describe("The zero-indexed page number of the response data");
+
 server.tool(
   "list-workflows",
   "List all published workflows",
   {
-    pageNumber: z
-      .number()
-      .default(0)
-      .describe("The zero-indexed page number of the response data"),
+    status: z
+      .enum(["ALL", "PUBLISHED"])
+      .default("ALL")
+      .describe("Optional parameter to filter results by publication status"),
+    pageNumber: zodPageNumber,
   },
-  async ({ pageNumber = 0 }) => {
+  async ({ status = "ALL", pageNumber = 0 }) => {
     try {
       const response = await listWorkflows({
         client: client,
         throwOnError: true,
         query: {
+          status,
           pageNumber,
         },
       });
@@ -99,28 +110,68 @@ server.tool(
 );
 
 server.tool(
+  "get-workflow-history",
+  "Get a workflows version history",
+  {
+    workflowId: z
+      .string()
+      .describe("The ID of the workflow to get the details of"),
+    pageNumber: zodPageNumber,
+  },
+  async ({ workflowId, pageNumber = 0 }) => {
+    try {
+      const response = await getWorkflowHistory({
+        client: client,
+        throwOnError: true,
+        path: {
+          workflowId,
+        },
+        query: {
+          pageNumber,
+        },
+      });
+
+      const workflowHistory: PageOfWorkflowHistory = response.data;
+      return jsonResponse(
+        relinkWorkflowHistoryPage(workflowId, workflowHistory),
+      );
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
   "get-workflow",
   "Get the details of a workflow",
   {
     workflowId: z
       .string()
       .describe("The ID of the workflow to get the details of"),
+    workflowVersion: z
+      .string()
+      .default("PUBLISHED")
+      .describe("PUBLISHED, DRAFT, or an integer workflow version"),
   },
-  async ({ workflowId }) => {
+  async ({ workflowId, workflowVersion = "PUBLISHED" }) => {
     try {
       const response = await getWorkflowVersion({
         client: client,
         throwOnError: true,
         path: {
-          workflowId: workflowId,
-          version: "PUBLISHED",
+          workflowId,
+          workflowVersion,
         },
       });
 
-      const workflow: WorkflowVersionSummary = response.data;
+      const workflow: WorkflowVersionResult = response.data;
       return jsonResponse(relinkWorkflowVersion(workflow));
-    } catch (error) {
-      return handleError(error);
+    } catch (error: any) {
+      if (error?.httpStatus === 410 && workflowVersion === "PUBLISHED") {
+        return textResponse("This project has not been published");
+      } else {
+        return handleError(error);
+      }
     }
   },
 );
@@ -133,6 +184,10 @@ server.tool(
     componentId: z
       .string()
       .describe("The ID of the component to start running from"),
+    sessionMode: z
+      .enum(["PROD", "TEST"])
+      .default("PROD")
+      .describe("Option to start PROD or TEST sessions"),
     // Simplify placeholderValues to a String -> String map rather than confusing AI with all the options
     placeholderValues: z
       .record(z.string(), z.string())
@@ -147,16 +202,22 @@ server.tool(
       )
       .optional(),
   },
-  async ({ workflowId, componentId, placeholderValues }) => {
+  async ({
+    workflowId,
+    componentId,
+    sessionMode = "PROD",
+    placeholderValues,
+  }) => {
     try {
       const response = await runWorkflow({
         client: client,
         throwOnError: true,
         path: {
-          workflowId: workflowId,
+          workflowId,
         },
         body: {
-          componentId: componentId,
+          componentId,
+          sessionMode,
           //The API supports more natural JSON but we don't need that and simplify the MCP interface but need to cast to
           // more complicated type to keep typescript happy
           placeholderValues: placeholderValues as unknown as Record<
@@ -180,12 +241,13 @@ server.tool(
     workflowId: z
       .string()
       .describe("The ID of the workflow to list sessions for"),
-    pageNumber: z
-      .number()
-      .default(0)
-      .describe("The zero-indexed page number of the response data"),
+    sessionMode: z
+      .enum(["PROD", "TEST"])
+      .default("PROD")
+      .describe("Optional filter to return PROD or TEST sessions"),
+    pageNumber: zodPageNumber,
   },
-  async ({ workflowId, pageNumber = 0 }) => {
+  async ({ workflowId, sessionMode = "PROD", pageNumber = 0 }) => {
     try {
       const response = await listWorkflowSessions({
         client: client,
@@ -194,6 +256,7 @@ server.tool(
           workflowId,
         },
         query: {
+          sessionMode,
           pageNumber,
         },
       });
@@ -201,7 +264,9 @@ server.tool(
       const sessions: SessionSummary[] = response?.data?._embedded || [];
       if (sessions.length === 0) {
         if (pageNumber === 0) {
-          return textResponse("This workflow has never been run");
+          return textResponse(
+            `This workflow has never been run in ${sessionMode} mode`,
+          );
         } else {
           return textResponse("This page contains no additional sessions");
         }
@@ -249,7 +314,7 @@ server.tool(
   },
   async ({ sessionId }) => {
     try {
-      const response = await terminateSession({
+      const response = await terminateEntireSession({
         client: client,
         throwOnError: true,
         path: {
@@ -305,9 +370,9 @@ server.tool(
       .default("root")
       .describe("The ID of the thread to retry"),
   },
-  async ({ sessionId, componentId, threadId }) => {
+  async ({ sessionId, componentId, threadId = "root" }) => {
     try {
-      const response = await retryFailedComponent({
+      const response = await retryFailedComponent1({
         client: client,
         throwOnError: true,
         path: {
@@ -389,7 +454,11 @@ function handleError(error: any) {
 }
 
 function jsonResponse(result: object) {
-  return textResponse(JSON.stringify(result, null, 2));
+  const text = JSON.stringify(result, null, 2);
+  if (process.stdout.isTTY) {
+    console.error(text);
+  }
+  return textResponse(text);
 }
 
 function textResponse(text: string) {

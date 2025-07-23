@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+npm run build
+
+WORKFLOW_ID=$1
+PAGE_NUMBER=$2
+
+if [ -n "$PAGE_NUMBER" ]; then
+  ARGS="{\"workflowId\":\"$WORKFLOW_ID\", \"pageNumber\":$PAGE_NUMBER}"
+else
+  ARGS="{\"workflowId\":\"$WORKFLOW_ID\"}"
+fi
+
+PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"get-workflow-history\",\"arguments\":${ARGS}}}"
+
+./exec.sh "$PAYLOAD"

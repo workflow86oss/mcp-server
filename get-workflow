@@ -4,7 +4,12 @@ set -e
 npm run build
 
 WORKFLOW_ID=$1
-ARGS="{\"workflowId\":\"$WORKFLOW_ID\"}"
+WORKFLOW_VERSION=$2
+if [ -n "$WORKFLOW_VERSION" ]; then
+  ARGS="{\"workflowId\":\"$WORKFLOW_ID\", \"workflowVersion\": \"$WORKFLOW_VERSION\"}"
+else
+  ARGS="{\"workflowId\":\"$WORKFLOW_ID\"}"
+fi
 PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"get-workflow\",\"arguments\":${ARGS}}}"
 
 ./exec.sh "$PAYLOAD"
