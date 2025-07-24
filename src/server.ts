@@ -404,55 +404,6 @@ server.tool(
   },
 );
 
-server.tool(
-  "rerun-workflow",
-  "Rerun a workflow component thread in a session",
-  {
-    workflowId: z.string().describe("The ID of the workflow to rerun"),
-    sessionId: z
-      .string()
-      .describe("The ID of the workflow session to copy values from"),
-    componentId: z
-      .string()
-      .describe("The ID of the component to start running from"),
-    projectVersion: z.number().describe("The project version to run"),
-    placeholderValues: z
-      .record(z.string(), z.string())
-      .optional()
-      .describe("Optional placeholder values to override"),
-  },
-  async ({
-    workflowId,
-    sessionId,
-    componentId,
-    projectVersion,
-    placeholderValues,
-  }) => {
-    try {
-      const response = await rerunWorkflow({
-        client: client,
-        throwOnError: true,
-        path: {
-          workflowId: workflowId,
-        },
-        body: {
-          componentId: componentId,
-          projectSessionId: sessionId,
-          projectVersion: projectVersion,
-          placeholderValues: placeholderValues as unknown as Record<
-            string,
-            Record<string, unknown>
-          >,
-        },
-      });
-
-      return jsonResponse(response.data);
-    } catch (error) {
-      return handleError(error);
-    }
-  },
-);
-
 function handleError(error: any) {
   if (error.httpStatus) {
     return textResponse(

@@ -3,7 +3,6 @@
 import type { Options as ClientOptions, TDataShape, Client } from "./client";
 import type {
   RunWorkflowData,
-  RerunWorkflowData,
   RunWorkflowResponses,
   RunWorkflowErrors,
   TerminateEntireSessionData,
@@ -331,32 +330,5 @@ export const getWorkflowSession = <ThrowOnError extends boolean = false>(
     ],
     url: "/v1/session/{sessionId}",
     ...options,
-  });
-};
-
-/**
- * Rerun Workflow Component
- * Reruns a workflow component thread in a session
- */
-export const rerunWorkflow = <ThrowOnError extends boolean = false>(
-  options: Options<RerunWorkflowData, ThrowOnError>,
-) => {
-  return (options.client ?? _heyApiClient).post<
-    RunWorkflowResponses,
-    RunWorkflowErrors,
-    ThrowOnError
-  >({
-    security: [
-      {
-        name: "x-api-key",
-        type: "apiKey",
-      },
-    ],
-    url: "/v1/workflow/{workflowId}/run",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
   });
 };
