@@ -12,8 +12,6 @@ import {
   runWorkflow,
   terminateComponent,
   terminateEntireSession,
-  retryFailedComponent,
-  rerunWorkflow,
 } from "./client/sdk.gen.js";
 import {
   PageOfWorkflowHistory,
