@@ -38,3 +38,16 @@ jobs:
           npm publish --tag canary --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Check generated client
+        run: |
+          # Canary publish above dirties the package.json
+          git restore package.json
+          npm run genclient
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "❌ Public API changes have not been deployed to prod yet (or you need to run genclient and commit)"
+            git status --porcelain
+            git diff
+            exit 1
+          fi
+          echo "✅ Ready to Tag"
