@@ -206,10 +206,6 @@ server.tool(
         "Optional workflow version to run. If not provided, uses latest version based on session mode.",
       )
       .optional(),
-    sourceWorkflowSessionId: z
-      .string()
-      .describe("Optional workflow session ID to copy placeholder values from.")
-      .optional(),
   },
   async ({
     workflowId,
@@ -217,7 +213,6 @@ server.tool(
     sessionMode = "PROD",
     placeholderValues,
     workflowVersion,
-    sourceWorkflowSessionId,
   }) => {
     try {
       const response = await runWorkflow({
@@ -236,7 +231,6 @@ server.tool(
             Record<string, unknown>
           >,
           workflowVersion: workflowVersion,
-          sourceWorkflowSessionId: sourceWorkflowSessionId,
         },
       });
 
