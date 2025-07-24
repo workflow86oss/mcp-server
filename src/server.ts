@@ -199,16 +199,16 @@ server.tool(
           "- Values MUST NOT be sent as JSON objects, instead keys should use dotted form.",
       )
       .optional(),
-    projectVersion: z
+    workflowVersion: z
       .number()
       .int()
       .describe(
-        "Optional project version to run. If not provided, uses latest version based on session mode.",
+        "Optional workflow version to run. If not provided, uses latest version based on session mode.",
       )
       .optional(),
-    projectSessionId: z
+    sourceWorkflowSessionId: z
       .string()
-      .describe("Optional project session ID to copy placeholder values from.")
+      .describe("Optional workflow session ID to copy placeholder values from.")
       .optional(),
   },
   async ({
@@ -216,8 +216,8 @@ server.tool(
     componentId,
     sessionMode = "PROD",
     placeholderValues,
-    projectVersion,
-    projectSessionId,
+    workflowVersion,
+    sourceWorkflowSessionId,
   }) => {
     try {
       const response = await runWorkflow({
@@ -235,8 +235,8 @@ server.tool(
             string,
             Record<string, unknown>
           >,
-          projectVersion,
-          projectSessionId,
+          workflowVersion: workflowVersion,
+          sourceWorkflowSessionId: sourceWorkflowSessionId,
         },
       });
 

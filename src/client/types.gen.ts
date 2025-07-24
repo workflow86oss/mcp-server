@@ -30,11 +30,11 @@ export type RunWorkflowCommand = {
   /**
    * Optional project version to run. If not provided, uses latest version based on session mode.
    */
-  projectVersion?: number;
+  workflowVersion?: number;
   /**
    * Optional project session ID to copy placeholder values from.
    */
-  projectSessionId?: string;
+  sourceWorkflowSessionId?: string;
 };
 
 export type StandardWorkflow86Exception = {
