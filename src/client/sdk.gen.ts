@@ -178,8 +178,8 @@ export const retryFailedComponent = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Retry failed component in given thread
- * Retries a failed component within a workflow session thread
+ * Retry failed component
+ * Retries a failed component within a workflow session
  */
 export const retryFailedComponent1 = <ThrowOnError extends boolean = false>(
   options: Options<RetryFailedComponent1Data, ThrowOnError>,
