@@ -26,6 +26,11 @@ export type RunWorkflowCommand = {
       [key: string]: unknown;
     };
   };
+
+  /**
+   * Optional project version to run. If not provided, uses latest version based on session mode.
+   */
+  workflowVersion?: number;
 };
 
 export type StandardWorkflow86Exception = {

@@ -16,7 +16,6 @@ import {
 import {
   PageOfWorkflowHistory,
   SessionSummary,
-  WorkflowHistory,
   WorkflowSummary,
   WorkflowVersionResult,
 } from "./client/types.gen.js";
@@ -200,12 +199,20 @@ server.tool(
           "- Values MUST NOT be sent as JSON objects, instead keys should use dotted form.",
       )
       .optional(),
+    workflowVersion: z
+      .number()
+      .int()
+      .describe(
+        "Optional workflow version to run. If not provided, uses latest version based on session mode.",
+      )
+      .optional(),
   },
   async ({
     workflowId,
     componentId,
     sessionMode = "PROD",
     placeholderValues,
+    workflowVersion,
   }) => {
     try {
       const response = await runWorkflow({
@@ -223,6 +230,7 @@ server.tool(
             string,
             Record<string, unknown>
           >,
+          workflowVersion: workflowVersion,
         },
       });
 
