@@ -200,8 +200,7 @@ server.tool(
       )
       .optional(),
     workflowVersion: z
-      .number()
-      .int()
+      .string()
       .describe(
         "Optional workflow version to run. If not provided, uses latest version based on session mode.",
       )
