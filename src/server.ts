@@ -73,7 +73,7 @@ const zodPageNumber = z
 
 server.tool(
   "list-workflows",
-  "List all published workflows",
+  "Get a paginated list of workflow summaries including workflow IDs, names, publication status, draft versions, and navigation links. Returns structured metadata for each workflow with pagination controls and links to detailed workflow information.",
   {
     status: z
       .enum(["ALL", "PUBLISHED"])
@@ -110,7 +110,7 @@ server.tool(
 
 server.tool(
   "get-workflow-history",
-  "Get a workflows version history",
+  "Retrieve a paginated history of all versions for a specific workflow, including version numbers, timestamps, status changes, and metadata for each version. Useful for tracking workflow evolution and accessing previous versions.",
   {
     workflowId: z
       .string()
@@ -142,7 +142,7 @@ server.tool(
 
 server.tool(
   "get-workflow",
-  "Get the details of a workflow",
+  "Get comprehensive workflow details including metadata (ID, version, status, name), full workflow description with purpose and use cases, complete component definitions with types and descriptions, placeholder mappings for data flow between components, component connections and relationships, and links to related workflow operations like session management",
   {
     workflowId: z
       .string()
@@ -177,7 +177,7 @@ server.tool(
 
 server.tool(
   "run-workflow",
-  "Runs a workflow component, passing in placeholders",
+  "Execute a workflow starting from a specified component with optional placeholder values. Supports both production runs and test runs of draft versions. Validates component existence and placeholder types before execution. Returns session details for tracking workflow progress. Can be used to restart workflows with data from previous sessions.",
   {
     workflowId: z.string().describe("The ID of the workflow to run"),
     componentId: z
@@ -186,7 +186,7 @@ server.tool(
     sessionMode: z
       .enum(["PROD", "TEST"])
       .default("PROD")
-      .describe("Option to start PROD or TEST sessions"),
+      .describe("Run the production version or a test run of the draft version"),
     // Simplify placeholderValues to a String -> String map rather than confusing AI with all the options
     placeholderValues: z
       .record(z.string(), z.string())
@@ -235,7 +235,7 @@ server.tool(
 
 server.tool(
   "list-sessions",
-  "List the running or completed sessions for a Workflow",
+  "Get a paginated list of all execution sessions for a workflow, including session IDs, status, timestamps, and execution mode. Can filter between production and test runs of draft workflows. Returns user-friendly messages when no sessions exist, with pagination support for workflows with many execution histories.",
   {
     workflowId: z
       .string()
@@ -280,7 +280,7 @@ server.tool(
 
 server.tool(
   "get-session",
-  "Get the details of a Workflow Session",
+  "Retrieve comprehensive details of a specific workflow execution session, including session status, component execution states, placeholder values, timing information, error details, and complete execution history. Essential for debugging and monitoring workflow runs.",
   {
     sessionId: z
       .string()
@@ -305,7 +305,7 @@ server.tool(
 
 server.tool(
   "terminate-entire-session",
-  "Terminate an entire workflow session",
+  "Immediately stop and terminate an entire workflow session, ending execution of all active components and preventing any further processing. Useful for canceling long-running workflows or stopping erroneous executions. Returns confirmation of termination status.",
   {
     sessionId: z
       .string()
@@ -330,7 +330,7 @@ server.tool(
 
 server.tool(
   "terminate-component",
-  "Terminate a specific component thread in a workflow session",
+  "Selectively terminate a specific component thread within a workflow session while allowing other components to continue running. Provides granular control over workflow execution by targeting individual components or threads. Useful for stopping problematic components without affecting the entire workflow.",
   {
     sessionId: z.string().describe("The ID of the workflow session"),
     componentId: z.string().describe("The ID of the component to terminate"),
@@ -360,7 +360,7 @@ server.tool(
 
 server.tool(
   "retry-failed-component",
-  "Retry a failed component thread in a workflow session",
+  "Restart execution of a failed component and continue the workflow from that point forward. Automatically resumes processing from the specified component using existing session data and placeholder values. Essential for recovering from transient failures or errors without restarting the entire workflow.",
   {
     sessionId: z.string().describe("The ID of the workflow session"),
     componentId: z.string().describe("The ID of the component to retry"),
