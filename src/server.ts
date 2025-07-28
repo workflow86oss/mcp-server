@@ -202,7 +202,7 @@ server.tool(
     workflowVersion: z
       .string()
       .describe(
-        "Optional workflow version to run. If not provided, uses latest version based on session mode.",
+        "Optional workflow version to run. It could be a integer version or 'DRAFT' or 'PUBLISHED'. If DRAFT OR PUBLISHED, will run latest version of the project with the respective status. If not provided, uses latest version",
       )
       .optional(),
   },
