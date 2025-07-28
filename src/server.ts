@@ -186,7 +186,9 @@ server.tool(
     sessionMode: z
       .enum(["PROD", "TEST"])
       .default("PROD")
-      .describe("Run the production version or a test run of the draft version"),
+      .describe(
+        "Run the production version or a test run of the draft version",
+      ),
     // Simplify placeholderValues to a String -> String map rather than confusing AI with all the options
     placeholderValues: z
       .record(z.string(), z.string())
