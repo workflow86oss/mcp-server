@@ -26,6 +26,10 @@ export type BaseWorkflowCommand = {
       [key: string]: unknown;
     };
   };
+  /**
+   * Optional workflow version to run. If not provided, uses latest version
+   */
+  workflowVersion?: string;
 };
 
 /**
