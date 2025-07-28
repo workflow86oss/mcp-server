@@ -352,7 +352,7 @@ export const rerunWorkflow = <ThrowOnError extends boolean = false>(
         type: "apiKey",
       },
     ],
-    url: "/v1/workflow/{workflowId}/run",
+    url: "/v1/workflow/{workflowId}/rerun",
     ...options,
     headers: {
       "Content-Type": "application/json",

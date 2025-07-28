@@ -8,10 +8,26 @@ export type BaseWorkflowCommand = {
    * UUID identifier of the component to start running from
    */
   componentId: string;
+
   /**
-   * Production or Test SessionMode. New Production workflows run against the PUBLISHED workflow version. New Test workflows run against the DRAFT workflow version.
+   * Optional workflow version to run. If not provided, uses latest version
    */
-  sessionMode?: "PROD" | "TEST";
+  workflowVersion?: string;
+};
+
+/**
+ * A command for starting a workflow
+ */
+export type RunWorkflowCommand = BaseWorkflowCommand & {
+  /**
+   * Optional project version to run. If not provided, uses latest version based on session mode.
+   */
+  projectVersion?: string;
+  /**
+   * Optional project session ID to copy placeholder values from.
+   */
+  projectSessionId?: string;
+
   /**
    * A object containing placeholder keys and values.
    * - Keys must be from the set of placeholders available to the specified component.
@@ -26,34 +42,12 @@ export type BaseWorkflowCommand = {
       [key: string]: unknown;
     };
   };
-  /**
-   * Optional workflow version to run. If not provided, uses latest version
-   */
-  workflowVersion?: string;
-};
-
-/**
- * A command for starting a workflow
- */
-export type RunWorkflowCommand = BaseWorkflowCommand & {
-  /**
-   * Optional project version to run. If not provided, uses latest version based on session mode.
-   */
-  projectVersion?: number;
-  /**
-   * Optional project session ID to copy placeholder values from.
-   */
-  projectSessionId?: string;
 };
 
 /**
  * A command for rerunning a workflow
  */
 export type RerunWorkflowCommand = BaseWorkflowCommand & {
-  /**
-   * Required project version to run.
-   */
-  projectVersion?: number;
   /**
    * Required project session ID to copy placeholder values from.
    */
@@ -484,7 +478,7 @@ export type RerunWorkflowData = {
     workflowId: string;
   };
   query?: never;
-  url: "/v1/workflow/{workflowId}/run";
+  url: "/v1/workflow/{workflowId}/rerun";
 };
 
 export type RunWorkflowErrors = {

@@ -198,8 +198,7 @@ server.tool(
       )
       .optional(),
     projectVersion: z
-      .number()
-      .int()
+      .string()
       .describe(
         "Optional project version to run. If not provided, uses latest version based on session mode.",
       )
@@ -410,7 +409,7 @@ server.tool(
       .string()
       .describe("The ID of the component to start running from"),
     projectVersion: z
-      .number()
+      .string()
       .describe(
         "The project version to run. It will default to project version from the sessionId",
       )
@@ -427,7 +426,7 @@ server.tool(
         body: {
           componentId: componentId,
           originalSessionId: sessionId,
-          projectVersion: projectVersion,
+          workflowVersion: projectVersion,
         },
       });
 
