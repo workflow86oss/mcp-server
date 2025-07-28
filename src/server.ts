@@ -184,12 +184,6 @@ server.tool(
     componentId: z
       .string()
       .describe("The ID of the component to start running from"),
-    sessionMode: z
-      .enum(["PROD", "TEST"])
-      .default("PROD")
-      .describe(
-        "Run the production version or a test run of the draft version",
-      ),
     // Simplify placeholderValues to a String -> String map rather than confusing AI with all the options
     placeholderValues: z
       .record(z.string(), z.string())
@@ -218,7 +212,6 @@ server.tool(
   async ({
     workflowId,
     componentId,
-    sessionMode = "PROD",
     placeholderValues,
     projectVersion,
     projectSessionId,
@@ -232,7 +225,6 @@ server.tool(
         },
         body: {
           componentId,
-          sessionMode,
           //The API supports more natural JSON but we don't need that and simplify the MCP interface but need to cast to
           // more complicated type to keep typescript happy
           placeholderValues: placeholderValues as unknown as Record<
@@ -417,19 +409,14 @@ server.tool(
     componentId: z
       .string()
       .describe("The ID of the component to start running from"),
-    projectVersion: z.number().describe("The project version to run"),
-    placeholderValues: z
-      .record(z.string(), z.string())
-      .optional()
-      .describe("Optional placeholder values to override"),
+    projectVersion: z
+      .number()
+      .describe(
+        "The project version to run. It will default to project version from the sessionId",
+      )
+      .optional(),
   },
-  async ({
-    workflowId,
-    sessionId,
-    componentId,
-    projectVersion,
-    placeholderValues,
-  }) => {
+  async ({ workflowId, sessionId, componentId, projectVersion }) => {
     try {
       const response = await rerunWorkflow({
         client: client,
@@ -439,12 +426,8 @@ server.tool(
         },
         body: {
           componentId: componentId,
-          projectSessionId: sessionId,
+          originalSessionId: sessionId,
           projectVersion: projectVersion,
-          placeholderValues: placeholderValues as unknown as Record<
-            string,
-            Record<string, unknown>
-          >,
         },
       });
 

@@ -53,11 +53,11 @@ export type RerunWorkflowCommand = BaseWorkflowCommand & {
   /**
    * Required project version to run.
    */
-  projectVersion: number;
+  projectVersion?: number;
   /**
    * Required project session ID to copy placeholder values from.
    */
-  projectSessionId: string;
+  originalSessionId: string;
 };
 
 export type StandardWorkflow86Exception = {
