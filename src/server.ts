@@ -182,10 +182,6 @@ server.tool(
     componentId: z
       .string()
       .describe("The ID of the component to start running from"),
-    sessionMode: z
-      .enum(["PROD", "TEST"])
-      .default("PROD")
-      .describe("Option to start PROD or TEST sessions"),
     // Simplify placeholderValues to a String -> String map rather than confusing AI with all the options
     placeholderValues: z
       .record(z.string(), z.string())
@@ -206,13 +202,7 @@ server.tool(
       )
       .optional(),
   },
-  async ({
-    workflowId,
-    componentId,
-    sessionMode = "PROD",
-    placeholderValues,
-    workflowVersion,
-  }) => {
+  async ({ workflowId, componentId, placeholderValues, workflowVersion }) => {
     try {
       const response = await runWorkflow({
         client: client,
@@ -222,7 +212,6 @@ server.tool(
         },
         body: {
           componentId,
-          sessionMode,
           //The API supports more natural JSON but we don't need that and simplify the MCP interface but need to cast to
           // more complicated type to keep typescript happy
           placeholderValues: placeholderValues as unknown as Record<

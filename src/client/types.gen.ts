@@ -9,10 +9,6 @@ export type RunWorkflowCommand = {
    */
   componentId: string;
   /**
-   * Production or Test SessionMode. New Production workflows run against the PUBLISHED workflow version. New Test workflows run against the DRAFT workflow version.
-   */
-  sessionMode?: "PROD" | "TEST";
-  /**
    * A object containing placeholder keys and values.
    * - Keys must be from the set of placeholders available to the specified component.
    * - All keys are optional at the API level, but omitting them may of course cause the workflow to fail.
