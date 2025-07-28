@@ -38,6 +38,17 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check generated client
+        run: |
+          npm run genclient
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "❌ Generated client not in sync with prod OpenAPI spec:"
+            git status --porcelain
+            git diff
+            exit 1
+          fi
+          echo "✅ Generated client in sync with prod"
+
       - name: Publish to npmjs
         run: npm publish
         env:

@@ -2,7 +2,9 @@
   "name": "@npm-workflow86/mcp-server",
   "version": "0.1.2",
   "main": "build/server.js",
-  "publishConfig": { "registry": "https://registry.npmjs.org/" },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "keywords": [],
   "author": "Workflow86",
   "license": "MIT",
@@ -14,9 +16,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.3",
-    "typescript": "^5.8.3",
-    "prettier": "^3.6.0",
-    "@hey-api/openapi-ts": "^0.77.0"
+    "typescript": "^5.8.3"
   },
   "bin": {
     "mcp-server": "build/server.js"
@@ -24,9 +24,9 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
-    "check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
-    "genclient": "openapi-ts -i ${W86_DOMAIN:-https://rest.workflow86.com}/v3/api-docs -o src/client && npm run format"
+    "format": "npx prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
+    "check": "npx prettier --check \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
+    "genclient": "npx @hey-api/openapi-ts -i \"${W86_DOMAIN:-https://rest.workflow86.com}/v3/api-docs\" -o src/client && npm run format"
   },
   "files": [
     "build"
