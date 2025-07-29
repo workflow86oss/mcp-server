@@ -388,7 +388,7 @@ server.tool(
 
 server.tool(
   "rerun-workflow",
-  "Reruns a workflow component from an existing session and will placeholders" +
+  "Reruns a workflow component from an existing session and copies placeholders" +
     " from the provided workflow session",
   {
     workflowId: z.string().describe("The ID of the workflow to rerun"),
