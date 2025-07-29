@@ -23,10 +23,6 @@ export type RunWorkflowCommand = BaseWorkflowCommand & {
    * Optional project version to run. If not provided, uses latest version based on session mode.
    */
   projectVersion?: string;
-  /**
-   * Optional project session ID to copy placeholder values from.
-   */
-  projectSessionId?: string;
 
   /**
    * A object containing placeholder keys and values.

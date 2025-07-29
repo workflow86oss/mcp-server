@@ -203,18 +203,8 @@ server.tool(
         "Optional project version to run. If not provided, uses latest version based on session mode.",
       )
       .optional(),
-    projectSessionId: z
-      .string()
-      .describe("Optional project session ID to copy placeholder values from.")
-      .optional(),
   },
-  async ({
-    workflowId,
-    componentId,
-    placeholderValues,
-    projectVersion,
-    projectSessionId,
-  }) => {
+  async ({ workflowId, componentId, placeholderValues, projectVersion }) => {
     try {
       const response = await runWorkflow({
         client: client,
@@ -231,7 +221,6 @@ server.tool(
             Record<string, unknown>
           >,
           projectVersion,
-          projectSessionId,
         },
       });
 
