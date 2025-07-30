@@ -197,14 +197,14 @@ server.tool(
           "- Values MUST NOT be sent as JSON objects, instead keys should use dotted form.",
       )
       .optional(),
-    projectVersion: z
+    workflowVersion: z
       .string()
       .describe(
         "Optional project version to run. If not provided, uses latest version based on session mode.",
       )
       .optional(),
   },
-  async ({ workflowId, componentId, placeholderValues, projectVersion }) => {
+  async ({ workflowId, componentId, placeholderValues, workflowVersion }) => {
     try {
       const response = await runWorkflow({
         client: client,
@@ -220,7 +220,7 @@ server.tool(
             string,
             Record<string, unknown>
           >,
-          projectVersion,
+          workflowVersion,
         },
       });
 
