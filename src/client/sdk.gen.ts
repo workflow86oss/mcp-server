@@ -3,9 +3,11 @@
 import type { Options as ClientOptions, TDataShape, Client } from "./client";
 import type {
   RunWorkflowData,
-  RerunWorkflowData,
   RunWorkflowResponses,
   RunWorkflowErrors,
+  RerunWorkflowData,
+  RerunWorkflowResponses,
+  RerunWorkflowErrors,
   TerminateEntireSessionData,
   TerminateEntireSessionResponses,
   TerminateEntireSessionErrors,
@@ -78,6 +80,33 @@ export const runWorkflow = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/run",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Rerun a Workflow
+ * Reruns a workflow component from an existing session and will placeholders from the provided workflow session
+ */
+export const rerunWorkflow = <ThrowOnError extends boolean = false>(
+  options: Options<RerunWorkflowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    RerunWorkflowResponses,
+    RerunWorkflowErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/{workflowId}/rerun",
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -331,32 +360,5 @@ export const getWorkflowSession = <ThrowOnError extends boolean = false>(
     ],
     url: "/v1/session/{sessionId}",
     ...options,
-  });
-};
-
-/**
- * Rerun Workflow Component
- * Reruns a workflow component thread in a session
- */
-export const rerunWorkflow = <ThrowOnError extends boolean = false>(
-  options: Options<RerunWorkflowData, ThrowOnError>,
-) => {
-  return (options.client ?? _heyApiClient).post<
-    RunWorkflowResponses,
-    RunWorkflowErrors,
-    ThrowOnError
-  >({
-    security: [
-      {
-        name: "x-api-key",
-        type: "apiKey",
-      },
-    ],
-    url: "/v1/workflow/{workflowId}/rerun",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
   });
 };
