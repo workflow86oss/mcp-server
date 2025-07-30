@@ -5,7 +5,7 @@ import {
   SessionSummary,
   WorkflowHistory,
   WorkflowSummary,
-  WorkflowVersionResult,
+  WorkflowVersionDetails,
 } from "./client";
 
 /*
@@ -148,7 +148,7 @@ function relinkWorkflowHistory(
 }
 
 export function relinkWorkflowVersion(
-  workflow: WorkflowVersionResult,
+  workflow: WorkflowVersionDetails,
 ): Record<string, any> {
   const links: Record<string, ToolCall> = {};
 

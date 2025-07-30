@@ -19,7 +19,7 @@ import {
   PageOfWorkflowHistory,
   SessionSummary,
   WorkflowSummary,
-  WorkflowVersionResult,
+  WorkflowVersionDetails,
 } from "./client/types.gen.js";
 import { client } from "./client/client.gen.js";
 import {
@@ -164,7 +164,7 @@ server.tool(
         },
       });
 
-      const workflow: WorkflowVersionResult = response.data;
+      const workflow: WorkflowVersionDetails = response.data;
       return jsonResponse(relinkWorkflowVersion(workflow));
     } catch (error: any) {
       if (error?.httpStatus === 410 && workflowVersion === "PUBLISHED") {

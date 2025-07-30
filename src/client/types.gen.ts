@@ -300,6 +300,20 @@ export type WorkflowSummary = {
 };
 
 /**
+ * The columns in the schema of this Database
+ */
+export type ColumnDetails = {
+  /**
+   * The column name
+   */
+  columnName: string;
+  /**
+   * The column type
+   */
+  columnType: "DECIMAL" | "VARCHAR2" | "BOOLEAN" | "DATETIME" | "LIST";
+};
+
+/**
  * The components that make up this workflow
  */
 export type ComponentDetails = {
@@ -326,12 +340,38 @@ export type ComponentDetails = {
   /**
    * Placeholders used as input by this component
    */
-  placeholders: {
+  inputPlaceholders: {
     [key: string]: string;
   };
+  /**
+   * Component-type specific configuration structure
+   */
+  configuration: {
+    [key: string]: {
+      [key: string]: unknown;
+    };
+  };
+  /**
+   * Any Validation Errors from parsing this component configuration
+   */
+  validationErrors: Array<string>;
 };
 
-export type WorkflowVersionResult = {
+/**
+ * The databases referenced by this workflow
+ */
+export type DatabaseReference = {
+  /**
+   * The name of the Workflow86 Database
+   */
+  name: string;
+  /**
+   * The columns in the schema of this Database
+   */
+  columns: Array<ColumnDetails>;
+};
+
+export type WorkflowVersionDetails = {
   /**
    * UUID id of this workflow version
    */
@@ -356,6 +396,10 @@ export type WorkflowVersionResult = {
    * The components that make up this workflow
    */
   components: Array<ComponentDetails>;
+  /**
+   * The databases referenced by this workflow
+   */
+  databases: Array<DatabaseReference>;
   _links: {
     [key: string]: string;
   };
@@ -864,7 +908,7 @@ export type GetWorkflowResponses = {
   /**
    * OK
    */
-  200: WorkflowVersionResult;
+  200: WorkflowVersionDetails;
 };
 
 export type GetWorkflowResponse =
@@ -913,7 +957,7 @@ export type GetWorkflowVersionResponses = {
   /**
    * OK
    */
-  200: WorkflowVersionResult;
+  200: WorkflowVersionDetails;
 };
 
 export type GetWorkflowVersionResponse =
