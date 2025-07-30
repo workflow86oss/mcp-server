@@ -5,6 +5,9 @@ import type {
   RunWorkflowData,
   RunWorkflowResponses,
   RunWorkflowErrors,
+  RerunWorkflowData,
+  RerunWorkflowResponses,
+  RerunWorkflowErrors,
   TerminateEntireSessionData,
   TerminateEntireSessionResponses,
   TerminateEntireSessionErrors,
@@ -77,6 +80,33 @@ export const runWorkflow = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/run",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Rerun a Workflow
+ * Reruns a workflow component from an existing session and will placeholders from the provided workflow session
+ */
+export const rerunWorkflow = <ThrowOnError extends boolean = false>(
+  options: Options<RerunWorkflowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    RerunWorkflowResponses,
+    RerunWorkflowErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/{workflowId}/rerun",
     ...options,
     headers: {
       "Content-Type": "application/json",

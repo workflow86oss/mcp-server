@@ -12,11 +12,12 @@ import {
   runWorkflow,
   terminateComponent,
   terminateEntireSession,
+  retryFailedComponent,
+  rerunWorkflow,
 } from "./client/sdk.gen.js";
 import {
   PageOfWorkflowHistory,
   SessionSummary,
-  WorkflowHistory,
   WorkflowSummary,
   WorkflowVersionResult,
 } from "./client/types.gen.js";
@@ -183,12 +184,6 @@ server.tool(
     componentId: z
       .string()
       .describe("The ID of the component to start running from"),
-    sessionMode: z
-      .enum(["PROD", "TEST"])
-      .default("PROD")
-      .describe(
-        "Run the production version or a test run of the draft version",
-      ),
     // Simplify placeholderValues to a String -> String map rather than confusing AI with all the options
     placeholderValues: z
       .record(z.string(), z.string())
@@ -202,13 +197,14 @@ server.tool(
           "- Values MUST NOT be sent as JSON objects, instead keys should use dotted form.",
       )
       .optional(),
+    workflowVersion: z
+      .string()
+      .describe(
+        "Optional project version to run. If not provided, uses latest version based on session mode.",
+      )
+      .optional(),
   },
-  async ({
-    workflowId,
-    componentId,
-    sessionMode = "PROD",
-    placeholderValues,
-  }) => {
+  async ({ workflowId, componentId, placeholderValues, workflowVersion }) => {
     try {
       const response = await runWorkflow({
         client: client,
@@ -218,13 +214,13 @@ server.tool(
         },
         body: {
           componentId,
-          sessionMode,
           //The API supports more natural JSON but we don't need that and simplify the MCP interface but need to cast to
           // more complicated type to keep typescript happy
           placeholderValues: placeholderValues as unknown as Record<
             string,
             Record<string, unknown>
           >,
+          workflowVersion,
         },
       });
 
@@ -380,6 +376,47 @@ server.tool(
           sessionId: sessionId,
           componentId: componentId,
           threadId: threadId,
+        },
+      });
+
+      return jsonResponse(response.data);
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "rerun-workflow",
+  "Reruns a workflow component from an existing session and copies placeholders" +
+    " from the provided workflow session",
+  {
+    workflowId: z.string().describe("The ID of the workflow to rerun"),
+    sessionId: z
+      .string()
+      .describe("The ID of the workflow session to copy values from"),
+    componentId: z
+      .string()
+      .describe("The ID of the component to start running from"),
+    projectVersion: z
+      .string()
+      .describe(
+        "The project version to run. It will default to project version from the sessionId",
+      )
+      .optional(),
+  },
+  async ({ workflowId, sessionId, componentId, projectVersion }) => {
+    try {
+      const response = await rerunWorkflow({
+        client: client,
+        throwOnError: true,
+        path: {
+          workflowId: workflowId,
+        },
+        body: {
+          componentId: componentId,
+          originalSessionId: sessionId,
+          workflowVersion: projectVersion,
         },
       });
 
