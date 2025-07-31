@@ -30,7 +30,8 @@
     "test": "jest",
     "format": "npx prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "check": "npx prettier --check \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
-    "genclient": "npx @hey-api/openapi-ts && npm run format"
+    "genclient": "npx @hey-api/openapi-ts && npm run format",
+    "prep": "npm run format && npm run test"
   },
   "files": [
     "build"
