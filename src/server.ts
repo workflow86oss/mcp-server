@@ -29,6 +29,7 @@ import {
   relinkWorkflowVersion,
 } from "./links.js";
 import { version } from "../package.json";
+import {WorkflowHistorySchema} from "./client/schemas.gen";
 
 // Polyfill ReadableStream if not available
 if (typeof globalThis.ReadableStream === "undefined") {
