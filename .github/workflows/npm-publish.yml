@@ -48,7 +48,9 @@ jobs:
           echo "✅ Generated client in sync with prod"
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          npm run test
 
       - name: Publish to npmjs
         run: npm publish

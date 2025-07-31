@@ -27,9 +27,11 @@ import {
   relinkWorkflowHistoryPage,
   relinkWorkflowPage,
   relinkWorkflowVersion,
+  relinkSessionResult,
 } from "./links.js";
 import { version } from "../package.json";
-import {WorkflowHistorySchema} from "./client/schemas.gen";
+import { WorkflowHistorySchema } from "./client/schemas.gen";
+import { addSchemaMetadataByType } from "./schema";
 
 // Polyfill ReadableStream if not available
 if (typeof globalThis.ReadableStream === "undefined") {
@@ -225,7 +227,9 @@ server.tool(
         },
       });
 
-      return jsonResponse(response.data);
+      return jsonResponse(
+        addSchemaMetadataByType(response.data, "RunWorkflowResponse"),
+      );
     } catch (error) {
       return handleError(error);
     }
@@ -295,7 +299,7 @@ server.tool(
         },
       });
 
-      return jsonResponse(response.data);
+      return jsonResponse(relinkSessionResult(response.data));
     } catch (error) {
       return handleError(error);
     }
@@ -320,7 +324,9 @@ server.tool(
         },
       });
 
-      return jsonResponse(response.data);
+      return jsonResponse(
+        addSchemaMetadataByType(response.data, "RetryWorkflowResponse"),
+      );
     } catch (error) {
       return handleError(error);
     }
@@ -350,7 +356,9 @@ server.tool(
         },
       });
 
-      return jsonResponse(response.data);
+      return jsonResponse(
+        addSchemaMetadataByType(response.data, "RetryWorkflowResponse"),
+      );
     } catch (error) {
       return handleError(error);
     }
@@ -380,7 +388,9 @@ server.tool(
         },
       });
 
-      return jsonResponse(response.data);
+      return jsonResponse(
+        addSchemaMetadataByType(response.data, "RetryWorkflowResponse"),
+      );
     } catch (error) {
       return handleError(error);
     }
@@ -421,7 +431,9 @@ server.tool(
         },
       });
 
-      return jsonResponse(response.data);
+      return jsonResponse(
+        addSchemaMetadataByType(response.data, "RunWorkflowResponse"),
+      );
     } catch (error) {
       return handleError(error);
     }
