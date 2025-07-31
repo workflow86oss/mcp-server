@@ -36,7 +36,9 @@ jobs:
           fi
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          npm run test
 
       - name: Check generated client
         run: |

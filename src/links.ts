@@ -6,7 +6,16 @@ import {
   WorkflowHistory,
   WorkflowSummary,
   WorkflowVersionDetails,
+  SessionResult,
 } from "./client";
+import { addSchemaMetadataByType } from "./schema";
+import {
+  PageOfWorkflowSummarySchema,
+  PageOfWorkflowHistorySchema,
+  WorkflowVersionDetailsSchema,
+  PageOfSessionSummarySchema,
+  SessionResultSchema,
+} from "./client/schemas.gen";
 
 /*
 This class provides functionality related to removing HATEOAS metadata (_links, _pageNumber...) from Public API Responses and replacing them
@@ -47,11 +56,15 @@ export function relinkWorkflowPage(
       },
     };
   }
-  return {
-    workflows: page._embedded.map(relinkWorkflowSummary),
-    "@pageNumber": page._pageNumber,
-    "@links": links,
-  };
+  return addSchemaMetadataByType(
+    {
+      workflows: page._embedded.map(relinkWorkflowSummary),
+      "@pageNumber": page._pageNumber,
+      "@links": links,
+    },
+    PageOfWorkflowSummarySchema,
+    "workflows",
+  );
 }
 
 function relinkWorkflowSummary(workflow: WorkflowSummary): Record<string, any> {
@@ -118,14 +131,18 @@ export function relinkWorkflowHistoryPage(
       },
     };
   }
-  return {
-    workflowId,
-    history: page._embedded.map((entry) =>
-      relinkWorkflowHistory(workflowId, entry),
-    ),
-    "@pageNumber": page._pageNumber,
-    "@links": links,
-  };
+  return addSchemaMetadataByType(
+    {
+      workflowId,
+      history: page._embedded.map((entry) =>
+        relinkWorkflowHistory(workflowId, entry),
+      ),
+      "@pageNumber": page._pageNumber,
+      "@links": links,
+    },
+    PageOfWorkflowHistorySchema,
+    "history",
+  );
 }
 function relinkWorkflowHistory(
   workflowId: string,
@@ -168,10 +185,13 @@ export function relinkWorkflowVersion(
   };
 
   const { _links, ...result } = workflow;
-  return {
-    ...result,
-    "@links": links,
-  };
+  return addSchemaMetadataByType(
+    {
+      ...result,
+      "@links": links,
+    },
+    WorkflowVersionDetailsSchema,
+  );
 }
 
 export function relinkSessionPage(
@@ -197,11 +217,15 @@ export function relinkSessionPage(
     };
   }
 
-  return {
-    session: sessions._embedded.map(relinkSessionSummary),
-    "@pageNumber": sessions._pageNumber,
-    "@links": links,
-  };
+  return addSchemaMetadataByType(
+    {
+      session: sessions._embedded.map(relinkSessionSummary),
+      "@pageNumber": sessions._pageNumber,
+      "@links": links,
+    },
+    PageOfSessionSummarySchema,
+    "session",
+  );
 }
 
 function relinkSessionSummary(session: SessionSummary): Record<string, any> {
@@ -218,6 +242,56 @@ function relinkSessionSummary(session: SessionSummary): Record<string, any> {
     ...result,
     "@links": links,
   };
+}
+
+export function relinkSessionResult(
+  sessionResult: SessionResult,
+): Record<string, any> {
+  const links: Record<string, ToolCall> = {};
+
+  const relinkedComponentResults = sessionResult.componentResults?.map(
+    (result) => {
+      const componentLinks: Record<string, ToolCall> = {};
+
+      if (result._links?.terminateComponent) {
+        componentLinks.terminateComponent = {
+          name: "terminate-component",
+          arguments: {
+            sessionId: sessionResult.sessionId,
+            componentId: result.componentId,
+            thread: result.thread,
+          },
+        };
+      }
+
+      if (result._links?.retryFailedComponent) {
+        componentLinks.retryFailedComponent = {
+          name: "retry-failed-component",
+          arguments: {
+            sessionId: sessionResult.sessionId,
+            componentId: result.componentId,
+            thread: result.thread,
+          },
+        };
+      }
+
+      const { _links, ...resultWithoutLinks } = result;
+      return {
+        ...resultWithoutLinks,
+        "@links": componentLinks,
+      };
+    },
+  );
+
+  const { _links, ...sessionWithoutLinks } = sessionResult;
+  return addSchemaMetadataByType(
+    {
+      ...sessionWithoutLinks,
+      componentResults: relinkedComponentResults,
+      "@links": links,
+    },
+    SessionResultSchema,
+  );
 }
 
 function getWorkflowId(url: string): string {
