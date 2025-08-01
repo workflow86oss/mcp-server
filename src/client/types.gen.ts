@@ -1433,6 +1433,46 @@ export type LastTaskInfo = {
   lastAssignedOnDate?: string;
 };
 
+/**
+ * Response containing form information
+ */
+export type FormSummaryDto = {
+  /**
+   * Name of the form
+   */
+  formName?: string;
+  /**
+   * URL link of the form
+   */
+  formUrlLink?: string;
+  /**
+   * ID of the workflow associated with the form
+   */
+  workflowId?: string;
+  /**
+   * Name of the workflow associated with the form
+   */
+  workflowName?: string;
+};
+
+export type PageOfFormSummaryDto = {
+  /**
+   * The page of response data as an array
+   */
+  _embedded: Array<FormSummaryDto>;
+  /**
+   * The zero-indexed page number of the response data
+   */
+  _pageNumber: number;
+  /**
+   * True iff this page is the final page
+   */
+  _lastPage: boolean;
+  _links: {
+    [key: string]: string;
+  };
+};
+
 export type ListTasksResponses = {
   /**
    * OK
@@ -1442,6 +1482,49 @@ export type ListTasksResponses = {
 
 export type ListTasksResponseData =
   ListTasksResponses[keyof ListTasksResponses];
+
+export type ListFormsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    pageNumber?: number;
+  };
+  url: "/v1/forms";
+};
+
+export type ListFormsErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type ListFormsError = ListFormsErrors[keyof ListFormsErrors];
+
+export type ListFormsResponses = {
+  /**
+   * OK
+   */
+  200: PageOfFormSummaryDto;
+};
+
+export type ListFormsResponse = ListFormsResponses[keyof ListFormsResponses];
 
 export type ClientOptions = {
   baseUrl: `${string}://rest.workflow86.com` | (string & {});
