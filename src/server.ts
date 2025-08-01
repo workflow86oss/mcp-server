@@ -15,6 +15,7 @@ import {
   retryFailedComponent,
   rerunWorkflow,
   listTasks,
+  listForms,
 } from "./client/sdk.gen.js";
 import {
   PageOfWorkflowHistory,
@@ -22,6 +23,8 @@ import {
   WorkflowSummary,
   WorkflowVersionDetails,
   ListTasksResponse,
+  PageOfFormSummaryDto,
+  FormSummaryDto,
 } from "./client/types.gen.js";
 import { client } from "./client/client.gen.js";
 import {
@@ -531,10 +534,47 @@ server.tool(
       const taskResponse: ListTasksResponse = response.data;
       const tasks = taskResponse?.tasks || [];
       if (tasks.length === 0) {
-        return textResponse("No tasks found matching the specified criteria");
+        if (!lastTaskId) {
+          return textResponse("There are no tasks available for this client");
+        } else {
+          return textResponse("This page contains no additional tasks");
+        }
       }
 
       return jsonResponse(taskResponse);
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "list-forms",
+  "Get a paginated list of available forms including form names, URLs, associated workflow IDs and names. Returns form metadata with pagination support for easy form discovery and access. Useful for finding forms that users can submit or access.",
+  {
+    pageNumber: zodPageNumber,
+  },
+  async ({ pageNumber = 0 }) => {
+    try {
+      const response = await listForms({
+        client: client,
+        throwOnError: true,
+        query: {
+          pageNumber,
+        },
+      });
+
+      const formsResponse: PageOfFormSummaryDto = response.data;
+      const forms: FormSummaryDto[] = formsResponse?._embedded || [];
+      if (forms.length === 0) {
+        if (pageNumber === 0) {
+          return textResponse("There are no forms available for this client");
+        } else {
+          return textResponse("This page contains no additional forms");
+        }
+      }
+
+      return jsonResponse(formsResponse);
     } catch (error) {
       return handleError(error);
     }
