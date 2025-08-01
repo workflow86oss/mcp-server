@@ -47,6 +47,9 @@ import type {
   GetWorkflowSessionData,
   GetWorkflowSessionResponses,
   GetWorkflowSessionErrors,
+  ListTasksData,
+  ListTasksResponses,
+  ListTasksErrors,
 } from "./types.gen";
 import { client as _heyApiClient } from "./client.gen";
 
@@ -421,5 +424,32 @@ export const getWorkflowSession = <ThrowOnError extends boolean = false>(
     ],
     url: "/v1/session/{sessionId}",
     ...options,
+  });
+};
+
+/**
+ * List tasks
+ * Returns a list of task summaries based on the provided query filters
+ */
+export const listTasks = <ThrowOnError extends boolean = false>(
+  options: Options<ListTasksData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    ListTasksResponses,
+    ListTasksErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/tasks",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };

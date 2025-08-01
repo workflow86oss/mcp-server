@@ -1251,6 +1251,198 @@ export type GetWorkflowSessionResponses = {
 export type GetWorkflowSessionResponse =
   GetWorkflowSessionResponses[keyof GetWorkflowSessionResponses];
 
+/**
+ * A summary of a task being requested. Usually comes in a list of these.
+ */
+export type TaskSummaryDto = {
+  /**
+   * The name of the task
+   */
+  taskName?: string;
+  /**
+   * The description of the task
+   */
+  taskDescription?: string;
+  /**
+   * The HTTP URL that will link the user to the task
+   */
+  taskUrl?: string;
+  /**
+   * The workflow ID of the workflow that sent this task
+   */
+  workflowId?: string;
+  /**
+   * The name of the workflow
+   */
+  workflowName?: string;
+  /**
+   * The session ID of the session of the workflow that assigned this task
+   */
+  sessionId?: string;
+  /**
+   * Navigation links related to this task
+   */
+  _links?: {
+    [key: string]: string;
+  };
+};
+
+/**
+ * A query for filtering and paginating tasks
+ */
+export type ListTaskCommand = {
+  /**
+   * Text search query to filter tasks by content. Searches across task names, descriptions, and related workflow information.
+   */
+  queryString?: string;
+  /**
+   * Filter tasks by specific workflow ID. Only tasks from this workflow will be returned.
+   */
+  workflowId?: string;
+  /**
+   * Date range filter for tasks based on their assignment date
+   */
+  dateFilter?: TaskDateFilter;
+  /**
+   * Array of task statuses to include in results. If not provided, tasks with all statuses will be returned.
+   */
+  statusToInclude?: Array<string>;
+  /**
+   * Last task information for pagination. Used to fetch the next page of results.
+   */
+  lastTask?: LastTaskDto;
+  /**
+   * Number of tasks to return per page. If not specified, server default will be used.
+   */
+  pageSize?: number;
+};
+
+/**
+ * Date range filter for task queries
+ */
+export type TaskDateFilter = {
+  /**
+   * Start date in ISO format (e.g., '2023-01-01T00:00:00')
+   */
+  startDate?: string;
+  /**
+   * End date in ISO format (e.g., '2023-12-31T23:59:59')
+   */
+  endDate?: string;
+};
+
+/**
+ * Information about the last task for pagination
+ */
+export type LastTaskDto = {
+  /**
+   * ID of the last task
+   */
+  lastTaskId?: string;
+  /**
+   * Assigned date of the last task
+   */
+  lastAssignedOnDate?: string;
+};
+
+export type ListTasksData = {
+  body: ListTaskCommand;
+  path?: never;
+  query?: never;
+  url: "/v1/tasks";
+};
+
+export type ListTasksErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type ListTasksError = ListTasksErrors[keyof ListTasksErrors];
+
+/**
+ * Response containing a list of task summaries with pagination metadata
+ */
+export type ListTasksResponse = {
+  /**
+   * List of task summaries
+   */
+  tasks?: Array<TaskSummaryDto>;
+  /**
+   * Total number of tasks matching the query
+   */
+  totalCount?: number;
+  /**
+   * Whether there are more tasks available for pagination
+   */
+  hasMore?: boolean;
+  /**
+   * Information about the last task for pagination purposes
+   */
+  lastTask?: LastTaskInfo;
+  /**
+   * Navigation links for API endpoints
+   */
+  _links?: {
+    [key: string]: string;
+  };
+  /**
+   * Available actions for pagination and filtering
+   */
+  _actions?: {
+    [key: string]: {
+      href?: string;
+      method?: string;
+      contentType?: string;
+      description?: string;
+      example?: {
+        [key: string]: unknown;
+      };
+    };
+  };
+};
+
+/**
+ * Information about the last task in the current page
+ */
+export type LastTaskInfo = {
+  /**
+   * ID of the last task in this page
+   */
+  lastTaskId?: string;
+  /**
+   * Assigned date of the last task in this page
+   */
+  lastAssignedOnDate?: string;
+};
+
+export type ListTasksResponses = {
+  /**
+   * OK
+   */
+  200: ListTasksResponse;
+};
+
+export type ListTasksResponseData =
+  ListTasksResponses[keyof ListTasksResponses];
+
 export type ClientOptions = {
   baseUrl: `${string}://rest.workflow86.com` | (string & {});
 };
