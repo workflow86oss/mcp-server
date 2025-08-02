@@ -447,9 +447,9 @@ server.tool(
       .describe("Filter tasks by specific workflow ID")
       .optional(),
     statusToInclude: z
-      .array(z.string())
+      .array(z.enum(["TODO", "DONE", "TERMINATED", "ERROR"]))
       .describe(
-        "Array of task statuses to include in results (e.g., ['ACTIVE', 'PENDING'])",
+        "Array of task statuses to include in results (Can only be the following ['TODO', 'DONE', 'TERMINATED', 'ERROR'])",
       )
       .optional(),
     startDate: z
@@ -473,9 +473,8 @@ server.tool(
     pageSize: z
       .number()
       .min(1)
-      .max(100)
       .describe(
-        "Number of tasks to return per page (1-100). Defaults to 50 if not specified.",
+        "Number of tasks to return per page (Minimum 1 page). Defaults to 50 if not specified.",
       )
       .optional(),
   },
