@@ -14,12 +14,17 @@ import {
   terminateEntireSession,
   retryFailedComponent,
   rerunWorkflow,
+  listTasks,
+  listForms,
 } from "./client/sdk.gen.js";
 import {
   PageOfWorkflowHistory,
   SessionSummary,
   WorkflowSummary,
   WorkflowVersionDetails,
+  ListTasksResponse,
+  PageOfFormSummaryDto,
+  FormSummaryDto,
 } from "./client/types.gen.js";
 import { client } from "./client/client.gen.js";
 import {
@@ -421,6 +426,154 @@ server.tool(
       });
 
       return jsonResponse(response.data);
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "list-tasks",
+  "Get a filtered list of task summaries with comprehensive filter options including text search, workflow filtering, status filtering, date range filtering, and pagination support. Returns task details with names, descriptions, URLs, workflow information, and navigation links for easy task management and tracking.",
+  {
+    queryString: z
+      .string()
+      .describe(
+        "Text search query to filter tasks by content. Do not provide this parameter if there is no search query - omit it entirely rather than passing an empty string.",
+      )
+      .optional(),
+    workflowId: z
+      .string()
+      .describe("Filter tasks by specific workflow ID")
+      .optional(),
+    statusToInclude: z
+      .array(z.enum(["TODO", "DONE", "TERMINATED", "ERROR"]))
+      .describe(
+        "Array of task statuses to include in results (Can only be the following ['TODO', 'DONE', 'TERMINATED', 'ERROR'])",
+      )
+      .optional(),
+    startDate: z
+      .string()
+      .describe("Start date filter in ISO format (e.g., '2023-01-01T00:00:00')")
+      .optional(),
+    endDate: z
+      .string()
+      .describe("End date filter in ISO format (e.g., '2023-12-31T23:59:59')")
+      .optional(),
+    lastTaskId: z
+      .string()
+      .describe("ID of the last task from previous page for pagination")
+      .optional(),
+    lastAssignedOnDate: z
+      .string()
+      .describe(
+        "Assigned date of the last task from previous page for pagination",
+      )
+      .optional(),
+    pageSize: z
+      .number()
+      .min(1)
+      .describe(
+        "Number of tasks to return per page (Minimum 1 page). Defaults to 50 if not specified.",
+      )
+      .optional(),
+  },
+  async ({
+    queryString,
+    workflowId,
+    statusToInclude,
+    startDate,
+    endDate,
+    lastTaskId,
+    lastAssignedOnDate,
+    pageSize,
+  }) => {
+    try {
+      const body: any = {};
+
+      if (queryString) {
+        body.queryString = queryString;
+      }
+
+      if (workflowId) {
+        body.workflowId = workflowId;
+      }
+
+      if (statusToInclude && statusToInclude.length > 0) {
+        body.statusToInclude = statusToInclude;
+      }
+
+      if (startDate || endDate) {
+        body.dateFilter = {};
+        if (startDate) {
+          body.dateFilter.startDate = startDate;
+        }
+        if (endDate) {
+          body.dateFilter.endDate = endDate;
+        }
+      }
+
+      if (lastTaskId && lastAssignedOnDate) {
+        body.lastTask = {
+          lastTaskId,
+          lastAssignedOnDate,
+        };
+      }
+
+      if (pageSize) {
+        body.pageSize = pageSize;
+      }
+
+      const response = await listTasks({
+        client: client,
+        throwOnError: true,
+        body: body,
+      });
+
+      const taskResponse: ListTasksResponse = response.data;
+      const tasks = taskResponse?.tasks || [];
+      if (tasks.length === 0) {
+        if (!lastTaskId) {
+          return textResponse("There are no tasks available for this client");
+        } else {
+          return textResponse("This page contains no additional tasks");
+        }
+      }
+
+      return jsonResponse(taskResponse);
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "list-forms",
+  "Get a paginated list of available forms including form names, URLs, associated workflow IDs and names. Returns form metadata with pagination support for easy form discovery and access. Useful for finding forms that users can submit or access.",
+  {
+    pageNumber: zodPageNumber,
+  },
+  async ({ pageNumber = 0 }) => {
+    try {
+      const response = await listForms({
+        client: client,
+        throwOnError: true,
+        query: {
+          pageNumber,
+        },
+      });
+
+      const formsResponse: PageOfFormSummaryDto = response.data;
+      const forms: FormSummaryDto[] = formsResponse?._embedded || [];
+      if (forms.length === 0) {
+        if (pageNumber === 0) {
+          return textResponse("There are no forms available for this client");
+        } else {
+          return textResponse("This page contains no additional forms");
+        }
+      }
+
+      return jsonResponse(formsResponse);
     } catch (error) {
       return handleError(error);
     }
