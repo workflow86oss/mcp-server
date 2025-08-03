@@ -41,6 +41,9 @@ import type {
   GetWorkflowSessionData,
   GetWorkflowSessionResponses,
   GetWorkflowSessionErrors,
+  BuildWorkflowData,
+  BuildWorkflowResponses,
+  BuildWorkflowErrors,
 } from "./types.gen";
 import { client as _heyApiClient } from "./client.gen";
 
@@ -360,5 +363,32 @@ export const getWorkflowSession = <ThrowOnError extends boolean = false>(
     ],
     url: "/v1/session/{sessionId}",
     ...options,
+  });
+};
+
+/**
+ * Build a Workflow
+ * Builds a workflow using AI with text and optional image input
+ */
+export const buildWorkflow = <ThrowOnError extends boolean = false>(
+  options: Options<BuildWorkflowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    BuildWorkflowResponses,
+    BuildWorkflowErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/build",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };

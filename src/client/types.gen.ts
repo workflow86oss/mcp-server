@@ -1106,6 +1106,83 @@ export type GetWorkflowSessionResponses = {
 export type GetWorkflowSessionResponse =
   GetWorkflowSessionResponses[keyof GetWorkflowSessionResponses];
 
+/**
+ * A command for building a workflow using AI
+ */
+export type BuildWorkflowCommand = {
+  /**
+   * The text description of the workflow to build
+   */
+  text: string;
+  /**
+   * Optional URL of an image to include in the workflow build
+   */
+  image?: string;
+};
+
+/**
+ * A response when building a workflow
+ */
+export type BuildWorkflowResponse = {
+  /**
+   * UUID identifier of the AI chat session started
+   */
+  sessionId?: string;
+  /**
+   * The status of the workflow build process
+   */
+  status?: "IN_PROGRESS" | "SUCCESSFUL" | "FAILED";
+  /**
+   * URL to poll for build progress details
+   */
+  sessionUrl?: string;
+  _links?: {
+    [key: string]: string;
+  };
+};
+
+export type BuildWorkflowData = {
+  body: BuildWorkflowCommand;
+  path?: never;
+  query?: never;
+  url: "/v1/workflow/build";
+};
+
+export type BuildWorkflowErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type BuildWorkflowError = BuildWorkflowErrors[keyof BuildWorkflowErrors];
+
+export type BuildWorkflowResponses = {
+  /**
+   * OK
+   */
+  200: BuildWorkflowResponse;
+};
+
+export type BuildWorkflowResponse2 =
+  BuildWorkflowResponses[keyof BuildWorkflowResponses];
+
 export type ClientOptions = {
   baseUrl: `${string}://rest.workflow86.com` | (string & {});
 };

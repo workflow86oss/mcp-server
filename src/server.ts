@@ -14,6 +14,7 @@ import {
   terminateEntireSession,
   retryFailedComponent,
   rerunWorkflow,
+  buildWorkflow,
 } from "./client/sdk.gen.js";
 import {
   PageOfWorkflowHistory,
@@ -421,6 +422,40 @@ server.tool(
       });
 
       return jsonResponse(response.data);
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "build-workflow",
+  "Build a workflow using AI with text description and optional image input. Returns an AI chat session ID for tracking the build progress.",
+  {
+    text: z.string().describe("The text description of the workflow to build"),
+    image: z
+      .string()
+      .describe("Optional URL of an image to include in the workflow build")
+      .optional(),
+  },
+  async ({ text, image }) => {
+    try {
+      const response = await buildWorkflow({
+        client: client,
+        throwOnError: true,
+        body: {
+          text,
+          image,
+        },
+      });
+
+      const sessionId = response.data.sessionId;
+      
+      if (sessionId) {
+        return textResponse(`Workflow build started successfully. Session ID: ${sessionId}. Use the get-session tool with this session ID to check build progress.`);
+      } else {
+        return jsonResponse(response.data);
+      }
     } catch (error) {
       return handleError(error);
     }
