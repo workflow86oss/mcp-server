@@ -452,10 +452,64 @@ server.tool(
       const sessionId = response.data.sessionId;
       
       if (sessionId) {
-        return textResponse(`Workflow build started successfully. Session ID: ${sessionId}. Use the get-session tool with this session ID to check build progress.`);
+        return textResponse(`Workflow build started successfully. Session ID: ${sessionId}. Use the get-session tool with this session ID to check build progress. The build process may take several minutes to complete.`);
       } else {
         return jsonResponse(response.data);
       }
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+);
+
+server.tool(
+  "poll-workflow-build",
+  "Poll the status of a workflow build until it completes or fails. Returns the final build status.",
+  {
+    sessionId: z.string().describe("The session ID returned from build-workflow"),
+    maxWaitSeconds: z
+      .number()
+      .default(300)
+      .describe("Maximum time to wait for completion in seconds (default: 300)"),
+  },
+  async ({ sessionId, maxWaitSeconds = 300 }) => {
+    try {
+      const startTime = Date.now();
+      const maxWaitMs = maxWaitSeconds * 1000;
+      
+      while (Date.now() - startTime < maxWaitMs) {
+        try {
+          const response = await getWorkflowSession({
+            client: client,
+            throwOnError: true,
+            path: {
+              sessionId,
+            },
+          });
+
+          const session = response.data;
+          
+          if (session.status === "SUCCESSFUL") {
+            return textResponse(`Workflow build completed successfully! Session ID: ${sessionId}`);
+          } else if (session.status === "FAILED") {
+            return textResponse(`Workflow build failed. Session ID: ${sessionId}. Check the session details for error information.`);
+          } else if (session.status === "TERMINATED") {
+            return textResponse(`Workflow build was terminated. Session ID: ${sessionId}`);
+          }
+          
+          // Wait 5 seconds before next poll
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          
+                 } catch (error: any) {
+           if (error?.httpStatus === 404) {
+             return textResponse(`Session ${sessionId} not found. The build may have failed or been cancelled.`);
+           }
+           throw error;
+         }
+      }
+      
+      return textResponse(`Workflow build is still in progress after ${maxWaitSeconds} seconds. Session ID: ${sessionId}. Use get-session to check current status.`);
+      
     } catch (error) {
       return handleError(error);
     }
