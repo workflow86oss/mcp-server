@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test)",
+      "Bash(./list-workflows)",
+      "Bash(./publish-workflow ed8fb55d-1965-4315-81aa-633b2da41f51)",
+      "Bash(./publish-workflow:*)",
+      "Bash(./unpublish-workflow:*)"
+    ],
+    "deny": []
+  }
+}
