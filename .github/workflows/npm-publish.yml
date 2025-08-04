@@ -36,9 +36,6 @@ jobs:
             exit 1
           fi
 
-      - name: Build
-        run: npm run build
-
       - name: Check generated client
         run: |
           npm run genclient
@@ -49,6 +46,9 @@ jobs:
             exit 1
           fi
           echo "✅ Generated client in sync with prod"
+
+      - name: Build
+        run: npm run build
 
       - name: Publish to npmjs
         run: npm publish
