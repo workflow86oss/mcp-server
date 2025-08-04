@@ -6,7 +6,7 @@ if [[ "${W86_WITH}" = "node" ]]; then
 elif [[ "${W86_WITH}" = "canary" ]]; then
   COMMAND='npx @npm-workflow86/mcp-server@canary'
 else
-  COMMAND='npx @npm-workflow86/mcp-server'
+  COMMAND='npx @npm-workflow86/mcp-server@latest'
 fi
 echo "CALLING[$W86_WITH] ${PAYLOAD}"
 echo
