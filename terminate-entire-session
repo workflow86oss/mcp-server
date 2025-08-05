@@ -12,6 +12,4 @@ fi
 
 ARGS="{\"sessionId\":\"$SESSION_ID\"}"
 
-PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"terminate-entire-session\",\"arguments\":${ARGS}}}"
-
-./exec.sh "$PAYLOAD"
+./exec.sh "terminate-entire-session" "$ARGS"

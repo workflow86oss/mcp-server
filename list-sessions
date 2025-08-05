@@ -12,6 +12,4 @@ else
   ARGS="{\"workflowId\":\"$WORKFLOW_ID\"}"
 fi
 
-PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"list-sessions\",\"arguments\":${ARGS}}}"
-
-./exec.sh "$PAYLOAD"
+./exec.sh "list-sessions" "$ARGS"

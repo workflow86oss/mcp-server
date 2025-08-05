@@ -11,6 +11,5 @@ if [[ -z "${P_VALUES}" ]]; then
 else
   ARGS="{\"workflowId\":\"$WORKFLOW_ID\", \"componentId\":\"$COMPONENT_ID\", \"placeholderValues\": ${P_VALUES}}"
 fi
-PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"run-workflow\",\"arguments\":${ARGS}}}"
 
-./exec.sh "$PAYLOAD"
+./exec.sh "run-workflow" "$ARGS"
