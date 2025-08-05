@@ -239,11 +239,11 @@ export function registerWorkflowTools(server: McpServer) {
       comment: z
         .string()
         .optional()
-        .describe(publishWorkflowSchema.prop("comment")),
+        .describe("Comment describing the changes in this publication"),
       description: z
         .string()
         .optional()
-        .describe(publishWorkflowSchema.prop("description")),
+        .describe("Normative description of this workflow"),
     },
     async ({ workflowId, comment, description }) => {
       try {

@@ -14,6 +14,16 @@ import type {
   PublishWorkflowData,
   PublishWorkflowResponses,
   PublishWorkflowErrors,
+  ListTablesData,
+  ListTablesResponses,
+  CreateTableData,
+  CreateTableResponses,
+  RenameColumnData,
+  RenameColumnResponses,
+  DeleteColumnData,
+  DeleteColumnResponses,
+  AddColumnData,
+  AddColumnResponses,
   TerminateEntireSessionData,
   TerminateEntireSessionResponses,
   TerminateEntireSessionErrors,
@@ -47,6 +57,8 @@ import type {
   ListTasksData,
   ListTasksResponses,
   ListTasksErrors,
+  GetTableDetailsData,
+  GetTableDetailsResponses,
   GetWorkflowSessionData,
   GetWorkflowSessionResponses,
   GetWorkflowSessionErrors,
@@ -169,6 +181,113 @@ export const publishWorkflow = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/publish",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * List Tables
+ * Get a paginated list of all tables for a client.
+ */
+export const listTables = <ThrowOnError extends boolean = false>(
+  options?: Options<ListTablesData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ListTablesResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/table",
+    ...options,
+  });
+};
+
+export const createTable = <ThrowOnError extends boolean = false>(
+  options: Options<CreateTableData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    CreateTableResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/table",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+export const renameColumn = <ThrowOnError extends boolean = false>(
+  options: Options<RenameColumnData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    RenameColumnResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/table/{tableId}/rename/{originalColumnName}",
+    ...options,
+  });
+};
+
+export const deleteColumn = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteColumnData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    DeleteColumnResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/table/{tableId}/delete/{columnName}",
+    ...options,
+  });
+};
+
+export const addColumn = <ThrowOnError extends boolean = false>(
+  options: Options<AddColumnData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    AddColumnResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/table/{tableId}/add/{columnName}",
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -426,6 +545,25 @@ export const listTasks = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/tasks",
+    ...options,
+  });
+};
+
+export const getTableDetails = <ThrowOnError extends boolean = false>(
+  options: Options<GetTableDetailsData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).get<
+    GetTableDetailsResponses,
+    unknown,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/table/{tableId}",
     ...options,
   });
 };

@@ -141,6 +141,37 @@ export type PublishWorkflowResponse = {
   draftVersion?: number;
 };
 
+export type ColumnDetails = {
+  /**
+   * The column name
+   */
+  columnName: string;
+  /**
+   * The column type
+   */
+  columnType: "DECIMAL" | "VARCHAR2" | "BOOLEAN" | "DATETIME" | "LIST";
+};
+
+export type CreateTableCommand = {
+  tableName?: string;
+  columns?: Array<ColumnDetails>;
+};
+
+export type TableDetails = {
+  /**
+   * The id of the Workflow86 Table
+   */
+  tableId: string;
+  /**
+   * The name of the Workflow86 Table
+   */
+  name: string;
+  /**
+   * The columns in the schema of this Table
+   */
+  columns: Array<ColumnDetails>;
+};
+
 /**
  * Flattened representation of the component result graph
  */
@@ -349,20 +380,6 @@ export type WorkflowSummary = {
 };
 
 /**
- * The columns in the schema of this Database
- */
-export type ColumnDetails = {
-  /**
-   * The column name
-   */
-  columnName: string;
-  /**
-   * The column type
-   */
-  columnType: "DECIMAL" | "VARCHAR2" | "BOOLEAN" | "DATETIME" | "LIST";
-};
-
-/**
  * The components that make up this workflow
  */
 export type ComponentDetails = {
@@ -409,15 +426,15 @@ export type ComponentDetails = {
 /**
  * The databases referenced by this workflow
  */
-export type DatabaseReference = {
+export type TableSummary = {
   /**
-   * The name of the Workflow86 Database
+   * The id of the Workflow86 Table
+   */
+  tableId: string;
+  /**
+   * The name of the Workflow86 Table
    */
   name: string;
-  /**
-   * The columns in the schema of this Database
-   */
-  columns: Array<ColumnDetails>;
 };
 
 export type WorkflowVersionDetails = {
@@ -448,7 +465,7 @@ export type WorkflowVersionDetails = {
   /**
    * The databases referenced by this workflow
    */
-  databases: Array<DatabaseReference>;
+  databases: Array<TableSummary>;
   _links: {
     [key: string]: string;
   };
@@ -624,6 +641,24 @@ export type TokenisePageOfTaskSummaryDto = {
    */
   totalCount?: number;
   initialQuery?: TaskQueryBody;
+  _links: {
+    [key: string]: string;
+  };
+};
+
+export type PageOfTableSummary = {
+  /**
+   * The page of response data as an array
+   */
+  _embedded: Array<TableSummary>;
+  /**
+   * The zero-indexed page number of the response data
+   */
+  _pageNumber: number;
+  /**
+   * True iff this page is the final page
+   */
+  _lastPage: boolean;
   _links: {
     [key: string]: string;
   };
@@ -834,6 +869,101 @@ export type PublishWorkflowResponses = {
 
 export type PublishWorkflowResponse2 =
   PublishWorkflowResponses[keyof PublishWorkflowResponses];
+
+export type ListTablesData = {
+  body?: never;
+  path?: never;
+  query?: {
+    pageNumber?: number;
+  };
+  url: "/v1/table";
+};
+
+export type ListTablesResponses = {
+  /**
+   * OK
+   */
+  200: PageOfTableSummary;
+};
+
+export type ListTablesResponse = ListTablesResponses[keyof ListTablesResponses];
+
+export type CreateTableData = {
+  body: CreateTableCommand;
+  path?: never;
+  query?: never;
+  url: "/v1/table";
+};
+
+export type CreateTableResponses = {
+  /**
+   * OK
+   */
+  200: TableDetails;
+};
+
+export type CreateTableResponse =
+  CreateTableResponses[keyof CreateTableResponses];
+
+export type RenameColumnData = {
+  body?: never;
+  path: {
+    tableId: string;
+  };
+  query: {
+    originalColumnName: string;
+    newColumnName: string;
+  };
+  url: "/v1/table/{tableId}/rename/{originalColumnName}";
+};
+
+export type RenameColumnResponses = {
+  /**
+   * OK
+   */
+  200: TableDetails;
+};
+
+export type RenameColumnResponse =
+  RenameColumnResponses[keyof RenameColumnResponses];
+
+export type DeleteColumnData = {
+  body?: never;
+  path?: never;
+  query: {
+    tableId: string;
+    columnName: string;
+  };
+  url: "/v1/table/{tableId}/delete/{columnName}";
+};
+
+export type DeleteColumnResponses = {
+  /**
+   * OK
+   */
+  200: TableDetails;
+};
+
+export type DeleteColumnResponse =
+  DeleteColumnResponses[keyof DeleteColumnResponses];
+
+export type AddColumnData = {
+  body: ColumnDetails;
+  path: {
+    tableId: string;
+  };
+  query?: never;
+  url: "/v1/table/{tableId}/add/{columnName}";
+};
+
+export type AddColumnResponses = {
+  /**
+   * OK
+   */
+  200: TableDetails;
+};
+
+export type AddColumnResponse = AddColumnResponses[keyof AddColumnResponses];
 
 export type TerminateEntireSessionData = {
   body?: never;
@@ -1370,6 +1500,25 @@ export type ListTasksResponses = {
 };
 
 export type ListTasksResponse = ListTasksResponses[keyof ListTasksResponses];
+
+export type GetTableDetailsData = {
+  body?: never;
+  path?: never;
+  query: {
+    tableId: string;
+  };
+  url: "/v1/table/{tableId}";
+};
+
+export type GetTableDetailsResponses = {
+  /**
+   * OK
+   */
+  200: TableDetails;
+};
+
+export type GetTableDetailsResponse =
+  GetTableDetailsResponses[keyof GetTableDetailsResponses];
 
 export type GetWorkflowSessionData = {
   body?: never;

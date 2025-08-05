@@ -210,6 +210,59 @@ export const PublishWorkflowResponseSchema = {
   },
 } as const;
 
+export const ColumnDetailsSchema = {
+  required: ["columnName", "columnType"],
+  type: "object",
+  properties: {
+    columnName: {
+      type: "string",
+      description: "The column name",
+    },
+    columnType: {
+      type: "string",
+      description: "The column type",
+      enum: ["DECIMAL", "VARCHAR2", "BOOLEAN", "DATETIME", "LIST"],
+    },
+  },
+} as const;
+
+export const CreateTableCommandSchema = {
+  type: "object",
+  properties: {
+    tableName: {
+      type: "string",
+    },
+    columns: {
+      type: "array",
+      items: {
+        $ref: "#/components/schemas/ColumnDetails",
+      },
+    },
+  },
+} as const;
+
+export const TableDetailsSchema = {
+  required: ["columns", "name", "tableId"],
+  type: "object",
+  properties: {
+    tableId: {
+      type: "string",
+      description: "The id of the Workflow86 Table",
+    },
+    name: {
+      type: "string",
+      description: "The name of the Workflow86 Table",
+    },
+    columns: {
+      type: "array",
+      description: "The columns in the schema of this Table",
+      items: {
+        $ref: "#/components/schemas/ColumnDetails",
+      },
+    },
+  },
+} as const;
+
 export const ComponentResultSchema = {
   required: [
     "componentId",
@@ -532,23 +585,6 @@ export const WorkflowSummarySchema = {
   description: "The page of response data as an array",
 } as const;
 
-export const ColumnDetailsSchema = {
-  required: ["columnName", "columnType"],
-  type: "object",
-  properties: {
-    columnName: {
-      type: "string",
-      description: "The column name",
-    },
-    columnType: {
-      type: "string",
-      description: "The column type",
-      enum: ["DECIMAL", "VARCHAR2", "BOOLEAN", "DATETIME", "LIST"],
-    },
-  },
-  description: "The columns in the schema of this Database",
-} as const;
-
 export const ComponentDetailsSchema = {
   required: [
     "componentId",
@@ -618,20 +654,17 @@ export const ComponentDetailsSchema = {
   description: "The components that make up this workflow",
 } as const;
 
-export const DatabaseReferenceSchema = {
-  required: ["columns", "name"],
+export const TableSummarySchema = {
+  required: ["name", "tableId"],
   type: "object",
   properties: {
+    tableId: {
+      type: "string",
+      description: "The id of the Workflow86 Table",
+    },
     name: {
       type: "string",
-      description: "The name of the Workflow86 Database",
-    },
-    columns: {
-      type: "array",
-      description: "The columns in the schema of this Database",
-      items: {
-        $ref: "#/components/schemas/ColumnDetails",
-      },
+      description: "The name of the Workflow86 Table",
     },
   },
   description: "The databases referenced by this workflow",
@@ -683,7 +716,7 @@ export const WorkflowVersionDetailsSchema = {
       type: "array",
       description: "The databases referenced by this workflow",
       items: {
-        $ref: "#/components/schemas/DatabaseReference",
+        $ref: "#/components/schemas/TableSummary",
       },
     },
     _links: {
@@ -965,6 +998,35 @@ export const TokenisePageOfTaskSummaryDtoSchema = {
     },
     initialQuery: {
       $ref: "#/components/schemas/TaskQueryBody",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
+  },
+} as const;
+
+export const PageOfTableSummarySchema = {
+  required: ["_embedded", "_lastPage", "_links", "_pageNumber"],
+  type: "object",
+  properties: {
+    _embedded: {
+      type: "array",
+      description: "The page of response data as an array",
+      items: {
+        $ref: "#/components/schemas/TableSummary",
+      },
+    },
+    _pageNumber: {
+      type: "integer",
+      description: "The zero-indexed page number of the response data",
+      format: "int32",
+    },
+    _lastPage: {
+      type: "boolean",
+      description: "True iff this page is the final page",
     },
     _links: {
       type: "object",
