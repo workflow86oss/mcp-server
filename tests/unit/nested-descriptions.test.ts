@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { getSchemaMetadata } from '../src/schema';
+import { getSchemaMetadata } from '../../src/schema';
 
 describe('Nested Field Descriptions', () => {
   it('should provide nested field descriptions for WorkflowVersionDetails', () => {

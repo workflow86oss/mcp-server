@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { getSchemaMetadata, addSchemaMetadataByType, SchemaTypeName } from '../src/schema';
+import { getSchemaMetadata, addSchemaMetadataByType, SchemaTypeName } from '../../src/schema';
 
 describe('Schema functionality', () => {
   describe('getSchemaMetadata', () => {

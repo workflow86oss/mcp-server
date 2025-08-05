@@ -27,7 +27,8 @@
   },
   "scripts": {
     "build": "tsc && chmod +x build/server.js",
-    "test": "jest",
+    "test": "jest --testPathPatterns=unit",
+    "moduleTest": "jest --testPathPatterns=module",
     "format": "npx prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "check": "npx prettier --check \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "genclient": "npx @hey-api/openapi-ts && npm run format",
