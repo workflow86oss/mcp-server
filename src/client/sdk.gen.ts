@@ -435,9 +435,9 @@ export const getWorkflowSession = <ThrowOnError extends boolean = false>(
  * Returns a list of task summaries based on the provided query filters
  */
 export const listTasks = <ThrowOnError extends boolean = false>(
-  options: Options<ListTasksData, ThrowOnError>,
+  options?: Options<ListTasksData, ThrowOnError>,
 ) => {
-  return (options.client ?? _heyApiClient).post<
+  return (options?.client ?? _heyApiClient).get<
     ListTasksResponses,
     ListTasksErrors,
     ThrowOnError
@@ -450,10 +450,6 @@ export const listTasks = <ThrowOnError extends boolean = false>(
     ],
     url: "/v1/tasks",
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
   });
 };
 

@@ -1346,9 +1346,16 @@ export type LastTaskDto = {
 };
 
 export type ListTasksData = {
-  body: ListTaskCommand;
+  body?: never;
   path?: never;
-  query?: never;
+  query?: {
+    queryString?: string;
+    workflowId?: string;
+    statusToInclude?: Array<string>;
+    startDate?: string;
+    endDate?: string;
+    lastTaskToken?: string;
+  };
   url: "/v1/tasks";
 };
 
