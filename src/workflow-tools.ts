@@ -6,6 +6,8 @@ import {
   listWorkflows,
   runWorkflow,
   rerunWorkflow,
+  publishWorkflow,
+  unpublishWorkflow,
 } from "./client/sdk.gen.js";
 import {
   PageOfWorkflowHistory,
@@ -226,6 +228,68 @@ export function registerWorkflowTools(server: McpServer) {
 
         return jsonResponse(
           addSchemaMetadataByType(response.data, "RunWorkflowResponse"),
+        );
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "publish-workflow",
+    "Publish an existing workflow DRAFT, making it available for production execution. Adds a comment and description to document the publication. Creates a new published version and increments the draft version number.",
+    {
+      workflowId: z.string().describe("The ID of the workflow to publish"),
+      comment: z
+        .string()
+        .optional()
+        .describe("Comment describing the changes in this publication"),
+      description: z
+        .string()
+        .optional()
+        .describe("Normative description of this workflow"),
+    },
+    async ({ workflowId, comment, description }) => {
+      try {
+        const response = await publishWorkflow({
+          client: client,
+          throwOnError: true,
+          path: {
+            workflowId,
+          },
+          body: {
+            comment,
+            description,
+          },
+        });
+
+        return jsonResponse(
+          addSchemaMetadataByType(response.data, "PublishWorkflowResponse"),
+        );
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "unpublish-workflow",
+    "Unpublish an existing workflow, making it unavailable for normal execution. This changes the status of the currently published version and makes only the draft version available. Useful for taking workflows offline for any reason.",
+    {
+      workflowId: z.string().describe("The ID of the workflow to unpublish"),
+    },
+    async ({ workflowId }) => {
+      try {
+        const response = await unpublishWorkflow({
+          client: client,
+          throwOnError: true,
+          path: {
+            workflowId,
+          },
+        });
+
+        return jsonResponse(
+          addSchemaMetadataByType(response.data, "UnpublishWorkflowResponse"),
         );
       } catch (error) {
         return handleError(error);

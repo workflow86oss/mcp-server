@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+npm run build
+
+WORKFLOW_ID=$1
+COMMENT=$2
+DESCRIPTION=$3
+
+if [ -z "$WORKFLOW_ID" ]; then
+  echo "Usage: $0 <workflow_id> [comment] [description]"
+  echo "Example: $0 123e4567-e89b-12d3-a456-426614174000 'Fixed validation bug' 'Customer onboarding workflow v2.1'"
+  exit 1
+fi
+
+# Build the arguments JSON
+ARGS="{\"workflowId\":\"$WORKFLOW_ID\""
+if [ -n "$COMMENT" ]; then
+  ARGS="${ARGS}, \"comment\": \"$COMMENT\""
+fi
+if [ -n "$DESCRIPTION" ]; then
+  ARGS="${ARGS}, \"description\": \"$DESCRIPTION\""
+fi
+ARGS="${ARGS}}"
+
+./exec.sh "publish-workflow" "$ARGS"

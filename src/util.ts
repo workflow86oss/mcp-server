@@ -34,7 +34,7 @@ export function handleError(error: any) {
     return textResponse(`An unexpected error occurred: ${error.message}`);
   } else {
     return textResponse(
-      `An unexpected failure occurred: ${error?.message || JSON.stringify(error)}`,
+      `An unexpected failure occurred: ${error?.message || error?.toString() || JSON.stringify(error)}`,
     );
   }
 }

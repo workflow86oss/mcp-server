@@ -2,12 +2,18 @@
 
 import type { Options as ClientOptions, TDataShape, Client } from "./client";
 import type {
+  UnpublishWorkflowData,
+  UnpublishWorkflowResponses,
+  UnpublishWorkflowErrors,
   RunWorkflowData,
   RunWorkflowResponses,
   RunWorkflowErrors,
   RerunWorkflowData,
   RerunWorkflowResponses,
   RerunWorkflowErrors,
+  PublishWorkflowData,
+  PublishWorkflowResponses,
+  PublishWorkflowErrors,
   TerminateEntireSessionData,
   TerminateEntireSessionResponses,
   TerminateEntireSessionErrors,
@@ -62,6 +68,29 @@ export type Options<
 };
 
 /**
+ * Unpublish a Workflow
+ * Unpublish an existing workflow, making it unavailable for normal execution
+ */
+export const unpublishWorkflow = <ThrowOnError extends boolean = false>(
+  options: Options<UnpublishWorkflowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    UnpublishWorkflowResponses,
+    UnpublishWorkflowErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/{workflowId}/unpublish",
+    ...options,
+  });
+};
+
+/**
  * Run a Workflow
  * Runs a workflow component, passing in placeholders
  */
@@ -107,6 +136,33 @@ export const rerunWorkflow = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/rerun",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Publish a Workflow
+ * Publish an existing workflow draft, adding a comment and description
+ */
+export const publishWorkflow = <ThrowOnError extends boolean = false>(
+  options: Options<PublishWorkflowData, ThrowOnError>,
+) => {
+  return (options.client ?? _heyApiClient).post<
+    PublishWorkflowResponses,
+    PublishWorkflowErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/{workflowId}/publish",
     ...options,
     headers: {
       "Content-Type": "application/json",
