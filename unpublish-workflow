@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+npm run build
+
+WORKFLOW_ID=$1
+
+if [ -z "$WORKFLOW_ID" ]; then
+  echo "Usage: $0 <workflow_id>"
+  echo "Example: $0 123e4567-e89b-12d3-a456-426614174000"
+  exit 1
+fi
+
+ARGS="{\"workflowId\":\"$WORKFLOW_ID\"}"
+
+./exec.sh "unpublish-workflow" "$ARGS"
