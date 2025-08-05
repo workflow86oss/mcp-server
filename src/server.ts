@@ -454,27 +454,16 @@ server.tool(
       .optional(),
     startDate: z
       .string()
-      .describe("Start date filter in ISO format (e.g., '2023-01-01T00:00:00')")
+      .describe("Start date filter in ISO format (e.g., '2023-01-01T00:00:00Z')")
       .optional(),
     endDate: z
       .string()
-      .describe("End date filter in ISO format (e.g., '2023-12-31T23:59:59')")
+      .describe("End date filter in ISO format (e.g., '2023-12-31T23:59:59Z')")
       .optional(),
-    lastTaskId: z
-      .string()
-      .describe("ID of the last task from previous page for pagination")
-      .optional(),
-    lastAssignedOnDate: z
+    lastTaskToken: z
       .string()
       .describe(
-        "Assigned date of the last task from previous page for pagination",
-      )
-      .optional(),
-    pageSize: z
-      .number()
-      .min(1)
-      .describe(
-        "Number of tasks to return per page (Minimum 1 page). Defaults to 50 if not specified.",
+        "Pagination token in format 'ISO-date:taskId' (e.g., '2023-11-15T14:30:00Z:550e8400-e29b-41d4-a716-446655440000') from previous response for pagination",
       )
       .optional(),
   },
@@ -484,57 +473,49 @@ server.tool(
     statusToInclude,
     startDate,
     endDate,
-    lastTaskId,
-    lastAssignedOnDate,
-    pageSize,
+    lastTaskToken,
   }) => {
     try {
-      const body: any = {};
+      const query: any = {};
 
       if (queryString) {
-        body.queryString = queryString;
+        query.queryString = queryString;
       }
 
       if (workflowId) {
-        body.workflowId = workflowId;
+        query.workflowId = workflowId;
       }
 
       if (statusToInclude && statusToInclude.length > 0) {
-        body.statusToInclude = statusToInclude;
+        query.statusToInclude = statusToInclude;
       }
 
-      if (startDate || endDate) {
-        body.dateFilter = {};
-        if (startDate) {
-          body.dateFilter.startDate = startDate;
-        }
-        if (endDate) {
-          body.dateFilter.endDate = endDate;
-        }
+      if (startDate) {
+        query.startDate = startDate;
       }
 
-      if (lastTaskId && lastAssignedOnDate) {
-        body.lastTask = {
-          lastTaskId,
-          lastAssignedOnDate,
-        };
+      if (endDate) {
+        query.endDate = endDate;
       }
 
-      if (pageSize) {
-        body.pageSize = pageSize;
+      if (lastTaskToken) {
+        query.lastTaskToken = lastTaskToken;
       }
 
       const response = await listTasks({
         client: client,
         throwOnError: true,
-        body: body,
+        query: query,
       });
 
       const taskResponse: ListTasksResponse = response.data;
       const tasks = taskResponse?.tasks || [];
       if (tasks.length === 0) {
-        if (!lastTaskId) {
-          return textResponse("There are no tasks available for this client");
+        if (!lastTaskToken) {
+          if (statusToInclude && statusToInclude.length === 1 && statusToInclude[0] === "TODO") {
+            return textResponse("🎉 All tasks completed! No TODO items remaining.");
+          }
+          return textResponse("There are no tasks available for this user");
         } else {
           return textResponse("This page contains no additional tasks");
         }
