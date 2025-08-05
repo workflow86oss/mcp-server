@@ -18,6 +18,4 @@ else
   ARGS="{\"sessionId\":\"$SESSION_ID\",\"componentId\":\"$COMPONENT_ID\"}"
 fi
 
-PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"retry-failed-component\",\"arguments\":${ARGS}}}"
-
-./exec.sh "$PAYLOAD"
+./exec.sh "retry-failed-component" "$ARGS"
