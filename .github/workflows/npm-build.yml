@@ -110,7 +110,7 @@ jobs:
             npm version ${VERSION_TO_TAG} --no-git-tag-version
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
-            git add package.json package-lock.json
+            git add package.json
             git commit -m "Bump version to ${VERSION_TO_TAG}"
           fi
 
