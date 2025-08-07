@@ -117,7 +117,7 @@ export type RerunWorkflowCommand = {
 
 export type PublishWorkflowCommand = {
   /**
-   * Comment describing the changes in this version
+   * Comment describing the changes in this publication
    */
   comment?: string;
   /**
@@ -146,11 +146,11 @@ export type PublishWorkflowResponse = {
  */
 export type ComponentResult = {
   /**
-   * UUID id of this Component Result
+   * UUID identifier of this Component Result
    */
   resultId: string;
   /**
-   * UUID id of the Component this result is for
+   * UUID identifier of the Component this result is for
    */
   componentId: string;
   /**
@@ -162,7 +162,7 @@ export type ComponentResult = {
    */
   componentName: string;
   /**
-   * The thread this Component was run in - either 'root' or a UUID id
+   * The thread this Component was run in - either 'root' or a UUID identifier
    */
   thread: string;
   /**
@@ -193,7 +193,13 @@ export type ComponentResult = {
    * The URL of any form that has been submitted as part of this Component's execution
    */
   submittedFormUrl?: string;
+  /**
+   * Timestamp when the component execution started
+   */
   startedAt?: string;
+  /**
+   * Timestamp when the component execution was last updated
+   */
   updatedAt?: string;
   _links?: {
     [key: string]: string;
@@ -212,7 +218,7 @@ export type JsonNode = {
  */
 export type SessionResult = {
   /**
-   * UUID id of the session returned
+   * UUID identifier of the session returned
    */
   sessionId: string;
   /**
@@ -230,15 +236,21 @@ export type SessionResult = {
     | "TERMINATED"
     | "OUT_OF_QUOTA";
   /**
-   * UUID id of the workflow this session belongs to
+   * UUID identifier of the workflow this session belongs to
    */
   workflowId: string;
   /**
    * The integer version of the workflow this session belongs to
    */
   workflowVersion: number;
-  startedAt?: string;
-  updatedAt?: string;
+  /**
+   * Timestamp when the session was started
+   */
+  startedAt: string;
+  /**
+   * Timestamp when the session was last updated
+   */
+  updatedAt: string;
   /**
    * Flattened representation of the component result graph
    */
@@ -308,7 +320,7 @@ export type PageOfWorkflowSummary = {
  */
 export type WorkflowSummary = {
   /**
-   * UUID id of this workflow
+   * UUID identifier of this workflow
    */
   workflowId: string;
   /**
@@ -355,7 +367,7 @@ export type ColumnDetails = {
  */
 export type ComponentDetails = {
   /**
-   * UUID id of the Component
+   * UUID identifier of the Component
    */
   componentId: string;
   /**
@@ -410,7 +422,7 @@ export type DatabaseReference = {
 
 export type WorkflowVersionDetails = {
   /**
-   * UUID id of this workflow version
+   * UUID identifier of this workflow version
    */
   workflowId: string;
   /**
@@ -465,7 +477,7 @@ export type PageOfSessionSummary = {
  */
 export type SessionSummary = {
   /**
-   * UUID id of the session returned
+   * UUID identifier of the session returned
    */
   sessionId: string;
   /**
@@ -483,15 +495,21 @@ export type SessionSummary = {
     | "TERMINATED"
     | "OUT_OF_QUOTA";
   /**
-   * UUID id of the workflow this session belongs to
+   * UUID identifier of the workflow this session belongs to
    */
   workflowId: string;
   /**
    * The integer version of the workflow this session belongs to
    */
   workflowVersion: number;
-  startedAt?: string;
-  updatedAt?: string;
+  /**
+   * Timestamp when the session was started
+   */
+  startedAt: string;
+  /**
+   * Timestamp when the session was last updated
+   */
+  updatedAt: string;
   _links?: {
     [key: string]: string;
   };

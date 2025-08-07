@@ -20,7 +20,7 @@ import {
   relinkWorkflowPage,
   relinkWorkflowVersion,
 } from "./links.js";
-import { addSchemaMetadataByType } from "./schema";
+import { addSchemaMetadataByType, createSchemaDescriber } from "./schema";
 import {
   textResponse,
   jsonResponse,
@@ -29,6 +29,10 @@ import {
 } from "./util.js";
 
 export function registerWorkflowTools(server: McpServer) {
+  // Create schema describers for cleaner lookup
+  const runWorkflowSchema = createSchemaDescriber("RunWorkflowCommand");
+  const rerunWorkflowSchema = createSchemaDescriber("RerunWorkflowCommand");
+  const publishWorkflowSchema = createSchemaDescriber("PublishWorkflowCommand");
   server.tool(
     "list-workflows",
     "Get a paginated list of workflow summaries including workflow IDs, names, publication status, draft versions, and navigation links. Returns structured metadata for each workflow with pagination controls and links to detailed workflow information.",
@@ -137,30 +141,20 @@ export function registerWorkflowTools(server: McpServer) {
 
   server.tool(
     "run-workflow",
-    "Execute a workflow starting from a specified component with optional placeholder values. Supports both production runs and test runs of draft versions. Validates component existence and placeholder types before execution. Returns session details for tracking workflow progress. Can be used to restart workflows with data from previous sessions.",
+    runWorkflowSchema.main(),
     {
       workflowId: z.string().describe("The ID of the workflow to run"),
       componentId: z
         .string()
-        .describe("The ID of the component to start running from"),
+        .describe(runWorkflowSchema.describe("componentId")),
       // Simplify placeholderValues to a String -> String map rather than confusing AI with all the options
       placeholderValues: z
         .record(z.string(), z.string())
-        .describe(
-          "A object containing placeholder keys and values.\n" +
-            "- Keys must be from the set of placeholders available to the specified component.\n" +
-            "- All keys are optional at the API level, but omitting them may cause the workflow to fail.\n" +
-            "- Values are validated against the placeholder type.\n" +
-            "- datetime placeholders MUST be in ISO-8601 format, but may omit timezone, offset, or the whole time portion.\n" +
-            '- list placeholders MUST be sent as a Bracketed String. eg. "[1,2,3]"\n' +
-            "- Values MUST NOT be sent as JSON objects, instead keys should use dotted form.",
-        )
+        .describe(runWorkflowSchema.prop("placeholderValues"))
         .optional(),
       workflowVersion: z
         .string()
-        .describe(
-          "Optional project version to run. If not provided, uses latest version based on session mode.",
-        )
+        .describe(runWorkflowSchema.prop("workflowVersion"))
         .optional(),
     },
     async ({ workflowId, componentId, placeholderValues, workflowVersion }) => {
@@ -194,21 +188,18 @@ export function registerWorkflowTools(server: McpServer) {
 
   server.tool(
     "rerun-workflow",
-    "Reruns a workflow component from an existing session and copies placeholders" +
-      " from the provided workflow session",
+    rerunWorkflowSchema.main(),
     {
       workflowId: z.string().describe("The ID of the workflow to rerun"),
       sessionId: z
         .string()
-        .describe("The ID of the workflow session to copy values from"),
+        .describe(rerunWorkflowSchema.prop("originalSessionId")),
       componentId: z
         .string()
-        .describe("The ID of the component to start running from"),
+        .describe(rerunWorkflowSchema.describe("componentId")),
       projectVersion: z
         .string()
-        .describe(
-          "The project version to run. It will default to project version from the sessionId",
-        )
+        .describe(rerunWorkflowSchema.prop("workflowVersion"))
         .optional(),
     },
     async ({ workflowId, sessionId, componentId, projectVersion }) => {
@@ -243,11 +234,11 @@ export function registerWorkflowTools(server: McpServer) {
       comment: z
         .string()
         .optional()
-        .describe("Comment describing the changes in this publication"),
+        .describe(publishWorkflowSchema.prop("comment")),
       description: z
         .string()
         .optional()
-        .describe("Normative description of this workflow"),
+        .describe(publishWorkflowSchema.prop("description")),
     },
     async ({ workflowId, comment, description }) => {
       try {

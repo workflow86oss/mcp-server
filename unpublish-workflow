@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-npm run build
-
 WORKFLOW_ID=$1
 
 if [ -z "$WORKFLOW_ID" ]; then

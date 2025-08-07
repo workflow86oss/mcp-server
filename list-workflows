@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-npm run build
-
 PAGE_NUMBER=$1
 
 if [ -n "$PAGE_NUMBER" ]; then

@@ -10,7 +10,7 @@ import {
 import { SessionSummary } from "./client/types.gen.js";
 import { client } from "./client/client.gen.js";
 import { relinkSessionPage, relinkSessionResult } from "./links.js";
-import { addSchemaMetadataByType } from "./schema";
+import { addSchemaMetadataByType, createSchemaDescriber } from "./schema";
 import {
   textResponse,
   jsonResponse,
@@ -19,6 +19,8 @@ import {
 } from "./util.js";
 
 export function registerSessionTools(server: McpServer) {
+  // Create schema describers for cleaner lookup
+  const sessionResultSchema = createSchemaDescriber("SessionResult");
   server.tool(
     "list-sessions",
     "Get a paginated list of all execution sessions for a workflow, including session IDs, status, timestamps, and execution mode. Can filter between production and test runs of draft workflows. Returns user-friendly messages when no sessions exist, with pagination support for workflows with many execution histories.",
@@ -66,7 +68,7 @@ export function registerSessionTools(server: McpServer) {
 
   server.tool(
     "get-session",
-    "Retrieve comprehensive details of a specific workflow execution session, including session status, component execution states, placeholder values, timing information, error details, and complete execution history. Essential for debugging and monitoring workflow runs.",
+    sessionResultSchema.main(),
     {
       sessionId: z
         .string()

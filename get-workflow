@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-npm run build
-
 WORKFLOW_ID=$1
 WORKFLOW_VERSION=$2
 if [ -n "$WORKFLOW_VERSION" ]; then

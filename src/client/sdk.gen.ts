@@ -68,8 +68,8 @@ export type Options<
 };
 
 /**
- * Unpublish a Workflow
- * Unpublish an existing workflow, making it unavailable for normal execution
+ * Unpublish Workflow
+ * Unpublish an existing workflow, making it unavailable for normal execution. This changes the status of the currently published version and makes only the draft version available. Useful for taking workflows offline for any reason.
  */
 export const unpublishWorkflow = <ThrowOnError extends boolean = false>(
   options: Options<UnpublishWorkflowData, ThrowOnError>,
@@ -91,8 +91,8 @@ export const unpublishWorkflow = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Run a Workflow
- * Runs a workflow component, passing in placeholders
+ * Run Workflow
+ * Execute a workflow starting from a specified component with optional placeholder values. Supports both production runs and test runs of draft versions. Validates component existence and placeholder types before execution. Returns session details for tracking workflow progress. Can be used to restart workflows with data from previous sessions.
  */
 export const runWorkflow = <ThrowOnError extends boolean = false>(
   options: Options<RunWorkflowData, ThrowOnError>,
@@ -118,8 +118,8 @@ export const runWorkflow = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Rerun a Workflow
- * Reruns a workflow component from an existing session and will placeholders from the provided workflow session
+ * Rerun Workflow
+ * Reruns a workflow component from an existing session and copies placeholders from the provided workflow session
  */
 export const rerunWorkflow = <ThrowOnError extends boolean = false>(
   options: Options<RerunWorkflowData, ThrowOnError>,
@@ -145,8 +145,8 @@ export const rerunWorkflow = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Publish a Workflow
- * Publish an existing workflow draft, adding a comment and description
+ * Publish Workflow
+ * Publish an existing workflow DRAFT, making it available for production execution. Adds a comment and description to document the publication. Creates a new published version and increments the draft version number.
  */
 export const publishWorkflow = <ThrowOnError extends boolean = false>(
   options: Options<PublishWorkflowData, ThrowOnError>,
@@ -172,8 +172,8 @@ export const publishWorkflow = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Terminate entire session
- * Terminates the entire workflow session
+ * Terminate Entire Session
+ * Immediately stop and terminate an entire workflow session, ending execution of all active components and preventing any further processing. Useful for canceling long-running workflows or stopping erroneous executions. Returns confirmation of termination status.
  */
 export const terminateEntireSession = <ThrowOnError extends boolean = false>(
   options: Options<TerminateEntireSessionData, ThrowOnError>,
@@ -195,8 +195,8 @@ export const terminateEntireSession = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Terminate component
- * Terminates a specific component within a workflow session
+ * Terminate Component
+ * Selectively terminate a specific component thread within a workflow session while allowing other components to continue running. Provides granular control over workflow execution by targeting individual components or threads. Useful for stopping problematic components without affecting the entire workflow.
  */
 export const terminateComponent = <ThrowOnError extends boolean = false>(
   options: Options<TerminateComponentData, ThrowOnError>,
@@ -218,8 +218,8 @@ export const terminateComponent = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Terminate component
- * Terminates a specific component within a workflow session
+ * Terminate Component
+ * Selectively terminate a specific component thread within a workflow session while allowing other components to continue running. Provides granular control over workflow execution by targeting individual components or threads. Useful for stopping problematic components without affecting the entire workflow.
  */
 export const terminateComponent1 = <ThrowOnError extends boolean = false>(
   options: Options<TerminateComponent1Data, ThrowOnError>,
@@ -241,8 +241,8 @@ export const terminateComponent1 = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Retry failed component
- * Retries a failed component within a workflow session
+ * Retry Failed Component
+ * Restart execution of a failed component and continue the workflow from that point forward. Automatically resumes processing from the specified component using existing session data and placeholder values. Essential for recovering from transient failures or errors without restarting the entire workflow.
  */
 export const retryFailedComponent = <ThrowOnError extends boolean = false>(
   options: Options<RetryFailedComponentData, ThrowOnError>,
@@ -264,8 +264,8 @@ export const retryFailedComponent = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Retry failed component
- * Retries a failed component within a workflow session
+ * Retry Failed Component
+ * Restart execution of a failed component and continue the workflow from that point forward. Automatically resumes processing from the specified component using existing session data and placeholder values. Essential for recovering from transient failures or errors without restarting the entire workflow.
  */
 export const retryFailedComponent1 = <ThrowOnError extends boolean = false>(
   options: Options<RetryFailedComponent1Data, ThrowOnError>,
@@ -287,7 +287,8 @@ export const retryFailedComponent1 = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * List the available Workflows
+ * List Workflows
+ * Get a paginated list of workflow summaries including workflow IDs, names, publication status, draft versions, and navigation links. Returns structured metadata for each workflow with pagination controls and links to detailed workflow information.
  */
 export const listWorkflows = <ThrowOnError extends boolean = false>(
   options?: Options<ListWorkflowsData, ThrowOnError>,
@@ -309,7 +310,8 @@ export const listWorkflows = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Get the current published Workflow
+ * Get Workflow
+ * Get comprehensive workflow details including metadata (ID, version, status, name), full workflow description with purpose and use cases, complete component definitions with types and descriptions, placeholder mappings for data flow between components, component connections and relationships, and links to related workflow operations like session management
  */
 export const getWorkflow = <ThrowOnError extends boolean = false>(
   options: Options<GetWorkflowData, ThrowOnError>,
@@ -331,7 +333,8 @@ export const getWorkflow = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Get the current draft or published Workflow
+ * Get Workflow Version
+ * Get comprehensive workflow details including metadata (ID, version, status, name), full workflow description with purpose and use cases, complete component definitions with types and descriptions, placeholder mappings for data flow between components, component connections and relationships, and links to related workflow operations like session management
  */
 export const getWorkflowVersion = <ThrowOnError extends boolean = false>(
   options: Options<GetWorkflowVersionData, ThrowOnError>,
@@ -353,7 +356,8 @@ export const getWorkflowVersion = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * List the sessions for a Workflow
+ * List Sessions
+ * Get a paginated list of all execution sessions for a workflow, including session IDs, status, timestamps, and execution mode. Can filter between production and test runs of draft workflows. Returns user-friendly messages when no sessions exist, with pagination support for workflows with many execution histories.
  */
 export const listWorkflowSessions = <ThrowOnError extends boolean = false>(
   options: Options<ListWorkflowSessionsData, ThrowOnError>,
@@ -375,7 +379,8 @@ export const listWorkflowSessions = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Get the version history of this Workflow
+ * Get Workflow History
+ * Retrieve a paginated history of all versions for a specific workflow, including version numbers, timestamps, status changes, and metadata for each version. Useful for tracking workflow evolution and accessing previous versions.
  */
 export const getWorkflowHistory = <ThrowOnError extends boolean = false>(
   options: Options<GetWorkflowHistoryData, ThrowOnError>,
@@ -397,8 +402,8 @@ export const getWorkflowHistory = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Get Session Details
- * Returns the details of a workflow session
+ * Get Session
+ * Retrieve comprehensive details of a specific workflow execution session, including session status, component execution states, placeholder values, timing information, error details, and complete execution history. Essential for debugging and monitoring workflow runs.
  */
 export const getWorkflowSession = <ThrowOnError extends boolean = false>(
   options: Options<GetWorkflowSessionData, ThrowOnError>,

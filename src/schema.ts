@@ -7,6 +7,9 @@ const SCHEMA_MAP = {
   StandardWorkflow86Exception: schemas.Standard_Workflow86_ExceptionSchema,
   RunWorkflowResponse: schemas.RunWorkflowResponseSchema,
   RerunWorkflowCommand: schemas.RerunWorkflowCommandSchema,
+  PublishWorkflowCommand: schemas.PublishWorkflowCommandSchema,
+  PublishWorkflowResponse: schemas.PublishWorkflowResponseSchema,
+  UnpublishWorkflowResponse: schemas.UnpublishWorkflowResponseSchema,
   ComponentResult: schemas.ComponentResultSchema,
   JsonNode: schemas.JsonNodeSchema,
   SessionResult: schemas.SessionResultSchema,
@@ -24,6 +27,70 @@ const SCHEMA_MAP = {
 } as const;
 
 export type SchemaTypeName = keyof typeof SCHEMA_MAP;
+
+/**
+ * Get the main description of a schema
+ */
+export function getSchemaMainDescription<T extends SchemaTypeName>(
+  typeName: T,
+): string {
+  const schema = SCHEMA_MAP[typeName];
+  return (schema as any).description || "";
+}
+
+/**
+ * Get the description of a specific property from a schema
+ */
+export function getSchemaPropertyDescription<T extends SchemaTypeName>(
+  typeName: T,
+  propertyName: string,
+): string {
+  const schema = SCHEMA_MAP[typeName];
+  const properties = (schema as any).properties;
+  if (properties && properties[propertyName]) {
+    return properties[propertyName].description || "";
+  }
+  return "";
+}
+
+/**
+ * Get the example of a specific property from a schema
+ */
+export function getSchemaPropertyExample<T extends SchemaTypeName>(
+  typeName: T,
+  propertyName: string,
+): any {
+  const schema = SCHEMA_MAP[typeName];
+  const properties = (schema as any).properties;
+  if (properties && properties[propertyName]) {
+    return properties[propertyName].example;
+  }
+  return undefined;
+}
+
+/**
+ * Create a schema-aware describe function for a specific schema type
+ * This simplifies the lookup by creating a bound function
+ */
+export function createSchemaDescriber<T extends SchemaTypeName>(typeName: T) {
+  return {
+    main: () => getSchemaMainDescription(typeName),
+    prop: (propertyName: string) =>
+      getSchemaPropertyDescription(typeName, propertyName),
+    example: (propertyName: string) =>
+      getSchemaPropertyExample(typeName, propertyName),
+    /**
+     * Get description with example if available
+     */
+    describe: (propertyName: string) => {
+      const description = getSchemaPropertyDescription(typeName, propertyName);
+      const example = getSchemaPropertyExample(typeName, propertyName);
+      return example
+        ? `${description}\nExample: ${typeof example === "object" ? JSON.stringify(example, null, 2) : example}`
+        : description;
+    },
+  };
+}
 
 /**
  * Map schema type names to their output field names when _embedded is renamed

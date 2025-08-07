@@ -180,7 +180,7 @@ export const PublishWorkflowCommandSchema = {
   properties: {
     comment: {
       type: "string",
-      description: "Comment describing the changes in this version",
+      description: "Comment describing the changes in this publication",
       example: "Fixed validation bug in email component",
     },
     description: {
@@ -227,11 +227,11 @@ export const ComponentResultSchema = {
   properties: {
     resultId: {
       type: "string",
-      description: "UUID id of this Component Result",
+      description: "UUID identifier of this Component Result",
     },
     componentId: {
       type: "string",
-      description: "UUID id of the Component this result is for",
+      description: "UUID identifier of the Component this result is for",
     },
     componentType: {
       type: "string",
@@ -244,7 +244,7 @@ export const ComponentResultSchema = {
     thread: {
       type: "string",
       description:
-        "The thread this Component was run in - either 'root' or a UUID id",
+        "The thread this Component was run in - either 'root' or a UUID identifier",
     },
     status: {
       type: "string",
@@ -289,10 +289,12 @@ export const ComponentResultSchema = {
     },
     startedAt: {
       type: "string",
+      description: "Timestamp when the component execution started",
       format: "date-time",
     },
     updatedAt: {
       type: "string",
+      description: "Timestamp when the component execution was last updated",
       format: "date-time",
     },
     _links: {
@@ -315,7 +317,9 @@ export const SessionResultSchema = {
     "componentResults",
     "sessionId",
     "sessionMode",
+    "startedAt",
     "status",
+    "updatedAt",
     "workflowId",
     "workflowVersion",
   ],
@@ -323,7 +327,7 @@ export const SessionResultSchema = {
   properties: {
     sessionId: {
       type: "string",
-      description: "UUID id of the session returned",
+      description: "UUID identifier of the session returned",
     },
     sessionMode: {
       type: "string",
@@ -344,7 +348,7 @@ export const SessionResultSchema = {
     },
     workflowId: {
       type: "string",
-      description: "UUID id of the workflow this session belongs to",
+      description: "UUID identifier of the workflow this session belongs to",
     },
     workflowVersion: {
       type: "integer",
@@ -354,10 +358,12 @@ export const SessionResultSchema = {
     },
     startedAt: {
       type: "string",
+      description: "Timestamp when the session was started",
       format: "date-time",
     },
     updatedAt: {
       type: "string",
+      description: "Timestamp when the session was last updated",
       format: "date-time",
     },
     componentResults: {
@@ -490,7 +496,7 @@ export const WorkflowSummarySchema = {
   properties: {
     workflowId: {
       type: "string",
-      description: "UUID id of this workflow",
+      description: "UUID identifier of this workflow",
     },
     name: {
       type: "string",
@@ -558,7 +564,7 @@ export const ComponentDetailsSchema = {
   properties: {
     componentId: {
       type: "string",
-      description: "UUID id of the Component",
+      description: "UUID identifier of the Component",
     },
     type: {
       type: "string",
@@ -646,7 +652,7 @@ export const WorkflowVersionDetailsSchema = {
   properties: {
     workflowId: {
       type: "string",
-      description: "UUID id of this workflow version",
+      description: "UUID identifier of this workflow version",
     },
     version: {
       type: "integer",
@@ -722,7 +728,9 @@ export const SessionSummarySchema = {
   required: [
     "sessionId",
     "sessionMode",
+    "startedAt",
     "status",
+    "updatedAt",
     "workflowId",
     "workflowVersion",
   ],
@@ -730,7 +738,7 @@ export const SessionSummarySchema = {
   properties: {
     sessionId: {
       type: "string",
-      description: "UUID id of the session returned",
+      description: "UUID identifier of the session returned",
     },
     sessionMode: {
       type: "string",
@@ -751,7 +759,7 @@ export const SessionSummarySchema = {
     },
     workflowId: {
       type: "string",
-      description: "UUID id of the workflow this session belongs to",
+      description: "UUID identifier of the workflow this session belongs to",
     },
     workflowVersion: {
       type: "integer",
@@ -761,10 +769,12 @@ export const SessionSummarySchema = {
     },
     startedAt: {
       type: "string",
+      description: "Timestamp when the session was started",
       format: "date-time",
     },
     updatedAt: {
       type: "string",
+      description: "Timestamp when the session was last updated",
       format: "date-time",
     },
     _links: {

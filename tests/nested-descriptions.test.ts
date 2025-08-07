@@ -8,7 +8,7 @@ describe('Nested Field Descriptions', () => {
     
     // Should have nested component fields without extra description wrapper
     expect(components).toHaveProperty('description', 'Description of the Component'); // This is the actual field from the schema
-    expect(components).toHaveProperty('componentId', 'UUID id of the Component');
+    expect(components).toHaveProperty('componentId', 'UUID identifier of the Component');
     expect(components).toHaveProperty('type', 'Type of the Component');
     expect(components).toHaveProperty('name', 'Name of the Component');
     expect(components).toHaveProperty('nextComponents', 'UUID IDs of the components that will be executed after this one');
@@ -19,10 +19,10 @@ describe('Nested Field Descriptions', () => {
     const componentResults = (metadata['@schema'] as any).componentResults;
     
     // Should have nested result fields
-    expect(componentResults).toHaveProperty('resultId', 'UUID id of this Component Result');
-    expect(componentResults).toHaveProperty('componentId', 'UUID id of the Component this result is for');
+    expect(componentResults).toHaveProperty('resultId', 'UUID identifier of this Component Result');
+    expect(componentResults).toHaveProperty('componentId', 'UUID identifier of the Component this result is for');
     expect(componentResults).toHaveProperty('status', 'The status of the execution of this Component');
-    expect(componentResults).toHaveProperty('thread', 'The thread this Component was run in - either \'root\' or a UUID id');
+    expect(componentResults).toHaveProperty('thread', 'The thread this Component was run in - either \'root\' or a UUID identifier');
   });
 
   it('should provide deeply nested field descriptions', () => {
@@ -58,7 +58,7 @@ describe('Nested Field Descriptions', () => {
     expect(typeof (metadata['@schema'] as any).workflowId).toBe('string');
     expect(typeof (metadata['@schema'] as any).name).toBe('string');
     expect(typeof (metadata['@schema'] as any).published).toBe('string');
-    expect((metadata['@schema'] as any).workflowId).toBe('UUID id of this workflow');
+    expect((metadata['@schema'] as any).workflowId).toBe('UUID identifier of this workflow');
   });
 
   it('should show both array-level and nested descriptions', () => {
@@ -66,7 +66,7 @@ describe('Nested Field Descriptions', () => {
     
     // Components should have nested field descriptions
     expect((metadata['@schema'] as any).components.description).toBe('Description of the Component');
-    expect((metadata['@schema'] as any).components.componentId).toBe('UUID id of the Component');
+    expect((metadata['@schema'] as any).components.componentId).toBe('UUID identifier of the Component');
     
     // Databases should have nested field descriptions
     expect((metadata['@schema'] as any).databases.name).toBe('The name of the Workflow86 Database');
