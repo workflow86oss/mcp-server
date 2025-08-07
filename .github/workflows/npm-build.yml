@@ -101,17 +101,8 @@ jobs:
 
           # If current version already has a tag, bump patch version first
           if git tag -l | grep -q "^v${CURRENT_VERSION}$"; then
-            MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
-            MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
-            PATCH=$(echo $CURRENT_VERSION | cut -d. -f3)
-            NEW_PATCH=$((PATCH + 1))
-            VERSION_TO_TAG="${MAJOR}.${MINOR}.${NEW_PATCH}"
-
-            npm version ${VERSION_TO_TAG} --no-git-tag-version
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            git add package.json package-lock.json
-            git commit -m "Bump version to ${VERSION_TO_TAG}"
+            echo "Version has not been bumped - Not publishing"
+            exit 1
           fi
 
           # Build and publish first
