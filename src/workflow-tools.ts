@@ -237,17 +237,17 @@ export function registerWorkflowTools(server: McpServer) {
 
   server.tool(
     "publish-workflow",
-    "Publish an existing workflow DRAFT, making it available for production execution. Adds a comment and description to document the publication. Creates a new published version and increments the draft version number.",
+    "Deploy the draft version of a workflow as the published version, making it available for production execution. If a published version already exists, this will replace it and increment the draft version number. Include a comment and description to document the deployment.",
     {
       workflowId: z.string().describe("The ID of the workflow to publish"),
       comment: z
         .string()
         .optional()
-        .describe("Comment describing the changes in this publication"),
+        .describe("Comment describing the changes in deployment of draft to published"),
       description: z
         .string()
         .optional()
-        .describe("Normative description of this workflow"),
+        .describe("Normative description of the workflow, what it does, its purpose, and any other relevant explanatory information"),
     },
     async ({ workflowId, comment, description }) => {
       try {
@@ -274,7 +274,7 @@ export function registerWorkflowTools(server: McpServer) {
 
   server.tool(
     "unpublish-workflow",
-    "Unpublish an existing workflow, making it unavailable for normal execution. This changes the status of the currently published version and makes only the draft version available. Useful for taking workflows offline for any reason.",
+    "Unpublish a published version of a workflow, making it unavailable for normal execution. This changes the status of the workflow to have no version deployed to published state, making only the draft version available. Useful for taking published workflows offline for any reason.",
     {
       workflowId: z.string().describe("The ID of the workflow to unpublish"),
     },
