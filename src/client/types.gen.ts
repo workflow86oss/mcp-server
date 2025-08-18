@@ -1391,7 +1391,7 @@ export type ListTasksResponse = {
   /**
    * List of task summaries
    */
-  tasks?: Array<TaskSummaryDto>;
+  _embedded?: Array<TaskSummaryDto>;
   /**
    * Total number of tasks matching the query
    */
