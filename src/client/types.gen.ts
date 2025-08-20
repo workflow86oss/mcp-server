@@ -558,6 +558,105 @@ export type WorkflowHistory = {
   };
 };
 
+export type LastTaskDto = {
+  lastTaskId?: string;
+  lastAssignedOnDate?: string;
+};
+
+export type TaskDateFilter = {
+  startDate?: string;
+  endDate?: string;
+};
+
+export type TaskQueryBody = {
+  queryString?: string;
+  workflowId?: string;
+  dateFilter?: TaskDateFilter;
+  statusToInclude?: Array<string>;
+  lastTask?: LastTaskDto;
+};
+
+/**
+ * A summary of a task being requested. Usually comes in a list of these.
+ */
+export type TaskSummaryDto = {
+  /**
+   * The name of the task
+   */
+  taskName?: string;
+  /**
+   * The description of the task
+   */
+  taskDescription?: string;
+  /**
+   * The HTTP URL that will link the user to the task
+   */
+  taskUrl?: string;
+  /**
+   * The workflow ID of the workflow that sent this task
+   */
+  workflowId?: string;
+  /**
+   * The name of the workflow
+   */
+  workflowName?: string;
+  /**
+   * The session ID of the session of the workflow that assigned this task
+   */
+  sessionId?: string;
+};
+
+export type TokenisePageOfTaskSummaryDto = {
+  /**
+   * The page of response data as an array
+   */
+  _embedded: Array<TaskSummaryDto>;
+  /**
+   * The zero-indexed page number of the response data
+   */
+  _pageNumber: number;
+  /**
+   * True iff this page is the final page
+   */
+  _lastPage: boolean;
+  /**
+   * Total number of results matching the query
+   */
+  totalCount?: number;
+  initialQuery?: TaskQueryBody;
+  _links: {
+    [key: string]: string;
+  };
+};
+
+/**
+ * The page of response data as an array
+ */
+export type FormSummaryDto = {
+  formName?: string;
+  formUrl?: string;
+  workflowId?: string;
+  workflowName?: string;
+};
+
+export type PageOfFormSummaryDto = {
+  /**
+   * The page of response data as an array
+   */
+  _embedded: Array<FormSummaryDto>;
+  /**
+   * The zero-indexed page number of the response data
+   */
+  _pageNumber: number;
+  /**
+   * True iff this page is the final page
+   */
+  _lastPage: boolean;
+  _links: {
+    [key: string]: string;
+  };
+};
+
 export type UnpublishWorkflowData = {
   body?: never;
   path: {
@@ -1206,6 +1305,72 @@ export type GetWorkflowHistoryResponses = {
 export type GetWorkflowHistoryResponse =
   GetWorkflowHistoryResponses[keyof GetWorkflowHistoryResponses];
 
+export type ListTasksData = {
+  body?: never;
+  path?: never;
+  query?: {
+    /**
+     * Text search query to filter tasks by content
+     */
+    queryString?: string;
+    /**
+     * Filter tasks by specific workflow ID
+     */
+    workflowId?: string;
+    /**
+     * Array of task statuses to include in results
+     */
+    statusToInclude?: string;
+    /**
+     * Start date for assignment date filter (ISO format)
+     */
+    startDate?: string;
+    /**
+     * End date for assignment date filter (ISO format)
+     */
+    endDate?: string;
+    /**
+     * Pagination token in format 'dateAssigned:taskId' from previous response
+     */
+    lastTaskToken?: string;
+  };
+  url: "/v1/tasks";
+};
+
+export type ListTasksErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type ListTasksError = ListTasksErrors[keyof ListTasksErrors];
+
+export type ListTasksResponses = {
+  /**
+   * OK
+   */
+  200: TokenisePageOfTaskSummaryDto;
+};
+
+export type ListTasksResponse = ListTasksResponses[keyof ListTasksResponses];
+
 export type GetWorkflowSessionData = {
   body?: never;
   path: {
@@ -1250,6 +1415,49 @@ export type GetWorkflowSessionResponses = {
 
 export type GetWorkflowSessionResponse =
   GetWorkflowSessionResponses[keyof GetWorkflowSessionResponses];
+
+export type ListFormsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    pageNumber?: number;
+  };
+  url: "/v1/forms";
+};
+
+export type ListFormsErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type ListFormsError = ListFormsErrors[keyof ListFormsErrors];
+
+export type ListFormsResponses = {
+  /**
+   * OK
+   */
+  200: PageOfFormSummaryDto;
+};
+
+export type ListFormsResponse = ListFormsResponses[keyof ListFormsResponses];
 
 export type ClientOptions = {
   baseUrl: `${string}://rest.workflow86.com` | (string & {});

@@ -44,9 +44,15 @@ import type {
   GetWorkflowHistoryData,
   GetWorkflowHistoryResponses,
   GetWorkflowHistoryErrors,
+  ListTasksData,
+  ListTasksResponses,
+  ListTasksErrors,
   GetWorkflowSessionData,
   GetWorkflowSessionResponses,
   GetWorkflowSessionErrors,
+  ListFormsData,
+  ListFormsResponses,
+  ListFormsErrors,
 } from "./types.gen";
 import { client as _heyApiClient } from "./client.gen";
 
@@ -402,6 +408,29 @@ export const getWorkflowHistory = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * List tasks visible to the user
+ * Retrieve a paginated list of all tasks that the authenticated user can see. Supports filtering by status, workflow, date range, and text search. Uses token-based pagination for efficient navigation through large result sets.
+ */
+export const listTasks = <ThrowOnError extends boolean = false>(
+  options?: Options<ListTasksData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ListTasksResponses,
+    ListTasksErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/tasks",
+    ...options,
+  });
+};
+
+/**
  * Get Session
  * Retrieve comprehensive details of a specific workflow execution session, including session status, component execution states, placeholder values, timing information, error details, and complete execution history. Essential for debugging and monitoring workflow runs.
  */
@@ -420,6 +449,28 @@ export const getWorkflowSession = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/session/{sessionId}",
+    ...options,
+  });
+};
+
+/**
+ * List all forms available to the given user
+ */
+export const listForms = <ThrowOnError extends boolean = false>(
+  options?: Options<ListFormsData, ThrowOnError>,
+) => {
+  return (options?.client ?? _heyApiClient).get<
+    ListFormsResponses,
+    ListFormsErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/forms",
     ...options,
   });
 };
