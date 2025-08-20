@@ -13,7 +13,7 @@ import {
 } from "./client/sdk.gen.js";
 import {
   FormSummaryDto,
-  ListTasksResponse,
+  SearchAfterPageOf,
   PageOfFormSummaryDto,
   PageOfWorkflowHistory,
   WorkflowSummary,
@@ -373,7 +373,7 @@ export function registerWorkflowTools(server: McpServer) {
           query: query,
         });
 
-        const taskResponse: ListTasksResponse = response.data;
+        const taskResponse: SearchAfterPageOf = response.data;
         const tasks = taskResponse?._embedded || [];
         if (tasks.length === 0) {
           if (!lastTaskToken) {

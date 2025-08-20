@@ -566,11 +566,11 @@ export type LastTaskDto = {
 /**
  * Response containing a list of task summaries with pagination metadata
  */
-export type ListTasksResponse = {
+export type SearchAfterPageOf = {
   /**
    * List of task summaries
    */
-  get_embedded?: Array<TaskSummaryDto>;
+  _embedded?: Array<TaskSummaryDto>;
   /**
    * Total number of tasks matching the query
    */
@@ -578,7 +578,7 @@ export type ListTasksResponse = {
   /**
    * Whether there are more tasks available for pagination
    */
-  get_lastPage?: boolean;
+  _lastPage?: boolean;
   initialQuery?: TaskQueryBody;
   _links?: {
     [key: string]: string;
@@ -1361,14 +1361,15 @@ export type ListTasksErrors = {
 
 export type ListTasksError = ListTasksErrors[keyof ListTasksErrors];
 
-export type ListTasksResponses = {
+export type ListOfTasksResponses = {
   /**
    * OK
    */
-  200: ListTasksResponse;
+  200: SearchAfterPageOf;
 };
 
-export type ListTasksResponse2 = ListTasksResponses[keyof ListTasksResponses];
+export type ListOfTasksResponse2 =
+  ListOfTasksResponses[keyof ListOfTasksResponses];
 
 export type GetWorkflowSessionData = {
   body?: never;
