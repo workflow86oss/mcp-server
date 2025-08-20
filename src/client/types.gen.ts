@@ -566,7 +566,7 @@ export type LastTaskDto = {
 /**
  * Response containing a list of task summaries with pagination metadata
  */
-export type SearchAfterPageOf = {
+export type TokenisePageOf = {
   /**
    * List of task summaries
    */
@@ -1365,7 +1365,7 @@ export type ListOfTasksResponses = {
   /**
    * OK
    */
-  200: SearchAfterPageOf;
+  200: TokenisePageOf;
 };
 
 export type ListOfTasksResponse2 =
