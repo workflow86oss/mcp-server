@@ -386,7 +386,7 @@ export function registerWorkflowTools(server: McpServer) {
                 "🎉 All tasks completed! No TODO items remaining.",
               );
             }
-            return textResponse("There are no tasks available for this user");
+            return textResponse("No tasks match this query filter");
           } else {
             return textResponse("This page contains no additional tasks");
           }
