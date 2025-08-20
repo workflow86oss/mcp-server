@@ -847,3 +847,188 @@ export const WorkflowHistorySchema = {
   },
   description: "The page of response data as an array",
 } as const;
+
+export const LastTaskDtoSchema = {
+  type: "object",
+  properties: {
+    lastTaskId: {
+      type: "string",
+    },
+    lastAssignedOnDate: {
+      type: "string",
+    },
+  },
+} as const;
+
+export const ListTasksResponseSchema = {
+  type: "object",
+  properties: {
+    get_embedded: {
+      type: "array",
+      description: "List of task summaries",
+      items: {
+        $ref: "#/components/schemas/TaskSummaryDto",
+      },
+    },
+    totalCount: {
+      type: "integer",
+      description: "Total number of tasks matching the query",
+      format: "int64",
+    },
+    get_lastPage: {
+      type: "boolean",
+      description: "Whether there are more tasks available for pagination",
+    },
+    initialQuery: {
+      $ref: "#/components/schemas/TaskQueryBody",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
+  },
+  description:
+    "Response containing a list of task summaries with pagination metadata",
+  example: {
+    _embedded: [
+      {
+        taskName: "Review Document",
+        taskDescription: "Please review the attached document",
+        taskUrl: "https://api.workflow86.com/v1/session/123/task/456",
+        workflowId: "workflow-123",
+        workflowName: "Document Review Process",
+        sessionId: "session-456",
+      },
+    ],
+    totalCount: 25,
+    _lastPage: true,
+  },
+} as const;
+
+export const TaskDateFilterSchema = {
+  type: "object",
+  properties: {
+    startDate: {
+      type: "string",
+    },
+    endDate: {
+      type: "string",
+    },
+  },
+} as const;
+
+export const TaskQueryBodySchema = {
+  type: "object",
+  properties: {
+    queryString: {
+      type: "string",
+    },
+    workflowId: {
+      type: "string",
+    },
+    dateFilter: {
+      $ref: "#/components/schemas/TaskDateFilter",
+    },
+    statusToInclude: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    lastTask: {
+      $ref: "#/components/schemas/LastTaskDto",
+    },
+  },
+} as const;
+
+export const TaskSummaryDtoSchema = {
+  type: "object",
+  properties: {
+    taskName: {
+      type: "string",
+      description: "The name of the task",
+    },
+    taskDescription: {
+      type: "string",
+      description: "The description of the task",
+    },
+    taskUrl: {
+      type: "string",
+      description: "The HTTP URL that will link the user to the task",
+    },
+    workflowId: {
+      type: "string",
+      description: "The workflow ID of the workflow that sent this task",
+    },
+    workflowName: {
+      type: "string",
+      description: "The name of the workflow",
+    },
+    sessionId: {
+      type: "string",
+      description:
+        "The session ID of the session of the workflow that assigned this task",
+    },
+  },
+  description:
+    "A summary of a task being requested. Usually comes in a list of these.",
+  example: {
+    taskName: "Review Document",
+    taskDescription: "Please review the attached document and provide feedback",
+    taskUrl:
+      "https://api.workflow86.com/v1/session/3aa378d1-c45f-448f-b543-d5490000742a/task/task-123",
+    workflowId: "5fc4c4f9-cef0-44d5-861c-c0af00008b28",
+    workflowName: "Document Review Process",
+    sessionId: "3aa378d1-c45f-448f-b543-d5490000742a",
+  },
+} as const;
+
+export const FormSummaryDtoSchema = {
+  type: "object",
+  properties: {
+    formName: {
+      type: "string",
+    },
+    formUrl: {
+      type: "string",
+    },
+    workflowId: {
+      type: "string",
+    },
+    workflowName: {
+      type: "string",
+    },
+  },
+  description: "The page of response data as an array",
+} as const;
+
+export const PageOfFormSummaryDtoSchema = {
+  required: ["_embedded", "_lastPage", "_links", "_pageNumber"],
+  type: "object",
+  properties: {
+    _embedded: {
+      type: "array",
+      description: "The page of response data as an array",
+      items: {
+        $ref: "#/components/schemas/FormSummaryDto",
+      },
+    },
+    _pageNumber: {
+      type: "integer",
+      description: "The zero-indexed page number of the response data",
+      format: "int32",
+    },
+    _lastPage: {
+      type: "boolean",
+      description: "True iff this page is the final page",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
+  },
+} as const;
