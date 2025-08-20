@@ -860,53 +860,6 @@ export const LastTaskDtoSchema = {
   },
 } as const;
 
-export const ListTasksResponseSchema = {
-  type: "object",
-  properties: {
-    get_embedded: {
-      type: "array",
-      description: "List of task summaries",
-      items: {
-        $ref: "#/components/schemas/TaskSummaryDto",
-      },
-    },
-    totalCount: {
-      type: "integer",
-      description: "Total number of tasks matching the query",
-      format: "int64",
-    },
-    get_lastPage: {
-      type: "boolean",
-      description: "Whether there are more tasks available for pagination",
-    },
-    initialQuery: {
-      $ref: "#/components/schemas/TaskQueryBody",
-    },
-    _links: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
-      },
-    },
-  },
-  description:
-    "Response containing a list of task summaries with pagination metadata",
-  example: {
-    _embedded: [
-      {
-        taskName: "Review Document",
-        taskDescription: "Please review the attached document",
-        taskUrl: "https://api.workflow86.com/v1/session/123/task/456",
-        workflowId: "workflow-123",
-        workflowName: "Document Review Process",
-        sessionId: "session-456",
-      },
-    ],
-    totalCount: 25,
-    _lastPage: true,
-  },
-} as const;
-
 export const TaskDateFilterSchema = {
   type: "object",
   properties: {
@@ -982,6 +935,43 @@ export const TaskSummaryDtoSchema = {
     workflowId: "5fc4c4f9-cef0-44d5-861c-c0af00008b28",
     workflowName: "Document Review Process",
     sessionId: "3aa378d1-c45f-448f-b543-d5490000742a",
+  },
+} as const;
+
+export const TokenisePageOfTaskSummaryDtoSchema = {
+  required: ["_embedded", "_lastPage", "_links", "_pageNumber"],
+  type: "object",
+  properties: {
+    _embedded: {
+      type: "array",
+      description: "The page of response data as an array",
+      items: {
+        $ref: "#/components/schemas/TaskSummaryDto",
+      },
+    },
+    _pageNumber: {
+      type: "integer",
+      description: "The zero-indexed page number of the response data",
+      format: "int32",
+    },
+    _lastPage: {
+      type: "boolean",
+      description: "True iff this page is the final page",
+    },
+    totalCount: {
+      type: "integer",
+      description: "Total number of results matching the query",
+      format: "int64",
+    },
+    initialQuery: {
+      $ref: "#/components/schemas/TaskQueryBody",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
   },
 } as const;
 

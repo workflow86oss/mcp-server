@@ -45,7 +45,7 @@ import type {
   GetWorkflowHistoryResponses,
   GetWorkflowHistoryErrors,
   ListTasksData,
-  ListOfTasksResponses,
+  ListTasksResponses,
   ListTasksErrors,
   GetWorkflowSessionData,
   GetWorkflowSessionResponses,
@@ -415,7 +415,7 @@ export const listTasks = <ThrowOnError extends boolean = false>(
   options?: Options<ListTasksData, ThrowOnError>,
 ) => {
   return (options?.client ?? _heyApiClient).get<
-    ListOfTasksResponses,
+    ListTasksResponses,
     ListTasksErrors,
     ThrowOnError
   >({

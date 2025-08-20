@@ -563,28 +563,6 @@ export type LastTaskDto = {
   lastAssignedOnDate?: string;
 };
 
-/**
- * Response containing a list of task summaries with pagination metadata
- */
-export type TokenisePageOf = {
-  /**
-   * List of task summaries
-   */
-  _embedded?: Array<TaskSummaryDto>;
-  /**
-   * Total number of tasks matching the query
-   */
-  totalCount?: number;
-  /**
-   * Whether there are more tasks available for pagination
-   */
-  _lastPage?: boolean;
-  initialQuery?: TaskQueryBody;
-  _links?: {
-    [key: string]: string;
-  };
-};
-
 export type TaskDateFilter = {
   startDate?: string;
   endDate?: string;
@@ -626,6 +604,29 @@ export type TaskSummaryDto = {
    * The session ID of the session of the workflow that assigned this task
    */
   sessionId?: string;
+};
+
+export type TokenisePageOfTaskSummaryDto = {
+  /**
+   * The page of response data as an array
+   */
+  _embedded: Array<TaskSummaryDto>;
+  /**
+   * The zero-indexed page number of the response data
+   */
+  _pageNumber: number;
+  /**
+   * True iff this page is the final page
+   */
+  _lastPage: boolean;
+  /**
+   * Total number of results matching the query
+   */
+  totalCount?: number;
+  initialQuery?: TaskQueryBody;
+  _links: {
+    [key: string]: string;
+  };
 };
 
 /**
@@ -1361,15 +1362,14 @@ export type ListTasksErrors = {
 
 export type ListTasksError = ListTasksErrors[keyof ListTasksErrors];
 
-export type ListOfTasksResponses = {
+export type ListTasksResponses = {
   /**
    * OK
    */
-  200: TokenisePageOf;
+  200: TokenisePageOfTaskSummaryDto;
 };
 
-export type ListOfTasksResponse2 =
-  ListOfTasksResponses[keyof ListOfTasksResponses];
+export type ListTasksResponse = ListTasksResponses[keyof ListTasksResponses];
 
 export type GetWorkflowSessionData = {
   body?: never;
