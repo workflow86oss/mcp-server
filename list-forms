@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+PAGE_NUMBER=${1:-0}
+
+ARGS="{\"pageNumber\":$PAGE_NUMBER}"
+
+./exec.sh "list-forms" "$ARGS"
