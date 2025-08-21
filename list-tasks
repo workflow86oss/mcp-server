@@ -1,0 +1,97 @@
+#!/bin/bash
+set -e
+
+QUERY_STRING=""
+WORKFLOW_ID=""
+STATUS_TO_INCLUDE=""
+START_DATE=""
+END_DATE=""
+LAST_TASK_TOKEN=""
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --query)
+      QUERY_STRING="$2"
+      shift 2
+      ;;
+    --workflow-id)
+      WORKFLOW_ID="$2"
+      shift 2
+      ;;
+    --status)
+      STATUS_TO_INCLUDE="$2"
+      shift 2
+      ;;
+    --start-date)
+      START_DATE="$2"
+      shift 2
+      ;;
+    --end-date)
+      END_DATE="$2"
+      shift 2
+      ;;
+    --last-task-token)
+      LAST_TASK_TOKEN="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Usage: $0 [--query <query>] [--workflow-id <id>] [--status <status>] [--start-date <date>] [--end-date <date>] [--last-task-token <token>]"
+      exit 1
+      ;;
+  esac
+done
+
+# Build JSON arguments
+ARGS="{"
+FIRST_PARAM=true
+
+if [ -n "$QUERY_STRING" ]; then
+  ARGS="$ARGS\"queryString\":\"$QUERY_STRING\""
+  FIRST_PARAM=false
+fi
+
+if [ -n "$WORKFLOW_ID" ]; then
+  if [ "$FIRST_PARAM" = false ]; then
+    ARGS="$ARGS,"
+  fi
+  ARGS="$ARGS\"workflowId\":\"$WORKFLOW_ID\""
+  FIRST_PARAM=false
+fi
+
+if [ -n "$STATUS_TO_INCLUDE" ]; then
+  if [ "$FIRST_PARAM" = false ]; then
+    ARGS="$ARGS,"
+  fi
+  ARGS="$ARGS\"statusToInclude\":[\"$STATUS_TO_INCLUDE\"]"
+  FIRST_PARAM=false
+fi
+
+if [ -n "$START_DATE" ]; then
+  if [ "$FIRST_PARAM" = false ]; then
+    ARGS="$ARGS,"
+  fi
+  ARGS="$ARGS\"startDate\":\"$START_DATE\""
+  FIRST_PARAM=false
+fi
+
+if [ -n "$END_DATE" ]; then
+  if [ "$FIRST_PARAM" = false ]; then
+    ARGS="$ARGS,"
+  fi
+  ARGS="$ARGS\"endDate\":\"$END_DATE\""
+  FIRST_PARAM=false
+fi
+
+if [ -n "$LAST_TASK_TOKEN" ]; then
+  if [ "$FIRST_PARAM" = false ]; then
+    ARGS="$ARGS,"
+  fi
+  ARGS="$ARGS\"lastTaskToken\":\"$LAST_TASK_TOKEN\""
+  FIRST_PARAM=false
+fi
+
+ARGS="$ARGS}"
+
+./exec.sh "list-tasks" "$ARGS"
