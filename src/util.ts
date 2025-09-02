@@ -19,9 +19,11 @@ export function textResponse(text: string) {
 export function jsonResponse(result: object) {
   const text = JSON.stringify(result, null, 2);
   if (process.stdout.isTTY) {
-    console.error(text);
+    console.log(text);
+    return textResponse("!snip!")
+  } else {
+    return textResponse(text);
   }
-  return textResponse(text);
 }
 
 export function handleError(error: any) {
@@ -34,7 +36,7 @@ export function handleError(error: any) {
     return textResponse(`An unexpected error occurred: ${error.message}`);
   } else {
     return textResponse(
-      `An unexpected failure occurred: ${error?.message || error?.toString() || JSON.stringify(error)}`,
+      `An unexpected failure occurred: ${error?.message || JSON.stringify(error)}`,
     );
   }
 }
