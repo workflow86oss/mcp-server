@@ -2,11 +2,19 @@
 set -e
 
 PAGE_NUMBER=$1
+STATUS=$2
 
+# Build the arguments JSON
+ARGS="{"
 if [ -n "$PAGE_NUMBER" ]; then
-  ARGS="{\"pageNumber\":$PAGE_NUMBER}"
-else
-  ARGS="{}"
+  ARGS="$ARGS\"pageNumber\":$PAGE_NUMBER"
 fi
+if [ -n "$STATUS" ]; then
+  if [ -n "$PAGE_NUMBER" ]; then
+    ARGS="$ARGS,"
+  fi
+  ARGS="$ARGS\"status\":\"$STATUS\""
+fi
+ARGS="$ARGS}"
 
 ./exec.sh "list-workflows" "$ARGS"

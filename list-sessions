@@ -2,12 +2,17 @@
 set -e
 
 WORKFLOW_ID=$1
-PAGE_NUMBER=$2
+SESSION_MODE=$2
+PAGE_NUMBER=$3
 
-if [ -n "$PAGE_NUMBER" ]; then
-  ARGS="{\"workflowId\":\"$WORKFLOW_ID\",\"pageNumber\":$PAGE_NUMBER}"
-else
-  ARGS="{\"workflowId\":\"$WORKFLOW_ID\"}"
+# Build the arguments JSON
+ARGS="{\"workflowId\":\"$WORKFLOW_ID\""
+if [ -n "$SESSION_MODE" ]; then
+  ARGS="$ARGS,\"sessionMode\":\"$SESSION_MODE\""
 fi
+if [ -n "$PAGE_NUMBER" ]; then
+  ARGS="$ARGS,\"pageNumber\":$PAGE_NUMBER"
+fi
+ARGS="$ARGS}"
 
 ./exec.sh "list-sessions" "$ARGS"

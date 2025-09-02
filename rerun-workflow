@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+npm run build
+
+WORKFLOW_ID=$1
+SESSION_ID=$2
+COMPONENT_ID=$3
+
+ARGS="{\"workflowId\":\"$WORKFLOW_ID\",\"sessionId\":\"$SESSION_ID\",\"componentId\":\"$COMPONENT_ID\"}"
+
+./exec.sh "rerun-workflow" "$ARGS"
