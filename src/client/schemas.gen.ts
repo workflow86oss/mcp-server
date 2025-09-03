@@ -667,17 +667,17 @@ export const TableSummarySchema = {
       description: "The name of the Workflow86 Table",
     },
   },
-  description: "The databases referenced by this workflow",
+  description: "The tables referenced by this workflow",
 } as const;
 
 export const WorkflowVersionDetailsSchema = {
   required: [
     "_links",
     "components",
-    "databases",
     "description",
     "name",
     "status",
+    "tables",
     "version",
     "workflowId",
   ],
@@ -712,9 +712,9 @@ export const WorkflowVersionDetailsSchema = {
         $ref: "#/components/schemas/ComponentDetails",
       },
     },
-    databases: {
+    tables: {
       type: "array",
-      description: "The databases referenced by this workflow",
+      description: "The tables referenced by this workflow",
       items: {
         $ref: "#/components/schemas/TableSummary",
       },

@@ -6,6 +6,8 @@ import { client } from "./client/client.gen.js";
 import { version } from "../package.json";
 import { registerWorkflowTools } from "./workflow-tools.js";
 import { registerSessionTools } from "./session-tools.js";
+import { registerTableTools } from "./table-tools.js";
+import { registerTasksTools } from "./tasks-tools";
 
 // Polyfill ReadableStream if not available
 if (typeof globalThis.ReadableStream === "undefined") {
@@ -46,6 +48,8 @@ const server = new McpServer({
 
 registerWorkflowTools(server);
 registerSessionTools(server);
+registerTasksTools(server);
+registerTableTools(server);
 
 async function main() {
   console.error(

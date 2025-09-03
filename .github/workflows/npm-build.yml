@@ -34,6 +34,25 @@ jobs:
       - name: Publish Dry Run
         run: npm publish --dry-run
 
+      - name: Run module test against Dev
+        env:
+          W86_DOMAIN: ${{secrets.DEV_HOST}}
+          W86_API_KEY: ${{secrets.DEV_API_KEY}}
+        run: npm run moduleTest
+
+      - name: Check generated client matches DEV Public API
+        env:
+          W86_DOMAIN: ${{secrets.DEV_HOST}}
+        run: |
+          npm run genclient
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "❌ Public API changes have not been deployed to DEV yet (or you need to run genclient and commit)"
+            git status --porcelain
+            git diff
+            exit 1
+          fi
+          echo "✅ Ready to Publish Canary"
+
       - name: Publish canary
         if: github.ref == 'refs/heads/main'
         run: |
@@ -44,37 +63,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  check-generated-client:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          registry-url: https://registry.npmjs.org/
-          scope: '@npm-workflow86'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Check generated client
-        run: |
-          npm run genclient
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "❌ Public API changes have not been deployed to prod yet (or you need to run genclient and commit)"
-            git status --porcelain
-            git diff
-            exit 1
-          fi
-          echo "✅ Ready to Tag"
-
   publish:
     runs-on: ubuntu-latest
-    needs: [build, check-generated-client]
+    needs: build
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
@@ -92,6 +83,17 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Check generated client matches PROD Public API
+        run: |
+          npm run genclient
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "❌ Public API changes have not been deployed to PROD yet (or you need to run genclient and commit)"
+            git status --porcelain
+            git diff
+            exit 1
+          fi
+          echo "✅ Ready to Tag"
 
       - name: Create version tag and publish
         env:

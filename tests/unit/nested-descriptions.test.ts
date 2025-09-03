@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { getSchemaMetadata } from '../src/schema';
+import { getSchemaMetadata } from '../../src/schema';
 
 describe('Nested Field Descriptions', () => {
   it('should provide nested field descriptions for WorkflowVersionDetails', () => {
@@ -27,15 +27,11 @@ describe('Nested Field Descriptions', () => {
 
   it('should provide deeply nested field descriptions', () => {
     const metadata = getSchemaMetadata('WorkflowVersionDetails');
-    const databases = (metadata['@schema'] as any).databases;
+    const tables = (metadata['@schema'] as any).tables;
     
-    // Should have database fields and nested column fields
-    expect(databases).toHaveProperty('name', 'The name of the Workflow86 Database');
-    expect(databases).toHaveProperty('columns');
-    
-    const columns = databases.columns;
-    expect(columns).toHaveProperty('columnName', 'The column name');
-    expect(columns).toHaveProperty('columnType', 'The column type');
+    // Should have table fields
+    expect(tables).toHaveProperty('name', 'The name of the Workflow86 Table');
+    expect(tables).toHaveProperty('tableId', 'The id of the Workflow86 Table');
   });
 
   it('should not include fullSchema in any response', () => {
@@ -68,7 +64,7 @@ describe('Nested Field Descriptions', () => {
     expect((metadata['@schema'] as any).components.description).toBe('Description of the Component');
     expect((metadata['@schema'] as any).components.componentId).toBe('UUID identifier of the Component');
     
-    // Databases should have nested field descriptions
-    expect((metadata['@schema'] as any).databases.name).toBe('The name of the Workflow86 Database');
+    // Tables should have nested field descriptions
+    expect((metadata['@schema'] as any).tables.name).toBe('The name of the Workflow86 Table');
   });
 });

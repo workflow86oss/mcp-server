@@ -20,7 +20,7 @@ export function jsonResponse(result: object) {
   const text = JSON.stringify(result, null, 2);
   if (process.stdout.isTTY) {
     console.log(text);
-    return textResponse("!snip!")
+    return textResponse("!snip!");
   } else {
     return textResponse(text);
   }

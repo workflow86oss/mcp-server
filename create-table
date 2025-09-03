@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+
+TABLE_NAME=$1
+COLUMNS_JSON=$2
+
+if [ -z "$TABLE_NAME" ]; then
+  echo "Usage: $0 <table-name> <columns-json>"
+  echo "Example: $0 \"My Table\" '[{\"columnName\":\"id\",\"columnType\":\"VARCHAR2\"},{\"columnName\":\"name\",\"columnType\":\"VARCHAR2\"}]'"
+  exit 1
+fi
+
+# Build the arguments JSON
+ARGS="{"
+ARGS="$ARGS\"tableName\":\"$TABLE_NAME\""
+if [ -n "$COLUMNS_JSON" ]; then
+  ARGS="$ARGS,\"columns\":$COLUMNS_JSON"
+fi
+ARGS="$ARGS}"
+
+./exec.sh "create-table" "$ARGS"

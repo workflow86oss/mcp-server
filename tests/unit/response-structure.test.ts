@@ -51,7 +51,7 @@ describe('Response Structure Validation', () => {
         status: 'PUBLISHED',
         name: 'Test Workflow',
         components: [],
-        databases: [],
+        tables: [],
         '@links': {
           'prod-sessions': {
             name: 'list-sessions',

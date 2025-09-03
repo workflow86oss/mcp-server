@@ -4,7 +4,7 @@ import {
   relinkWorkflowHistoryPage,
   relinkWorkflowVersion,
   relinkSessionPage,
-} from '../src/links';
+} from '../../src/links';
 import {
   PageOfWorkflowSummary,
   PageOfWorkflowHistory,
@@ -13,7 +13,7 @@ import {
   WorkflowSummary,
   WorkflowHistory,
   SessionSummary,
-} from '../src/client/types.gen';
+} from '../../src/client/types.gen';
 
 describe('Links functionality with schema metadata', () => {
   describe('relinkWorkflowPage', () => {
@@ -78,7 +78,7 @@ describe('Links functionality with schema metadata', () => {
         name: 'Test Workflow',
         description: 'Test Description',
         components: [],
-        databases: [],
+        tables: [],
         _links: {}
       };
 

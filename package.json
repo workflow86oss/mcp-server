@@ -27,7 +27,8 @@
   },
   "scripts": {
     "build": "tsc && chmod +x build/server.js",
-    "test": "jest",
+    "test": "jest -c jest.unit.config.js",
+    "moduleTest": "jest -c jest.module.config.js",
     "format": "npx prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "check": "npx prettier --check \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "genclient": "npx @hey-api/openapi-ts && npm run format",

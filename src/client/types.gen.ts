@@ -424,7 +424,7 @@ export type ComponentDetails = {
 };
 
 /**
- * The databases referenced by this workflow
+ * The tables referenced by this workflow
  */
 export type TableSummary = {
   /**
@@ -463,9 +463,9 @@ export type WorkflowVersionDetails = {
    */
   components: Array<ComponentDetails>;
   /**
-   * The databases referenced by this workflow
+   * The tables referenced by this workflow
    */
-  databases: Array<TableSummary>;
+  tables: Array<TableSummary>;
   _links: {
     [key: string]: string;
   };

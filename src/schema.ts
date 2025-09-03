@@ -2,29 +2,21 @@
 import * as schemas from "./client/schemas.gen";
 
 // Type mapping from generated types to schema objects - used internally for $ref resolution
-const SCHEMA_MAP = {
-  RunWorkflowCommand: schemas.RunWorkflowCommandSchema,
-  StandardWorkflow86Exception: schemas.Standard_Workflow86_ExceptionSchema,
-  RunWorkflowResponse: schemas.RunWorkflowResponseSchema,
-  RerunWorkflowCommand: schemas.RerunWorkflowCommandSchema,
-  PublishWorkflowCommand: schemas.PublishWorkflowCommandSchema,
-  PublishWorkflowResponse: schemas.PublishWorkflowResponseSchema,
-  UnpublishWorkflowResponse: schemas.UnpublishWorkflowResponseSchema,
-  ComponentResult: schemas.ComponentResultSchema,
-  JsonNode: schemas.JsonNodeSchema,
-  SessionResult: schemas.SessionResultSchema,
-  RetryWorkflowResponse: schemas.RetryWorkflowResponseSchema,
-  PageOfWorkflowSummary: schemas.PageOfWorkflowSummarySchema,
-  WorkflowSummary: schemas.WorkflowSummarySchema,
-  ColumnDetails: schemas.ColumnDetailsSchema,
-  ComponentDetails: schemas.ComponentDetailsSchema,
-  DatabaseReference: schemas.DatabaseReferenceSchema,
-  WorkflowVersionDetails: schemas.WorkflowVersionDetailsSchema,
-  PageOfSessionSummary: schemas.PageOfSessionSummarySchema,
-  SessionSummary: schemas.SessionSummarySchema,
-  PageOfWorkflowHistory: schemas.PageOfWorkflowHistorySchema,
-  WorkflowHistory: schemas.WorkflowHistorySchema,
-} as const;
+// Dynamically build schema mapping from generated schemas
+// Converts schema names like "RunWorkflowCommandSchema" to type names like "RunWorkflowCommand"
+const SCHEMA_MAP = Object.keys(schemas)
+  .filter((key) => key.endsWith("Schema"))
+  .reduce(
+    (acc, schemaKey) => {
+      // Convert "RunWorkflowCommandSchema" -> "RunWorkflowCommand"
+      // Strip "Schema" suffix and all underscores
+      const typeName = schemaKey.replace(/Schema$/, "").replace(/_/g, "");
+
+      acc[typeName] = (schemas as any)[schemaKey];
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
 
 export type SchemaTypeName = keyof typeof SCHEMA_MAP;
 

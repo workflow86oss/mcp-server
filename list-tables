@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+PAGE_NUMBER=$1
+
+# Build the arguments JSON
+ARGS="{"
+if [ -n "$PAGE_NUMBER" ]; then
+  ARGS="$ARGS\"pageNumber\":$PAGE_NUMBER"
+fi
+ARGS="$ARGS}"
+
+./exec.sh "list-tables" "$ARGS"
