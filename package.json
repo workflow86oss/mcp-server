@@ -15,7 +15,7 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
-    "@hey-api/openapi-ts": "^0.80.1",
+    "@hey-api/openapi-ts": "^0.82.3",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.3",
     "jest": "^30.0.5",

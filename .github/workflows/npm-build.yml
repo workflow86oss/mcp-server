@@ -36,13 +36,13 @@ jobs:
 
       - name: Run module test against Dev
         env:
-          W86_DOMAIN: ${{secrets.DEV_HOST}}
+          W86_DOMAIN: ${{secrets.DEV_DOMAIN}}
           W86_API_KEY: ${{secrets.DEV_API_KEY}}
         run: npm run moduleTest
 
       - name: Check generated client matches DEV Public API
         env:
-          W86_DOMAIN: ${{secrets.DEV_HOST}}
+          W86_DOMAIN: ${{secrets.DEV_DOMAIN}}
         run: |
           npm run genclient
           if [ -n "$(git status --porcelain)" ]; then
