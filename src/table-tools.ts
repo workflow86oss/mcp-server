@@ -1,19 +1,31 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { listTables, createTable, getTableDetails } from "./client/sdk.gen.js";
 import {
-  TableSummary,
+  listTables,
+  createTable,
+  getTableDetails,
+  renameColumn,
+  addColumn,
+  deleteColumn,
+} from "./client/sdk.gen.js";
+import {
+  ColumnDetails,
   TableDetails,
-  PageOfTableSummary,
+  TableSummary,
 } from "./client/types.gen.js";
 import { client } from "./client/client.gen.js";
-import { addSchemaMetadataByType, createSchemaDescriber } from "./schema";
+import { addSchemaMetadataByType, schemaToZod } from "./schema";
 import {
   textResponse,
   jsonResponse,
   handleError,
   zodPageNumber,
 } from "./util.js";
+import { relinkTableDetails, relinkTablePage } from "./table-links";
+import {
+  ColumnDetailsSchema,
+  CreateTableCommandSchema,
+} from "./client/schemas.gen";
 
 export function registerTableTools(server: McpServer) {
   server.tool(
@@ -30,27 +42,16 @@ export function registerTableTools(server: McpServer) {
           query: { pageNumber },
         });
 
-        if (!response.data) {
-          return textResponse("No tables found");
+        const tables: TableSummary[] = response?.data?._embedded || [];
+        if (tables.length === 0) {
+          if (pageNumber === 0) {
+            return textResponse("There are no tables defined for this client");
+          } else {
+            return textResponse("This page contains no additional tables");
+          }
         }
 
-        const page = response.data as PageOfTableSummary;
-
-        // Rename _embedded to tables for consistency
-        const result = {
-          ...page,
-          tables: page._embedded,
-        };
-        delete (result as any)._embedded;
-
-        // Add schema metadata
-        const resultWithSchema = addSchemaMetadataByType(
-          result,
-          "PageOfTableSummary",
-          "tables",
-        );
-
-        return jsonResponse(resultWithSchema);
+        return jsonResponse(relinkTablePage(response.data));
       } catch (error) {
         return handleError(error);
       }
@@ -58,53 +59,7 @@ export function registerTableTools(server: McpServer) {
   );
 
   server.tool(
-    "create-table",
-    "Create a new table with the specified name and column definitions. Column types must be one of: VARCHAR2, DECIMAL, BOOLEAN, DATETIME, LIST. Returns the created table details including the generated table ID.",
-    {
-      tableName: z.string().describe("The name for the new table"),
-      columns: z
-        .array(
-          z.object({
-            columnName: z.string().describe("The name of the column"),
-            columnType: z
-              .enum(["VARCHAR2", "DECIMAL", "BOOLEAN", "DATETIME", "LIST"])
-              .describe("The data type of the column"),
-          }),
-        )
-        .describe("Array of column definitions for the table"),
-    },
-    async ({ tableName, columns }) => {
-      try {
-        const response = await createTable({
-          client: client,
-          throwOnError: true,
-          body: {
-            tableName,
-            columns,
-          },
-        });
-
-        if (!response.data) {
-          return textResponse("Table creation failed");
-        }
-
-        const tableDetails = response.data as TableDetails;
-
-        // Add schema metadata
-        const resultWithSchema = addSchemaMetadataByType(
-          tableDetails,
-          "TableDetails",
-        );
-
-        return jsonResponse(resultWithSchema);
-      } catch (error) {
-        return handleError(error);
-      }
-    },
-  );
-
-  server.tool(
-    "get-table-details",
+    "get-table",
     "Retrieve detailed information about a specific table including its ID, name, and complete column definitions. Provides the full schema and metadata for the specified table.",
     {
       tableId: z
@@ -116,20 +71,164 @@ export function registerTableTools(server: McpServer) {
         const response = await getTableDetails({
           client: client,
           throwOnError: true,
-          query: {
+          path: {
             tableId: tableId,
           },
         });
-
-        if (!response.data) {
-          return textResponse(`Table with ID ${tableId} not found`);
-        }
 
         const tableDetails = response.data as TableDetails;
 
         // Add schema metadata
         const resultWithSchema = addSchemaMetadataByType(
-          tableDetails,
+          relinkTableDetails(tableDetails),
+          "TableDetails",
+        );
+
+        return jsonResponse(resultWithSchema);
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "create-table",
+    "Create a new Table with the given name and columns",
+    {
+      tableName: schemaToZod(CreateTableCommandSchema.properties.tableName),
+      columns: z.array(
+        z.object({
+          columnName: schemaToZod(ColumnDetailsSchema.properties.columnName),
+          columnType: schemaToZod(ColumnDetailsSchema.properties.columnType),
+        }),
+      ),
+    },
+    async ({ tableName, columns }) => {
+      try {
+        const response = await createTable({
+          client: client,
+          throwOnError: true,
+          body: {
+            tableName,
+            columns: columns as Array<ColumnDetails>,
+          },
+        });
+
+        const tableDetails = response.data as TableDetails;
+
+        // Add schema metadata
+        const resultWithSchema = addSchemaMetadataByType(
+          relinkTableDetails(tableDetails),
+          "TableDetails",
+        );
+
+        return jsonResponse(resultWithSchema);
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "add-column",
+    "Add a column to an existing table.",
+    {
+      tableId: z
+        .string()
+        .describe("The UUID identifier of the table to add to"),
+      name: z.string().describe("The name of the column to add"),
+      type: schemaToZod(ColumnDetailsSchema.properties.columnType),
+    },
+    async ({ tableId, name, type }) => {
+      try {
+        const response = await addColumn({
+          client: client,
+          throwOnError: true,
+          path: {
+            tableId,
+          },
+          body: {
+            columnName: name,
+            columnType: type,
+          },
+        });
+
+        const tableDetails = response.data as TableDetails;
+
+        const resultWithSchema = addSchemaMetadataByType(
+          relinkTableDetails(tableDetails),
+          "TableDetails",
+        );
+
+        return jsonResponse(resultWithSchema);
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "rename-column",
+    "Rename a column in an existing table.",
+    {
+      tableId: z.string().describe("The UUID identifier of the table to edit"),
+      originalColumnName: z
+        .string()
+        .describe("The name of the existing column to rename"),
+      newColumnName: z.string().describe("The new name for the column"),
+    },
+    async ({ tableId, originalColumnName, newColumnName }) => {
+      try {
+        const response = await renameColumn({
+          client: client,
+          throwOnError: true,
+          path: {
+            tableId,
+            originalColumnName,
+          },
+          query: {
+            newColumnName,
+          },
+        });
+
+        const tableDetails = response.data as TableDetails;
+
+        // Add schema metadata
+        const resultWithSchema = addSchemaMetadataByType(
+          relinkTableDetails(tableDetails),
+          "TableDetails",
+        );
+
+        return jsonResponse(resultWithSchema);
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "delete-column",
+    "Delete a column from an existing table.",
+    {
+      tableId: z.string().describe("The UUID identifier of the table to edit"),
+      columnName: z.string().describe("The name of the column to delete"),
+    },
+    async ({ tableId, columnName }) => {
+      try {
+        const response = await deleteColumn({
+          client: client,
+          throwOnError: true,
+          path: {
+            tableId,
+            columnName,
+          },
+        });
+
+        const tableDetails = response.data as TableDetails;
+
+        // Add schema metadata
+        const resultWithSchema = addSchemaMetadataByType(
+          relinkTableDetails(tableDetails),
           "TableDetails",
         );
 

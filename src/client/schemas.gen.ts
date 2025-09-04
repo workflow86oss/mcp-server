@@ -224,16 +224,20 @@ export const ColumnDetailsSchema = {
       enum: ["DECIMAL", "VARCHAR2", "BOOLEAN", "DATETIME", "LIST"],
     },
   },
+  description: "Array of column definitions",
 } as const;
 
 export const CreateTableCommandSchema = {
+  required: ["columns", "tableName"],
   type: "object",
   properties: {
     tableName: {
       type: "string",
+      description: "The name of the table to create",
     },
     columns: {
       type: "array",
+      description: "Array of column definitions",
       items: {
         $ref: "#/components/schemas/ColumnDetails",
       },
@@ -242,7 +246,7 @@ export const CreateTableCommandSchema = {
 } as const;
 
 export const TableDetailsSchema = {
-  required: ["columns", "name", "tableId"],
+  required: ["_links", "columns", "name", "tableId"],
   type: "object",
   properties: {
     tableId: {
@@ -258,6 +262,12 @@ export const TableDetailsSchema = {
       description: "The columns in the schema of this Table",
       items: {
         $ref: "#/components/schemas/ColumnDetails",
+      },
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
       },
     },
   },
@@ -655,7 +665,7 @@ export const ComponentDetailsSchema = {
 } as const;
 
 export const TableSummarySchema = {
-  required: ["name", "tableId"],
+  required: ["_links", "name", "tableId"],
   type: "object",
   properties: {
     tableId: {
@@ -665,6 +675,12 @@ export const TableSummarySchema = {
     name: {
       type: "string",
       description: "The name of the Workflow86 Table",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
     },
   },
   description: "The tables referenced by this workflow",

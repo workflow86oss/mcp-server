@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+TABLE_ID=$1
+COLUMN_NAME=$2
+COLUMN_TYPE=$3
+
+if [ -z "$TABLE_ID" ] || [ -z "$COLUMN_NAME" ] || [ -z "$COLUMN_TYPE" ]; then
+  echo "Usage: $0 <table-id> <column-name> <column-type>"
+  echo "Example: $0 \"123e4567-e89b-12d3-a456-426614174000\" \"email\" \"VARCHAR2\""
+  exit 1
+fi
+
+# Build the arguments JSON
+ARGS="{\"tableId\":\"$TABLE_ID\",\"name\":\"$COLUMN_NAME\",\"type\":\"$COLUMN_TYPE\"}"
+
+./exec.sh "add-column" "$ARGS"

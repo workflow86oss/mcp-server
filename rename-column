@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+TABLE_ID=$1
+ORIGINAL_COLUMN_NAME=$2
+NEW_COLUMN_NAME=$3
+
+if [ -z "$TABLE_ID" ] || [ -z "$ORIGINAL_COLUMN_NAME" ] || [ -z "$NEW_COLUMN_NAME" ]; then
+  echo "Usage: $0 <table-id> <original-column-name> <new-column-name>"
+  echo "Example: $0 \"123e4567-e89b-12d3-a456-426614174000\" \"email\" \"email_address\""
+  exit 1
+fi
+
+# Build the arguments JSON
+ARGS="{\"tableId\":\"$TABLE_ID\",\"originalColumnName\":\"$ORIGINAL_COLUMN_NAME\",\"newColumnName\":\"$NEW_COLUMN_NAME\"}"
+
+./exec.sh "rename-column" "$ARGS"

@@ -141,6 +141,9 @@ export type PublishWorkflowResponse = {
   draftVersion?: number;
 };
 
+/**
+ * Array of column definitions
+ */
 export type ColumnDetails = {
   /**
    * The column name
@@ -153,8 +156,14 @@ export type ColumnDetails = {
 };
 
 export type CreateTableCommand = {
-  tableName?: string;
-  columns?: Array<ColumnDetails>;
+  /**
+   * The name of the table to create
+   */
+  tableName: string;
+  /**
+   * Array of column definitions
+   */
+  columns: Array<ColumnDetails>;
 };
 
 export type TableDetails = {
@@ -170,6 +179,9 @@ export type TableDetails = {
    * The columns in the schema of this Table
    */
   columns: Array<ColumnDetails>;
+  _links: {
+    [key: string]: string;
+  };
 };
 
 /**
@@ -435,6 +447,9 @@ export type TableSummary = {
    * The name of the Workflow86 Table
    */
   name: string;
+  _links: {
+    [key: string]: string;
+  };
 };
 
 export type WorkflowVersionDetails = {
@@ -909,9 +924,9 @@ export type RenameColumnData = {
   body?: never;
   path: {
     tableId: string;
+    originalColumnName: string;
   };
   query: {
-    originalColumnName: string;
     newColumnName: string;
   };
   url: "/v1/table/{tableId}/rename/{originalColumnName}";
@@ -929,11 +944,11 @@ export type RenameColumnResponse =
 
 export type DeleteColumnData = {
   body?: never;
-  path?: never;
-  query: {
+  path: {
     tableId: string;
     columnName: string;
   };
+  query?: never;
   url: "/v1/table/{tableId}/delete/{columnName}";
 };
 
@@ -1503,10 +1518,10 @@ export type ListTasksResponse = ListTasksResponses[keyof ListTasksResponses];
 
 export type GetTableDetailsData = {
   body?: never;
-  path?: never;
-  query: {
+  path: {
     tableId: string;
   };
+  query?: never;
   url: "/v1/table/{tableId}";
 };
 
