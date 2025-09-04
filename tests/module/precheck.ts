@@ -1,61 +1,80 @@
-import {callTool} from "./test-utils";
+import { callTool } from "./test-utils";
 
 module.exports = async () => {
-    checkEnvVars();
+  checkEnvVars();
 
-    await callTool('list-workflows', {});
-}
+  await callTool("list-workflows", {});
+  console.log("✅ Project Service is contactable");
+};
 
 /**
  * Check that required environment variables are set for module tests
  */
 function checkEnvVars() {
-    const requiredVars = {
-        'W86_API_KEY': 'Your Workflow86 API key',
-        'W86_DOMAIN': 'Workflow86 API domain (e.g., https://rest.workflow86.com)'
-    };
+  const w86ApiKey = process.env.W86_API_KEY;
+  const w86Headers = process.env.W86_HEADERS;
+  const w86Domain = process.env.W86_DOMAIN;
 
-    let missingVars = [];
-    let hasTestValues = [];
+  // Check that either W86_API_KEY or W86_HEADERS is provided
+  if (!w86ApiKey && !w86Headers) {
+    throw new Error(`❌ Module test environment check failed
 
-    for (const [varName, description] of Object.entries(requiredVars)) {
-        const value = process.env[varName];
+Either W86_API_KEY or W86_HEADERS is required:
+  W86_API_KEY: Your Workflow86 API key
+  W86_HEADERS: Your Workflow86 headers (JSON format)
 
-        if (!value) {
-            missingVars.push({name: varName, description});
-        } else if (value.includes('test-') || value === 'test-api-key') {
-            hasTestValues.push({name: varName, value, description});
-        }
-    }
+Also required:
+  W86_DOMAIN: Workflow86 API domain (e.g., https://rest.workflow86.com)
 
-    if (missingVars.length > 0 || hasTestValues.length > 0) {
-        let errorMessage = '❌ Module test environment check throw new Errored\n';
-
-        if (missingVars.length > 0) {
-            errorMessage +='Missing required environment variables:';
-            missingVars.forEach(({name, description}) => {
-                errorMessage +=`  ${name}: ${description}\n`;
-            });
-            errorMessage +='\n';
-        }
-
-        if (hasTestValues.length > 0) {
-            errorMessage +='Environment variables contain test/placeholder values:';
-            hasTestValues.forEach(({name, value, description}) => {
-                errorMessage +=`  ${name}="${value}" (${description})\n`;
-            });
-            errorMessage +='\n';
-        }
-
-        errorMessage +=
-            `To run module tests, set the required environment variables:
-export W86_API_KEY="your-actual-api-key"';
+Set the required environment variables:
+export W86_API_KEY="your-actual-api-key"
+# OR
+export W86_HEADERS='{"Authorization": "Bearer your-token"}'
 export W86_DOMAIN="https://rest.workflow86.com"
 
-Then run: npm run moduleTest`;
+Then run: npm run moduleTest`);
+  }
 
-        throw new Error(errorMessage);
-    }
+  // Check for required W86_DOMAIN
+  if (!w86Domain) {
+    throw new Error(`❌ Module test environment check failed
 
-    console.log('✅ Module test environment variables are configured');
+Missing required environment variable:
+  W86_DOMAIN: Workflow86 API domain (e.g., https://rest.workflow86.com)
+
+Set the required environment variables:
+export W86_DOMAIN="https://rest.workflow86.com"
+
+Then run: npm run moduleTest`);
+  }
+
+  // Check for test/placeholder values
+  let hasTestValues = [];
+
+  if (
+    w86ApiKey &&
+    (w86ApiKey.includes("test-") || w86ApiKey === "test-api-key")
+  ) {
+    hasTestValues.push({ name: "W86_API_KEY", value: w86ApiKey });
+  }
+
+  if (w86Headers && w86Headers.includes("test-")) {
+    hasTestValues.push({ name: "W86_HEADERS", value: w86Headers });
+  }
+
+  if (w86Domain && w86Domain.includes("test-")) {
+    hasTestValues.push({ name: "W86_DOMAIN", value: w86Domain });
+  }
+
+  if (hasTestValues.length > 0) {
+    let errorMessage =
+      "❌ Environment variables contain test/placeholder values:\n";
+    hasTestValues.forEach(({ name, value }) => {
+      errorMessage += `  ${name}="${value}"\n`;
+    });
+    errorMessage += "\nPlease set actual values instead of test placeholders.";
+    throw new Error(errorMessage);
+  }
+
+  console.log("\n✅ Module test environment variables are configured");
 }

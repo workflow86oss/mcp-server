@@ -9,7 +9,7 @@ import {
 } from "./client/sdk.gen.js";
 import { SessionSummary } from "./client/types.gen.js";
 import { client } from "./client/client.gen.js";
-import { relinkSessionPage, relinkSessionResult } from "./links.js";
+import { relinkSessionPage, relinkSessionResult } from "./session-links.js";
 import { addSchemaMetadataByType, createSchemaDescriber } from "./schema";
 import {
   textResponse,

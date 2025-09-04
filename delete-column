@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+TABLE_ID=$1
+COLUMN_NAME=$2
+
+if [ -z "$TABLE_ID" ] || [ -z "$COLUMN_NAME" ]; then
+  echo "Usage: $0 <table-id> <column-name>"
+  echo "Example: $0 \"123e4567-e89b-12d3-a456-426614174000\" \"email\""
+  exit 1
+fi
+
+# Build the arguments JSON
+ARGS="{\"tableId\":\"$TABLE_ID\",\"columnName\":\"$COLUMN_NAME\"}"
+
+./exec.sh "delete-column" "$ARGS"

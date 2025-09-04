@@ -212,6 +212,10 @@ export const listTables = <ThrowOnError extends boolean = false>(
   });
 };
 
+/**
+ * Create Table
+ * Create a new Table with the given name and columns
+ */
 export const createTable = <ThrowOnError extends boolean = false>(
   options: Options<CreateTableData, ThrowOnError>,
 ) => {
@@ -273,6 +277,10 @@ export const deleteColumn = <ThrowOnError extends boolean = false>(
   });
 };
 
+/**
+ * Add Column
+ * Add a new column to an existing table
+ */
 export const addColumn = <ThrowOnError extends boolean = false>(
   options: Options<AddColumnData, ThrowOnError>,
 ) => {
@@ -549,6 +557,10 @@ export const listTasks = <ThrowOnError extends boolean = false>(
   });
 };
 
+/**
+ * Get Table Details
+ * Get the schema details of the given table
+ */
 export const getTableDetails = <ThrowOnError extends boolean = false>(
   options: Options<GetTableDetailsData, ThrowOnError>,
 ) => {

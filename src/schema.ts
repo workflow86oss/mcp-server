@@ -1,5 +1,9 @@
 // This file provides schema description lookup functionality
 import * as schemas from "./client/schemas.gen";
+import { type } from "node:os";
+import { z, ZodTypeAny } from "zod";
+import { ZodType } from "zod/src/v3/types";
+import { JSONSchema } from "zod/v4/core/json-schema";
 
 // Type mapping from generated types to schema objects - used internally for $ref resolution
 // Dynamically build schema mapping from generated schemas
@@ -259,4 +263,40 @@ export function addSchemaMetadataByType<T extends SchemaTypeName>(
     ...obj,
     ...metadata,
   };
+}
+
+export function schemaToZod(schema: any): ZodTypeAny {
+  let result: ZodTypeAny = zodType(schema);
+  if (schema.description) {
+    result = result.describe(schema.description);
+  }
+  return result;
+}
+
+function zodType(schema: any): ZodTypeAny {
+  if (schema.enum) {
+    return z.enum(schema.enum);
+  }
+  switch (schema.type) {
+    case "string": {
+      // map common formats
+      if (schema.format === "date-time") return z.string().datetime(); // or z.coerce.date()
+      if (schema.format === "uuid") return z.string().uuid();
+      if (schema.format === "email") return z.string().email();
+      return z.string();
+    }
+    case "integer":
+      return z.number().int();
+    case "number":
+      return z.number();
+    case "boolean":
+      return z.boolean();
+    case "array":
+      throw new Error("Handle arrays manually");
+    case "object": {
+      throw new Error("Handle objects manually");
+    }
+    default:
+      return z.any();
+  }
 }

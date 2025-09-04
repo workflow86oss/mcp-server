@@ -16,6 +16,19 @@ export function textResponse(text: string) {
   };
 }
 
+export function errorResponse(code: number, message: string) {
+  return {
+    isError: true as const,
+    content: [
+      {
+        type: "text" as const,
+        text: message,
+        code: code,
+      },
+    ],
+  };
+}
+
 export function jsonResponse(result: object) {
   const text = JSON.stringify(result, null, 2);
   if (process.stdout.isTTY) {
@@ -28,14 +41,23 @@ export function jsonResponse(result: object) {
 
 export function handleError(error: any) {
   if (error.httpStatus) {
-    return textResponse(
-      `An unexpected HTTP ${error.httpStatus} error occurred: ${error?.message || JSON.stringify(error)}`,
-    );
+    if (error.httpStatus >= 400 && error.httpStatus < 500 && error.message) {
+      return errorResponse(-32600, error.message);
+    } else {
+      return errorResponse(
+        -32603,
+        `An unexpected HTTP ${error.httpStatus} error occurred: ${error?.message || JSON.stringify(error)}`,
+      );
+    }
   } else if (error instanceof Error) {
     console.error(error.name, error.message, error.stack);
-    return textResponse(`An unexpected error occurred: ${error.message}`);
+    return errorResponse(
+      -32603,
+      `An unexpected error occurred: ${error.message}`,
+    );
   } else {
-    return textResponse(
+    return errorResponse(
+      -32603,
       `An unexpected failure occurred: ${error?.message || JSON.stringify(error)}`,
     );
   }

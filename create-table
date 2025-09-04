@@ -2,20 +2,41 @@
 set -e
 
 TABLE_NAME=$1
-COLUMNS_JSON=$2
+shift
 
 if [ -z "$TABLE_NAME" ]; then
-  echo "Usage: $0 <table-name> <columns-json>"
-  echo "Example: $0 \"My Table\" '[{\"columnName\":\"id\",\"columnType\":\"VARCHAR2\"},{\"columnName\":\"name\",\"columnType\":\"VARCHAR2\"}]'"
+  echo "Usage: $0 <table-name> [column-name column-type] ..."
+  echo "Example: $0 \"My Table\" \"id\" \"VARCHAR2\" \"name\" \"VARCHAR2\""
   exit 1
 fi
 
-# Build the arguments JSON
-ARGS="{"
-ARGS="$ARGS\"tableName\":\"$TABLE_NAME\""
-if [ -n "$COLUMNS_JSON" ]; then
-  ARGS="$ARGS,\"columns\":$COLUMNS_JSON"
+# Check if we have pairs of column name/type parameters
+if [ $(($# % 2)) -ne 0 ]; then
+  echo "Error: Column parameters must come in pairs (name, type)"
+  echo "Usage: $0 <table-name> [column-name column-type] ..."
+  echo "Example: $0 \"My Table\" \"id\" \"VARCHAR2\" \"name\" \"VARCHAR2\""
+  exit 1
 fi
-ARGS="$ARGS}"
+
+# Build columns JSON array from parameter pairs
+COLUMNS_JSON="["
+FIRST=true
+while [ $# -gt 1 ]; do
+  COLUMN_NAME=$1
+  COLUMN_TYPE=$2
+  shift 2
+  
+  if [ "$FIRST" = true ]; then
+    FIRST=false
+  else
+    COLUMNS_JSON="$COLUMNS_JSON,"
+  fi
+  
+  COLUMNS_JSON="$COLUMNS_JSON{\"columnName\":\"$COLUMN_NAME\",\"columnType\":\"$COLUMN_TYPE\"}"
+done
+COLUMNS_JSON="$COLUMNS_JSON]"
+
+# Build the arguments JSON
+ARGS="{\"tableName\":\"$TABLE_NAME\",\"columns\":$COLUMNS_JSON}"
 
 ./exec.sh "create-table" "$ARGS"

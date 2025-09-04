@@ -16,6 +16,10 @@ export const Standard_Workflow86_ExceptionSchema = {
       type: "string",
       description: "Message containing details of the problem",
     },
+    retryable: {
+      type: "string",
+      description: "Whether this issue can usefully be retried",
+    },
   },
 } as const;
 
@@ -224,16 +228,20 @@ export const ColumnDetailsSchema = {
       enum: ["DECIMAL", "VARCHAR2", "BOOLEAN", "DATETIME", "LIST"],
     },
   },
+  description: "Array of column definitions",
 } as const;
 
 export const CreateTableCommandSchema = {
+  required: ["columns", "tableName"],
   type: "object",
   properties: {
     tableName: {
       type: "string",
+      description: "The name of the table to create",
     },
     columns: {
       type: "array",
+      description: "Array of column definitions",
       items: {
         $ref: "#/components/schemas/ColumnDetails",
       },
@@ -242,7 +250,7 @@ export const CreateTableCommandSchema = {
 } as const;
 
 export const TableDetailsSchema = {
-  required: ["columns", "name", "tableId"],
+  required: ["_links", "columns", "name", "tableId"],
   type: "object",
   properties: {
     tableId: {
@@ -258,6 +266,12 @@ export const TableDetailsSchema = {
       description: "The columns in the schema of this Table",
       items: {
         $ref: "#/components/schemas/ColumnDetails",
+      },
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
       },
     },
   },
@@ -585,6 +599,22 @@ export const WorkflowSummarySchema = {
   description: "The page of response data as an array",
 } as const;
 
+export const ColumnDtoSchema = {
+  type: "object",
+  properties: {
+    columnId: {
+      type: "string",
+    },
+    columnName: {
+      type: "string",
+    },
+    columnType: {
+      type: "string",
+      enum: ["DECIMAL", "VARCHAR2", "BOOLEAN", "DATETIME", "LIST"],
+    },
+  },
+} as const;
+
 export const ComponentDetailsSchema = {
   required: [
     "componentId",
@@ -651,33 +681,58 @@ export const ComponentDetailsSchema = {
       },
     },
   },
-  description: "The components that make up this workflow",
 } as const;
 
-export const TableSummarySchema = {
-  required: ["name", "tableId"],
+export const ConnectedDatabaseDtoSchema = {
   type: "object",
   properties: {
-    tableId: {
+    databaseId: {
       type: "string",
-      description: "The id of the Workflow86 Table",
     },
-    name: {
+    databaseName: {
       type: "string",
-      description: "The name of the Workflow86 Table",
+    },
+    columns: {
+      type: "array",
+      items: {
+        $ref: "#/components/schemas/ColumnDto",
+      },
+    },
+    componentLinks: {
+      type: "array",
+      items: {
+        type: "string",
+      },
     },
   },
-  description: "The tables referenced by this workflow",
+} as const;
+
+export const WorkflowDetailContentsSchema = {
+  type: "object",
+  properties: {
+    databases: {
+      type: "array",
+      items: {
+        $ref: "#/components/schemas/ConnectedDatabaseDto",
+      },
+    },
+    components: {
+      type: "array",
+      items: {
+        $ref: "#/components/schemas/ComponentDetails",
+      },
+    },
+  },
+  description: "The components that make up this workflow",
 } as const;
 
 export const WorkflowVersionDetailsSchema = {
   required: [
     "_links",
-    "components",
+    "content",
     "description",
     "name",
     "status",
-    "tables",
     "version",
     "workflowId",
   ],
@@ -705,19 +760,8 @@ export const WorkflowVersionDetailsSchema = {
       type: "string",
       description: "The description of this workflow",
     },
-    components: {
-      type: "array",
-      description: "The components that make up this workflow",
-      items: {
-        $ref: "#/components/schemas/ComponentDetails",
-      },
-    },
-    tables: {
-      type: "array",
-      description: "The tables referenced by this workflow",
-      items: {
-        $ref: "#/components/schemas/TableSummary",
-      },
+    content: {
+      $ref: "#/components/schemas/WorkflowDetailContents",
     },
     _links: {
       type: "object",
@@ -1035,6 +1079,28 @@ export const PageOfTableSummarySchema = {
       },
     },
   },
+} as const;
+
+export const TableSummarySchema = {
+  required: ["_links", "name", "tableId"],
+  type: "object",
+  properties: {
+    tableId: {
+      type: "string",
+      description: "The id of the Workflow86 Table",
+    },
+    name: {
+      type: "string",
+      description: "The name of the Workflow86 Table",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
+  },
+  description: "The page of response data as an array",
 } as const;
 
 export const FormSummaryDtoSchema = {

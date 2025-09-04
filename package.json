@@ -10,7 +10,7 @@
   "license": "MIT",
   "description": "MCP Server for workflow86.com",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.13.1",
+    "@modelcontextprotocol/sdk": "^1.17.5",
     "undici": "^6.21.3",
     "zod": "^3.25.67"
   },
@@ -29,8 +29,8 @@
     "build": "tsc && chmod +x build/server.js",
     "test": "jest -c jest.unit.config.js",
     "moduleTest": "jest -c jest.module.config.js",
-    "format": "npx prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
-    "check": "npx prettier --check \"src/**/*.{js,jsx,ts,tsx,css,md,json}\"",
+    "format": "npx prettier --write \"{src,tests}/**/*.{js,jsx,ts,tsx,css,md,json}\"",
+    "check": "npx prettier --check \"{src,tests}/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "genclient": "npx @hey-api/openapi-ts && npm run format",
     "prep": "npm run format && npm run test"
   },
