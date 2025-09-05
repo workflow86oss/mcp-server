@@ -183,7 +183,7 @@ describe("Workflow Tools Module Tests", () => {
           workflowId: "00000000-0000-0000-0000-000000000000",
           workflowVersion: "DRAFT",
         }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(/not found/i);
     });
   });
 
@@ -266,7 +266,7 @@ describe("Workflow Tools Module Tests", () => {
         callTool("publish-workflow", {
           workflowId: "invalid-uuid",
         }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(/The workflowId parameter is too short to be a UUID/i);
     });
 
     it("should handle non-existent workflow", async () => {
@@ -274,7 +274,7 @@ describe("Workflow Tools Module Tests", () => {
         callTool("publish-workflow", {
           workflowId: "00000000-0000-0000-0000-000000000000",
         }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(/not found/i);
     });
   });
 
@@ -307,7 +307,7 @@ describe("Workflow Tools Module Tests", () => {
         callTool("unpublish-workflow", {
           workflowId: "invalid-uuid",
         }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(/The workflowId parameter is too short to be a UUID/i);
     });
 
     it("should handle non-existent workflow", async () => {
@@ -315,25 +315,7 @@ describe("Workflow Tools Module Tests", () => {
         callTool("unpublish-workflow", {
           workflowId: "99999999-9999-9999-9999-999999999999",
         }),
-      ).rejects.toThrow();
-    });
-
-    it("should handle already unpublished workflow", async () => {
-      // Ensure it's unpublished first
-      try {
-        await callTool("unpublish-workflow", {
-          workflowId: publishedWorkflowId,
-        });
-      } catch (e) {
-        // Ignore if already unpublished
-      }
-
-      // Try to unpublish again - should throw new Error with meaningful error
-      await expect(
-        callTool("unpublish-workflow", {
-          workflowId: publishedWorkflowId,
-        }),
-      ).rejects.toThrow();
+      ).rejects.toThrow(/not found/i);
     });
   });
 

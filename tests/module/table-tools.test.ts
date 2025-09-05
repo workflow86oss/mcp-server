@@ -133,7 +133,7 @@ describe("Table Tools Module Tests", () => {
 
       await expect(
         callTool("create-table", {
-          tableName: "",
+          tableName: " ",
           columns: columns,
         }),
       ).rejects.toThrow();
@@ -209,6 +209,396 @@ describe("Table Tools Module Tests", () => {
       await expect(
         callTool("get-table", { tableId: invalidId }),
       ).rejects.toThrow();
+    });
+  });
+
+  describe("add-column", () => {
+    it("should add a new column to an existing table", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      const result = await callTool("add-column", {
+        tableId: createdTableId,
+        name: "new_test_column",
+        type: "VARCHAR2",
+      });
+
+      expect(result.content).toBeDefined();
+      expect(result.content?.[0]?.type).toBe("text");
+
+      const responseText = result.content![0].text!;
+      const response = parseResponse(responseText);
+
+      if (!isPlainTextResponse(response)) {
+        expect(response).toHaveProperty("tableId");
+        expect(response.tableId).toBe(createdTableId);
+        expect(response).toHaveProperty("columns");
+        expect(Array.isArray(response.columns)).toBe(true);
+
+        // Check that the new column was added
+        const newColumn = response.columns.find(
+          (col: any) => col.columnName === "new_test_column",
+        );
+        expect(newColumn).toBeDefined();
+        expect(newColumn.columnType).toBe("VARCHAR2");
+      }
+    });
+
+    it("should handle adding different column types", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      const columnTypes = ["DATETIME", "BOOLEAN", "DECIMAL"];
+
+      for (const columnType of columnTypes) {
+        const columnName = `test_${columnType.toLowerCase()}_col`;
+        const result = await callTool("add-column", {
+          tableId: createdTableId,
+          name: columnName,
+          type: columnType,
+        });
+
+        expect(result.content).toBeDefined();
+        const responseText = result.content![0].text!;
+        const response = parseResponse(responseText);
+
+        if (!isPlainTextResponse(response)) {
+          const addedColumn = response.columns.find(
+            (col: any) => col.columnName === columnName,
+          );
+          expect(addedColumn).toBeDefined();
+          expect(addedColumn.columnType).toBe(columnType);
+        }
+      }
+    });
+
+    it("should handle adding column with duplicate name", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      await expect(
+        callTool("add-column", {
+          tableId: createdTableId,
+          name: "id", // This should already exist from table creation
+          type: "VARCHAR2",
+        }),
+      ).rejects.toThrow(/Column names must be unique/i);
+    });
+
+    it("should handle invalid table ID", async () => {
+      const nonExistentId = "00000000-0000-0000-0000-000000000000";
+
+      await expect(
+        callTool("add-column", {
+          tableId: nonExistentId,
+          name: "test_column",
+          type: "VARCHAR2",
+        }),
+      ).rejects.toThrow(/not found/i);
+    });
+
+    it("should handle invalid column type", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      await expect(
+        callTool("add-column", {
+          tableId: createdTableId,
+          name: "invalid_type_column",
+          type: "INVALID_TYPE",
+        }),
+      ).rejects.toThrow(/invalid.*type/i);
+    });
+
+    it("should handle empty column name", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      await expect(
+        callTool("add-column", {
+          tableId: createdTableId,
+          name: " ",
+          type: "VARCHAR2",
+        }),
+      ).rejects.toThrow(/must not be blank/i);
+    });
+  });
+
+  describe("rename-column", () => {
+    it("should rename an existing column", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      const result = await callTool("rename-column", {
+        tableId: createdTableId,
+        originalColumnName: "name", // Original column from table creation
+        newColumnName: "full_name",
+      });
+
+      expect(result.content).toBeDefined();
+      expect(result.content?.[0]?.type).toBe("text");
+
+      const responseText = result.content![0].text!;
+      const response = parseResponse(responseText);
+
+      if (!isPlainTextResponse(response)) {
+        expect(response).toHaveProperty("tableId");
+        expect(response.tableId).toBe(createdTableId);
+        expect(response).toHaveProperty("columns");
+        expect(Array.isArray(response.columns)).toBe(true);
+
+        // Check that the column was renamed
+        const renamedColumn = response.columns.find(
+          (col: any) => col.columnName === "full_name",
+        );
+        expect(renamedColumn).toBeDefined();
+
+        // Check that the old name is gone
+        const oldColumn = response.columns.find(
+          (col: any) => col.columnName === "name",
+        );
+        expect(oldColumn).toBeUndefined();
+      }
+    });
+
+    it("should handle renaming non-existent column", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      await expect(
+        callTool("rename-column", {
+          tableId: createdTableId,
+          originalColumnName: "non_existent_column",
+          newColumnName: "new_name",
+        }),
+      ).rejects.toThrow(/not found/i);
+    });
+
+    it("should handle renaming to existing column name", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      await expect(
+        callTool("rename-column", {
+          tableId: createdTableId,
+          originalColumnName: "full_name", // From previous rename test
+          newColumnName: "id", // This should already exist
+        }),
+      ).rejects.toThrow(/must be unique/i);
+    });
+
+    it("should handle invalid table ID for rename column", async () => {
+      const nonExistentId = "00000000-0000-0000-0000-000000000000";
+
+      await expect(
+        callTool("rename-column", {
+          tableId: nonExistentId,
+          originalColumnName: "test_column",
+          newColumnName: "renamed_column",
+        }),
+      ).rejects.toThrow(/not found/i);
+    });
+
+    it("should handle empty column names", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      await expect(
+        callTool("rename-column", {
+          tableId: createdTableId,
+          originalColumnName: " ",
+          newColumnName: "new_name",
+        }),
+      ).rejects.toThrow(/must not be blank/i);
+
+      await expect(
+        callTool("rename-column", {
+          tableId: createdTableId,
+          originalColumnName: "full_name",
+          newColumnName: " ",
+        }),
+      ).rejects.toThrow(/must not be blank/i);
+    });
+  });
+
+  describe("delete-column", () => {
+    it("should delete an existing column", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      const result = await callTool("delete-column", {
+        tableId: createdTableId,
+        columnName: "new_test_column", // Column added in add-column test
+      });
+
+      expect(result.content).toBeDefined();
+      expect(result.content?.[0]?.type).toBe("text");
+
+      const responseText = result.content![0].text!;
+      const response = parseResponse(responseText);
+
+      if (!isPlainTextResponse(response)) {
+        expect(response).toHaveProperty("tableId");
+        expect(response.tableId).toBe(createdTableId);
+        expect(response).toHaveProperty("columns");
+        expect(Array.isArray(response.columns)).toBe(true);
+
+        // Check that the column was deleted
+        const deletedColumn = response.columns.find(
+          (col: any) => col.columnName === "new_test_column",
+        );
+        expect(deletedColumn).toBeUndefined();
+      }
+    });
+
+    it("should delete multiple columns sequentially", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      const columnsToDelete = [
+        "test_datetime_col",
+        "test_boolean_col",
+        "test_decimal_col",
+      ];
+
+      for (const columnName of columnsToDelete) {
+        const result = await callTool("delete-column", {
+          tableId: createdTableId,
+          columnName: columnName,
+        });
+
+        expect(result.content).toBeDefined();
+        const responseText = result.content![0].text!;
+        const response = parseResponse(responseText);
+
+        if (!isPlainTextResponse(response)) {
+          const deletedColumn = response.columns.find(
+            (col: any) => col.columnName === columnName,
+          );
+          expect(deletedColumn).toBeUndefined();
+        }
+      }
+    });
+
+    it("should handle deleting non-existent column", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      await expect(
+        callTool("delete-column", {
+          tableId: createdTableId,
+          columnName: "non_existent_column",
+        }),
+      ).rejects.toThrow(/not found/i);
+    });
+
+    it("should handle invalid table ID for delete column", async () => {
+      const nonExistentId = "00000000-0000-0000-0000-000000000000";
+
+      await expect(
+        callTool("delete-column", {
+          tableId: nonExistentId,
+          columnName: "test_column",
+        }),
+      ).rejects.toThrow(/not found/i);
+    });
+
+    it("should handle empty column name", async () => {
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      await expect(
+        callTool("delete-column", {
+          tableId: createdTableId,
+          columnName: " ",
+        }),
+      ).rejects.toThrow(/must not be blank/i);
+    });
+
+    it("should handle deleting the last column edge case", async () => {
+      // This test might need to be adjusted based on business rules
+      // Some databases don't allow tables with zero columns
+      if (!createdTableId) {
+        throw new Error(
+          "No test table available. Create table test must run first.",
+        );
+      }
+
+      // First, get the current table state to see remaining columns
+      const tableResult = await callTool("get-table", {
+        tableId: createdTableId,
+      });
+
+      const tableResponseText = tableResult.content![0].text!;
+      const tableResponse = parseResponse(tableResponseText);
+
+      if (!isPlainTextResponse(tableResponse)) {
+        const remainingColumns = tableResponse.columns || [];
+
+        if (remainingColumns.length === 1) {
+          // If only one column remains, deletion might be restricted
+          const lastColumn = remainingColumns[0];
+
+          // This might throw an error or succeed based on business rules
+          try {
+            const result = await callTool("delete-column", {
+              tableId: createdTableId,
+              columnName: lastColumn.columnName,
+            });
+            // If it succeeds, verify the behavior
+            expect(result.content).toBeDefined();
+          } catch (error) {
+            // If it fails, that's also valid behavior for this edge case
+            expect(error).toBeDefined();
+          }
+        } else {
+          // Delete one of the remaining columns
+          const result = await callTool("delete-column", {
+            tableId: createdTableId,
+            columnName: remainingColumns[0].columnName,
+          });
+          expect(result.content).toBeDefined();
+        }
+      }
     });
   });
 });

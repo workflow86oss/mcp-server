@@ -56,7 +56,7 @@ async function main() {
     `Workflow86 MCP Server running on stdio (Node.js version: ${process.version}, baseUrl: ${baseUrl})`,
   );
 
-  if (!process.env.W86_API_KEY) {
+  if (!process.env.W86_API_KEY && !process.env.W86_HEADERS) {
     console.error("W86_API_KEY is not set");
     process.exit(1);
   }
