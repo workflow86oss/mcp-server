@@ -395,12 +395,9 @@ export type WorkflowSummary = {
   };
 };
 
-export type ColumnDto = {
-  columnId?: string;
-  columnName?: string;
-  columnType?: "DECIMAL" | "VARCHAR2" | "BOOLEAN" | "DATETIME" | "LIST";
-};
-
+/**
+ * The components that make up this workflow
+ */
 export type ComponentDetails = {
   /**
    * UUID identifier of the Component
@@ -442,19 +439,21 @@ export type ComponentDetails = {
   validationErrors: Array<string>;
 };
 
-export type ConnectedDatabaseDto = {
-  databaseId?: string;
-  databaseName?: string;
-  columns?: Array<ColumnDto>;
-  componentLinks?: Array<string>;
-};
-
 /**
- * The components that make up this workflow
+ * The tables referenced by this workflow
  */
-export type WorkflowDetailContents = {
-  databases?: Array<ConnectedDatabaseDto>;
-  components?: Array<ComponentDetails>;
+export type TableSummary = {
+  /**
+   * The id of the Workflow86 Table
+   */
+  tableId: string;
+  /**
+   * The name of the Workflow86 Table
+   */
+  name: string;
+  _links: {
+    [key: string]: string;
+  };
 };
 
 export type WorkflowVersionDetails = {
@@ -478,7 +477,14 @@ export type WorkflowVersionDetails = {
    * The description of this workflow
    */
   description: string;
-  content: WorkflowDetailContents;
+  /**
+   * The components that make up this workflow
+   */
+  components: Array<ComponentDetails>;
+  /**
+   * The tables referenced by this workflow
+   */
+  tables: Array<TableSummary>;
   _links: {
     [key: string]: string;
   };
@@ -672,23 +678,6 @@ export type PageOfTableSummary = {
    * True iff this page is the final page
    */
   _lastPage: boolean;
-  _links: {
-    [key: string]: string;
-  };
-};
-
-/**
- * The page of response data as an array
- */
-export type TableSummary = {
-  /**
-   * The id of the Workflow86 Table
-   */
-  tableId: string;
-  /**
-   * The name of the Workflow86 Table
-   */
-  name: string;
   _links: {
     [key: string]: string;
   };
