@@ -150,6 +150,10 @@ export type PublishWorkflowResponse = {
  */
 export type ColumnDetails = {
   /**
+   * The UUID identifier of the column
+   */
+  columnId: string;
+  /**
    * The column name
    */
   columnName: string;
@@ -439,23 +443,6 @@ export type ComponentDetails = {
   validationErrors: Array<string>;
 };
 
-/**
- * The tables referenced by this workflow
- */
-export type TableSummary = {
-  /**
-   * The id of the Workflow86 Table
-   */
-  tableId: string;
-  /**
-   * The name of the Workflow86 Table
-   */
-  name: string;
-  _links: {
-    [key: string]: string;
-  };
-};
-
 export type WorkflowVersionDetails = {
   /**
    * UUID identifier of this workflow version
@@ -484,7 +471,7 @@ export type WorkflowVersionDetails = {
   /**
    * The tables referenced by this workflow
    */
-  tables: Array<TableSummary>;
+  tables: Array<TableDetails>;
   _links: {
     [key: string]: string;
   };
@@ -678,6 +665,23 @@ export type PageOfTableSummary = {
    * True iff this page is the final page
    */
   _lastPage: boolean;
+  _links: {
+    [key: string]: string;
+  };
+};
+
+/**
+ * The page of response data as an array
+ */
+export type TableSummary = {
+  /**
+   * The id of the Workflow86 Table
+   */
+  tableId: string;
+  /**
+   * The name of the Workflow86 Table
+   */
+  name: string;
   _links: {
     [key: string]: string;
   };

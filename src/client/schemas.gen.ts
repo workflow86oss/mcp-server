@@ -215,9 +215,13 @@ export const PublishWorkflowResponseSchema = {
 } as const;
 
 export const ColumnDetailsSchema = {
-  required: ["columnName", "columnType"],
+  required: ["columnId", "columnName", "columnType"],
   type: "object",
   properties: {
+    columnId: {
+      type: "string",
+      description: "The UUID identifier of the column",
+    },
     columnName: {
       type: "string",
       description: "The column name",
@@ -668,28 +672,6 @@ export const ComponentDetailsSchema = {
   description: "The components that make up this workflow",
 } as const;
 
-export const TableSummarySchema = {
-  required: ["_links", "name", "tableId"],
-  type: "object",
-  properties: {
-    tableId: {
-      type: "string",
-      description: "The id of the Workflow86 Table",
-    },
-    name: {
-      type: "string",
-      description: "The name of the Workflow86 Table",
-    },
-    _links: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
-      },
-    },
-  },
-  description: "The tables referenced by this workflow",
-} as const;
-
 export const WorkflowVersionDetailsSchema = {
   required: [
     "_links",
@@ -736,7 +718,7 @@ export const WorkflowVersionDetailsSchema = {
       type: "array",
       description: "The tables referenced by this workflow",
       items: {
-        $ref: "#/components/schemas/TableSummary",
+        $ref: "#/components/schemas/TableDetails",
       },
     },
     _links: {
@@ -1055,6 +1037,28 @@ export const PageOfTableSummarySchema = {
       },
     },
   },
+} as const;
+
+export const TableSummarySchema = {
+  required: ["_links", "name", "tableId"],
+  type: "object",
+  properties: {
+    tableId: {
+      type: "string",
+      description: "The id of the Workflow86 Table",
+    },
+    name: {
+      type: "string",
+      description: "The name of the Workflow86 Table",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
+  },
+  description: "The page of response data as an array",
 } as const;
 
 export const FormSummaryDtoSchema = {
