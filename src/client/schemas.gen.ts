@@ -214,7 +214,7 @@ export const PublishWorkflowResponseSchema = {
   },
 } as const;
 
-export const ColumnDetailsSchema = {
+export const CreateColumnCommandSchema = {
   required: ["columnName", "columnType"],
   type: "object",
   properties: {
@@ -243,10 +243,31 @@ export const CreateTableCommandSchema = {
       type: "array",
       description: "Array of column definitions",
       items: {
-        $ref: "#/components/schemas/ColumnDetails",
+        $ref: "#/components/schemas/CreateColumnCommand",
       },
     },
   },
+} as const;
+
+export const ColumnDetailsSchema = {
+  required: ["columnId", "columnName", "columnType"],
+  type: "object",
+  properties: {
+    columnId: {
+      type: "string",
+      description: "The UUID identifier of the column",
+    },
+    columnName: {
+      type: "string",
+      description: "The column name",
+    },
+    columnType: {
+      type: "string",
+      description: "The column type",
+      enum: ["DECIMAL", "VARCHAR2", "BOOLEAN", "DATETIME", "LIST"],
+    },
+  },
+  description: "The columns in the schema of this Table",
 } as const;
 
 export const TableDetailsSchema = {
@@ -599,22 +620,6 @@ export const WorkflowSummarySchema = {
   description: "The page of response data as an array",
 } as const;
 
-export const ColumnDtoSchema = {
-  type: "object",
-  properties: {
-    columnId: {
-      type: "string",
-    },
-    columnName: {
-      type: "string",
-    },
-    columnType: {
-      type: "string",
-      enum: ["DECIMAL", "VARCHAR2", "BOOLEAN", "DATETIME", "LIST"],
-    },
-  },
-} as const;
-
 export const ComponentDetailsSchema = {
   required: [
     "componentId",
@@ -681,58 +686,17 @@ export const ComponentDetailsSchema = {
       },
     },
   },
-} as const;
-
-export const ConnectedDatabaseDtoSchema = {
-  type: "object",
-  properties: {
-    databaseId: {
-      type: "string",
-    },
-    databaseName: {
-      type: "string",
-    },
-    columns: {
-      type: "array",
-      items: {
-        $ref: "#/components/schemas/ColumnDto",
-      },
-    },
-    componentLinks: {
-      type: "array",
-      items: {
-        type: "string",
-      },
-    },
-  },
-} as const;
-
-export const WorkflowDetailContentsSchema = {
-  type: "object",
-  properties: {
-    databases: {
-      type: "array",
-      items: {
-        $ref: "#/components/schemas/ConnectedDatabaseDto",
-      },
-    },
-    components: {
-      type: "array",
-      items: {
-        $ref: "#/components/schemas/ComponentDetails",
-      },
-    },
-  },
   description: "The components that make up this workflow",
 } as const;
 
 export const WorkflowVersionDetailsSchema = {
   required: [
     "_links",
-    "content",
+    "components",
     "description",
     "name",
     "status",
+    "tables",
     "version",
     "workflowId",
   ],
@@ -760,8 +724,19 @@ export const WorkflowVersionDetailsSchema = {
       type: "string",
       description: "The description of this workflow",
     },
-    content: {
-      $ref: "#/components/schemas/WorkflowDetailContents",
+    components: {
+      type: "array",
+      description: "The components that make up this workflow",
+      items: {
+        $ref: "#/components/schemas/ComponentDetails",
+      },
+    },
+    tables: {
+      type: "array",
+      description: "The tables referenced by this workflow",
+      items: {
+        $ref: "#/components/schemas/TableDetails",
+      },
     },
     _links: {
       type: "object",

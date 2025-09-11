@@ -24,6 +24,7 @@ import {
 import { relinkTableDetails, relinkTablePage } from "./table-links";
 import {
   ColumnDetailsSchema,
+  CreateColumnCommandSchema,
   CreateTableCommandSchema,
 } from "./client/schemas.gen";
 
@@ -137,7 +138,7 @@ export function registerTableTools(server: McpServer) {
         .string()
         .describe("The UUID identifier of the table to add to"),
       name: z.string().describe("The name of the column to add"),
-      type: schemaToZod(ColumnDetailsSchema.properties.columnType),
+      type: schemaToZod(CreateColumnCommandSchema.properties.columnType),
     },
     async ({ tableId, name, type }) => {
       try {

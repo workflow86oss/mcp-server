@@ -148,7 +148,7 @@ export type PublishWorkflowResponse = {
 /**
  * Array of column definitions
  */
-export type ColumnDetails = {
+export type CreateColumnCommand = {
   /**
    * The column name
    */
@@ -167,7 +167,25 @@ export type CreateTableCommand = {
   /**
    * Array of column definitions
    */
-  columns: Array<ColumnDetails>;
+  columns: Array<CreateColumnCommand>;
+};
+
+/**
+ * The columns in the schema of this Table
+ */
+export type ColumnDetails = {
+  /**
+   * The UUID identifier of the column
+   */
+  columnId: string;
+  /**
+   * The column name
+   */
+  columnName: string;
+  /**
+   * The column type
+   */
+  columnType: "DECIMAL" | "VARCHAR2" | "BOOLEAN" | "DATETIME" | "LIST";
 };
 
 export type TableDetails = {
@@ -395,12 +413,9 @@ export type WorkflowSummary = {
   };
 };
 
-export type ColumnDto = {
-  columnId?: string;
-  columnName?: string;
-  columnType?: "DECIMAL" | "VARCHAR2" | "BOOLEAN" | "DATETIME" | "LIST";
-};
-
+/**
+ * The components that make up this workflow
+ */
 export type ComponentDetails = {
   /**
    * UUID identifier of the Component
@@ -442,21 +457,6 @@ export type ComponentDetails = {
   validationErrors: Array<string>;
 };
 
-export type ConnectedDatabaseDto = {
-  databaseId?: string;
-  databaseName?: string;
-  columns?: Array<ColumnDto>;
-  componentLinks?: Array<string>;
-};
-
-/**
- * The components that make up this workflow
- */
-export type WorkflowDetailContents = {
-  databases?: Array<ConnectedDatabaseDto>;
-  components?: Array<ComponentDetails>;
-};
-
 export type WorkflowVersionDetails = {
   /**
    * UUID identifier of this workflow version
@@ -478,7 +478,14 @@ export type WorkflowVersionDetails = {
    * The description of this workflow
    */
   description: string;
-  content: WorkflowDetailContents;
+  /**
+   * The components that make up this workflow
+   */
+  components: Array<ComponentDetails>;
+  /**
+   * The tables referenced by this workflow
+   */
+  tables: Array<TableDetails>;
   _links: {
     [key: string]: string;
   };
@@ -978,7 +985,7 @@ export type DeleteColumnResponse =
   DeleteColumnResponses[keyof DeleteColumnResponses];
 
 export type AddColumnData = {
-  body: ColumnDetails;
+  body: CreateColumnCommand;
   path: {
     tableId: string;
   };
