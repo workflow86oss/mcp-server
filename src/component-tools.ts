@@ -7,7 +7,7 @@ import {
   relinkComponentEditStatusResponse,
 } from "./component-links.js";
 
-// Component edit API functions (using direct fetch until endpoints are in OpenAPI spec)
+// Component edit functions (using direct API calls until endpoints are in OpenAPI spec)
 async function startComponentEdit(request: {
   workflowId: string;
   type?: string;
@@ -17,7 +17,7 @@ async function startComponentEdit(request: {
   availableCredentials?: string[];
   availableDatabase?: string[];
   triggerApps?: string[];
-}): Promise<Response> {
+}): Promise<{ data: any }> {
   const config = client.getConfig();
   const headers = config.headers as Record<string, string>;
   const apiKey = headers?.["x-api-key"];
@@ -26,7 +26,7 @@ async function startComponentEdit(request: {
     throw new Error("API key not configured");
   }
 
-  return fetch(`${config.baseUrl}/v1/component/edit`, {
+  const response = await fetch(`${config.baseUrl}/v1/component/edit`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -34,9 +34,19 @@ async function startComponentEdit(request: {
     },
     body: JSON.stringify(request),
   });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errorText}`);
+  }
+
+  const data = await response.json();
+  return { data };
 }
 
-async function getComponentEditStatus(sessionId: string): Promise<Response> {
+async function getComponentEditStatus(
+  sessionId: string,
+): Promise<{ data: any }> {
   const config = client.getConfig();
   const headers = config.headers as Record<string, string>;
   const apiKey = headers?.["x-api-key"];
@@ -45,12 +55,23 @@ async function getComponentEditStatus(sessionId: string): Promise<Response> {
     throw new Error("API key not configured");
   }
 
-  return fetch(`${config.baseUrl}/v1/component/edit/${sessionId}`, {
-    method: "GET",
-    headers: {
-      "x-api-key": apiKey,
+  const response = await fetch(
+    `${config.baseUrl}/v1/component/edit/${sessionId}`,
+    {
+      method: "GET",
+      headers: {
+        "x-api-key": apiKey,
+      },
     },
-  });
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${errorText}`);
+  }
+
+  const data = await response.json();
+  return { data };
 }
 
 export function registerComponentTools(server: McpServer) {
@@ -111,13 +132,7 @@ export function registerComponentTools(server: McpServer) {
           triggerApps,
         });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          return textResponse(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const result = await response.json();
-        return jsonResponse(relinkComponentEditResponse(result));
+        return jsonResponse(relinkComponentEditResponse(response.data));
       } catch (error) {
         return handleError(error);
       }
@@ -134,13 +149,7 @@ export function registerComponentTools(server: McpServer) {
       try {
         const response = await getComponentEditStatus(sessionId);
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          return textResponse(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const result = await response.json();
-        return jsonResponse(relinkComponentEditStatusResponse(result));
+        return jsonResponse(relinkComponentEditStatusResponse(response.data));
       } catch (error) {
         return handleError(error);
       }
