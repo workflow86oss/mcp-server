@@ -1,15 +1,57 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { client } from "./client/client.gen.js";
-import {
-  textResponse,
-  jsonResponse,
-  handleError,
-} from "./util.js";
+import { textResponse, jsonResponse, handleError } from "./util.js";
 import {
   relinkComponentEditResponse,
   relinkComponentEditStatusResponse,
 } from "./component-links.js";
+
+// Component edit API functions (using direct fetch until endpoints are in OpenAPI spec)
+async function startComponentEdit(request: {
+  workflowId: string;
+  type?: string;
+  componentId?: string;
+  userRequirement: string;
+  context?: any;
+  availableCredentials?: string[];
+  availableDatabase?: string[];
+  triggerApps?: string[];
+}): Promise<Response> {
+  const config = client.getConfig();
+  const headers = config.headers as Record<string, string>;
+  const apiKey = headers?.["x-api-key"];
+
+  if (!apiKey) {
+    throw new Error("API key not configured");
+  }
+
+  return fetch(`${config.baseUrl}/v1/component/edit`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+    },
+    body: JSON.stringify(request),
+  });
+}
+
+async function getComponentEditStatus(sessionId: string): Promise<Response> {
+  const config = client.getConfig();
+  const headers = config.headers as Record<string, string>;
+  const apiKey = headers?.["x-api-key"];
+
+  if (!apiKey) {
+    throw new Error("API key not configured");
+  }
+
+  return fetch(`${config.baseUrl}/v1/component/edit/${sessionId}`, {
+    method: "GET",
+    headers: {
+      "x-api-key": apiKey,
+    },
+  });
+}
 
 export function registerComponentTools(server: McpServer) {
   server.tool(
@@ -58,22 +100,15 @@ export function registerComponentTools(server: McpServer) {
       triggerApps,
     }) => {
       try {
-        const response = await fetch(`${client.getConfig().baseUrl}/v1/component/edit`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": client.getConfig().headers["x-api-key"],
-          },
-          body: JSON.stringify({
-            workflowId,
-            type,
-            componentId,
-            userRequirement,
-            context,
-            availableCredentials,
-            availableDatabase,
-            triggerApps,
-          }),
+        const response = await startComponentEdit({
+          workflowId,
+          type,
+          componentId,
+          userRequirement,
+          context,
+          availableCredentials,
+          availableDatabase,
+          triggerApps,
         });
 
         if (!response.ok) {
@@ -93,18 +128,11 @@ export function registerComponentTools(server: McpServer) {
     "get-component-edit-status",
     "Get the status of a component edit operation. Returns questions if AI needs clarification, or component ID if edit was successful.",
     {
-      sessionId: z
-        .string()
-        .describe("Session ID from edit-component response"),
+      sessionId: z.string().describe("Session ID from edit-component response"),
     },
     async ({ sessionId }) => {
       try {
-        const response = await fetch(`${client.getConfig().baseUrl}/v1/component/edit/${sessionId}`, {
-          method: "GET",
-          headers: {
-            "x-api-key": client.getConfig().headers["x-api-key"],
-          },
-        });
+        const response = await getComponentEditStatus(sessionId);
 
         if (!response.ok) {
           const errorText = await response.text();

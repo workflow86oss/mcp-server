@@ -4,7 +4,7 @@ export function relinkComponentEditResponse(
   response: any,
 ): Record<string, any> {
   const links: Record<string, ToolCall> = {};
-  
+
   if (response.sessionId) {
     links["check-status"] = {
       name: "get-component-edit-status",
@@ -24,7 +24,7 @@ export function relinkComponentEditStatusResponse(
   response: any,
 ): Record<string, any> {
   const links: Record<string, ToolCall> = {};
-  
+
   if (response.status === "in_progress" && response.sessionId) {
     links["check-status-again"] = {
       name: "get-component-edit-status",

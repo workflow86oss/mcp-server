@@ -2,8 +2,8 @@
 
 import type { ClientOptions } from "./types.gen";
 import {
-  type ClientOptions as DefaultClientOptions,
   type Config,
+  type ClientOptions as DefaultClientOptions,
   createClient,
   createConfig,
 } from "./client";
