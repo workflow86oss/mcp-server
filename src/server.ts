@@ -8,6 +8,7 @@ import { registerWorkflowTools } from "./workflow-tools.js";
 import { registerSessionTools } from "./session-tools.js";
 import { registerTableTools } from "./table-tools.js";
 import { registerTasksTools } from "./tasks-tools";
+import { registerComponentTools } from "./component-tools.js";
 
 // Polyfill ReadableStream if not available
 if (typeof globalThis.ReadableStream === "undefined") {
@@ -50,6 +51,7 @@ registerWorkflowTools(server);
 registerSessionTools(server);
 registerTasksTools(server);
 registerTableTools(server);
+registerComponentTools(server);
 
 async function main() {
   console.error(
