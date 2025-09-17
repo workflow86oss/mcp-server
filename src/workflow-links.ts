@@ -9,6 +9,7 @@ import {
   SessionResult,
   PageOfTableSummary,
   TableSummary,
+  RunWorkflowResponse,
 } from "./client";
 import { addSchemaMetadataByType } from "./schema";
 import {
@@ -18,6 +19,7 @@ import {
   PageOfSessionSummarySchema,
   SessionResultSchema,
   PageOfTableSummarySchema,
+  RunWorkflowResponseSchema,
 } from "./client/schemas.gen";
 import { ToolCall } from "./links";
 import { relinkTableSummary } from "./table-links";
@@ -183,5 +185,35 @@ export function relinkWorkflowVersion(
       "@links": links,
     },
     WorkflowVersionDetailsSchema,
+  );
+}
+
+export function transformRunWorkflowResponse(
+  response: RunWorkflowResponse,
+  workflowId: string,
+): Record<string, any> {
+  // Generate the correct app URL based on session mode
+  const isTestMode = response.sessionMode === "TEST";
+  const appSessionUrl = `https://app.workflow86.com/project/logs/progress_view/${workflowId}/${response.sessionId}?test=${isTestMode}`;
+  
+  const links: Record<string, ToolCall> = {};
+  
+  // Add link to get session details
+  if (response.sessionId) {
+    links["session-details"] = {
+      name: "get-session",
+      arguments: {
+        sessionId: response.sessionId,
+      },
+    };
+  }
+  
+  return addSchemaMetadataByType(
+    {
+      ...response,
+      sessionUrl: appSessionUrl,
+      "@links": links,
+    },
+    RunWorkflowResponseSchema,
   );
 }
