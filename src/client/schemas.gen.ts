@@ -214,6 +214,15 @@ export const PublishWorkflowResponseSchema = {
   },
 } as const;
 
+export const GenerateWorkflowResponseSchema = {
+  type: "object",
+  properties: {
+    success: {
+      type: "boolean",
+    },
+  },
+} as const;
+
 export const CreateColumnCommandSchema = {
   required: ["columnName", "columnType"],
   type: "object",

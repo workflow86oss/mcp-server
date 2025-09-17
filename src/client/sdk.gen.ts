@@ -14,6 +14,9 @@ import type {
   PublishWorkflowData,
   PublishWorkflowResponses,
   PublishWorkflowErrors,
+  GenerateWorkflowPlanData,
+  GenerateWorkflowPlanResponses,
+  GenerateWorkflowPlanErrors,
   ListTablesData,
   ListTablesResponses,
   CreateTableData,
@@ -181,6 +184,33 @@ export const publishWorkflow = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/publish",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Generate Workflow Edit Plan
+ * Generate a workflow edit plan using AI. Takes a workflow ID (optional, leave blank for new workflow) and user requirement description to create an edit plan. Returns a session ID that can be used to poll for the generated plan results.
+ */
+export const generateWorkflowPlan = <ThrowOnError extends boolean = false>(
+  options: Options<GenerateWorkflowPlanData, ThrowOnError>,
+) => {
+  return (options.client ?? client).post<
+    GenerateWorkflowPlanResponses,
+    GenerateWorkflowPlanErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/generate-workflow-plan",
     ...options,
     headers: {
       "Content-Type": "application/json",
