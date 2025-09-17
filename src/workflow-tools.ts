@@ -19,6 +19,7 @@ import {
   relinkWorkflowHistoryPage,
   relinkWorkflowPage,
   relinkWorkflowVersion,
+  transformRunWorkflowResponse,
 } from "./workflow-links.js";
 import { addSchemaMetadataByType, createSchemaDescriber } from "./schema";
 import {
@@ -178,7 +179,7 @@ export function registerWorkflowTools(server: McpServer) {
         });
 
         return jsonResponse(
-          addSchemaMetadataByType(response.data, "RunWorkflowResponse"),
+          transformRunWorkflowResponse(response.data, workflowId),
         );
       } catch (error) {
         return handleError(error);
@@ -218,7 +219,7 @@ export function registerWorkflowTools(server: McpServer) {
         });
 
         return jsonResponse(
-          addSchemaMetadataByType(response.data, "RunWorkflowResponse"),
+          transformRunWorkflowResponse(response.data, workflowId),
         );
       } catch (error) {
         return handleError(error);
