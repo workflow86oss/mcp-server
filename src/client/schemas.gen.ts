@@ -217,10 +217,24 @@ export const PublishWorkflowResponseSchema = {
 export const GenerateWorkflowResponseSchema = {
   type: "object",
   properties: {
-    success: {
-      type: "boolean",
+    sessionId: {
+      type: "string",
+      description:
+        "Session ID created for polling the result. Present when success is true",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
     },
   },
+  description:
+    "Response for generate-workflow-plan API that generates a workflow edit plan",
+  example: `Success: {
+  "sessionId": "3aa378d1-c45f-448f-b543-d5490000742a"
+}
+`,
 } as const;
 
 export const CreateColumnCommandSchema = {
@@ -907,6 +921,28 @@ export const WorkflowHistorySchema = {
     },
   },
   description: "The page of response data as an array",
+} as const;
+
+export const GetWorkflowPlanResponseSchema = {
+  type: "object",
+  properties: {
+    success: {
+      type: "boolean",
+    },
+    status: {
+      type: "string",
+      enum: ["IN_PROGRESS", "SUCCESS"],
+    },
+    workflowId: {
+      type: "string",
+    },
+    response: {
+      type: "string",
+    },
+    error: {
+      type: "string",
+    },
+  },
 } as const;
 
 export const LastTaskDtoSchema = {

@@ -145,8 +145,17 @@ export type PublishWorkflowResponse = {
   draftVersion?: number;
 };
 
+/**
+ * Response for generate-workflow-plan API that generates a workflow edit plan
+ */
 export type GenerateWorkflowResponse = {
-  success?: boolean;
+  /**
+   * Session ID created for polling the result. Present when success is true
+   */
+  sessionId?: string;
+  _links?: {
+    [key: string]: string;
+  };
 };
 
 /**
@@ -597,6 +606,14 @@ export type WorkflowHistory = {
   _links: {
     [key: string]: string;
   };
+};
+
+export type GetWorkflowPlanResponse = {
+  success?: boolean;
+  status?: "IN_PROGRESS" | "SUCCESS";
+  workflowId?: string;
+  response?: string;
+  error?: string;
 };
 
 export type LastTaskDto = {
@@ -1523,6 +1540,51 @@ export type GetWorkflowHistoryResponses = {
 
 export type GetWorkflowHistoryResponse =
   GetWorkflowHistoryResponses[keyof GetWorkflowHistoryResponses];
+
+export type GetWorkflowPlanData = {
+  body?: never;
+  path?: never;
+  query: {
+    sessionId: string;
+  };
+  url: "/v1/workflow/get-workflow-plan";
+};
+
+export type GetWorkflowPlanErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type GetWorkflowPlanError =
+  GetWorkflowPlanErrors[keyof GetWorkflowPlanErrors];
+
+export type GetWorkflowPlanResponses = {
+  /**
+   * OK
+   */
+  200: GetWorkflowPlanResponse;
+};
+
+export type GetWorkflowPlanResponse2 =
+  GetWorkflowPlanResponses[keyof GetWorkflowPlanResponses];
 
 export type ListTasksData = {
   body?: never;

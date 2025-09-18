@@ -9,6 +9,7 @@ import {
   publishWorkflow,
   unpublishWorkflow,
   generateWorkflowPlan,
+  getWorkflowPlan,
 } from "./client/sdk.gen.js";
 import {
   PageOfWorkflowHistory,
@@ -325,6 +326,33 @@ export function registerWorkflowTools(server: McpServer) {
 
         return jsonResponse(
           addSchemaMetadataByType(response.data, "GenerateWorkflowResponse"),
+        );
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "get-workflow-plan",
+    "Retrieve the status and results of a workflow plan generation using the session ID. Returns the current status (in_progress, success) and the latest AI response containing the plan or questions.",
+    {
+      sessionId: z
+        .string()
+        .describe("Session ID returned from generate-workflow-plan"),
+    },
+    async ({ sessionId }) => {
+      try {
+        const response = await getWorkflowPlan({
+          client: client,
+          throwOnError: true,
+          query: {
+            sessionId,
+          },
+        });
+
+        return jsonResponse(
+          addSchemaMetadataByType(response.data, "GetWorkflowPlanResponse"),
         );
       } catch (error) {
         return handleError(error);

@@ -57,6 +57,9 @@ import type {
   GetWorkflowHistoryData,
   GetWorkflowHistoryResponses,
   GetWorkflowHistoryErrors,
+  GetWorkflowPlanData,
+  GetWorkflowPlanResponses,
+  GetWorkflowPlanErrors,
   ListTasksData,
   ListTasksResponses,
   ListTasksErrors,
@@ -560,6 +563,29 @@ export const getWorkflowHistory = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/history",
+    ...options,
+  });
+};
+
+/**
+ * Get Workflow Plan
+ * Retrieve the status and results of a workflow plan generation using the session ID. Returns the current status (in_progress, success) and the latest AI response containing the plan or questions.
+ */
+export const getWorkflowPlan = <ThrowOnError extends boolean = false>(
+  options: Options<GetWorkflowPlanData, ThrowOnError>,
+) => {
+  return (options.client ?? client).get<
+    GetWorkflowPlanResponses,
+    GetWorkflowPlanErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/get-workflow-plan",
     ...options,
   });
 };
