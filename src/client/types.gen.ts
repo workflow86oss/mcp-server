@@ -608,12 +608,55 @@ export type WorkflowHistory = {
   };
 };
 
+/**
+ * Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation
+ */
 export type GetWorkflowPlanResponse = {
+  /**
+   * Indicates if the request was processed successfully
+   */
   success?: boolean;
+  /**
+   * Current status of the workflow plan generation
+   */
   status?: "IN_PROGRESS" | "SUCCESS";
+  /**
+   * The ID of the workflow being generated/edited, if applicable
+   */
   workflowId?: string;
-  response?: string;
+  response?: WorkflowPlanResponseDto;
+  /**
+   * Error message if the operation failed
+   */
   error?: string;
+  /**
+   * Navigation links for workflow operations
+   */
+  _links?: {
+    [key: string]: string;
+  };
+};
+
+/**
+ * Parsed AI response with structured workflow plan or questions
+ */
+export type WorkflowPlanResponseDto = {
+  chatTitle?: string;
+  action?: string;
+  ambiguity?: string;
+  questions?: JsonNode;
+  assume?: JsonNode;
+  explanation?: string;
+  editActionsSummary?: JsonNode;
+  newPlaceholders?: JsonNode;
+  obsoletePlaceholders?: JsonNode;
+  newComponents?: JsonNode;
+  updateComponents?: JsonNode;
+  removeComponents?: JsonNode;
+  newDatabases?: JsonNode;
+  removeDatabases?: JsonNode;
+  updatedDatabases?: JsonNode;
+  end?: boolean;
 };
 
 export type LastTaskDto = {

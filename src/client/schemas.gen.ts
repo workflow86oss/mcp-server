@@ -928,21 +928,93 @@ export const GetWorkflowPlanResponseSchema = {
   properties: {
     success: {
       type: "boolean",
+      description: "Indicates if the request was processed successfully",
     },
     status: {
       type: "string",
-      enum: ["IN_PROGRESS", "SUCCESS"],
+      description: "Current status of the workflow plan generation",
+      enum: ["IN_PROGRESS", "SUCCESS", "IN_PROGRESS", "SUCCESS"],
     },
     workflowId: {
       type: "string",
+      description:
+        "The ID of the workflow being generated/edited, if applicable",
     },
     response: {
-      type: "string",
+      $ref: "#/components/schemas/WorkflowPlanResponseDto",
     },
     error: {
       type: "string",
+      description: "Error message if the operation failed",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+        description: "Navigation links for workflow operations",
+      },
+      description: "Navigation links for workflow operations",
     },
   },
+  description:
+    "Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation",
+  example:
+    'In Progress: {\\n  \\"success\\": true,\\n  \\"status\\": \\"IN_PROGRESS\\"\\n}\\nSuccess with Questions: {\\n  \\"success\\": true,\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Property Inspection\\\\\\",\\\\\\"action\\\\\\":\\\\\\"question\\\\\\",\\\\\\"questions\\\\\\":[\\\\\\"Which calendar system?\\\\\\",\\\\\\"How to receive requests?\\\\\\"]}\\n}\\nSuccess with Plan: {\\n  \\"success\\": true,\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Lead Capture\\\\\\",\\\\\\"action\\\\\\":\\\\\\"propose\\\\\\",\\\\\\"newComponents\\\\\\":[...]}\\n}',
+} as const;
+
+export const WorkflowPlanResponseDtoSchema = {
+  type: "object",
+  properties: {
+    chatTitle: {
+      type: "string",
+    },
+    action: {
+      type: "string",
+    },
+    ambiguity: {
+      type: "string",
+    },
+    questions: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    assume: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    explanation: {
+      type: "string",
+    },
+    editActionsSummary: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    newPlaceholders: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    obsoletePlaceholders: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    newComponents: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    updateComponents: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    removeComponents: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    newDatabases: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    removeDatabases: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    updatedDatabases: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    end: {
+      type: "boolean",
+    },
+  },
+  description: "Parsed AI response with structured workflow plan or questions",
 } as const;
 
 export const LastTaskDtoSchema = {
