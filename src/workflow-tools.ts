@@ -65,7 +65,12 @@ export function registerWorkflowTools(server: McpServer) {
           }
         }
 
-        return jsonResponse(relinkWorkflowPage(response.data));
+        return jsonResponse(
+          addSchemaMetadataByType(
+            relinkWorkflowPage(response.data),
+            "PageOfWorkflowSummary",
+          ),
+        );
       } catch (error) {
         return handleError(error);
       }
@@ -96,7 +101,10 @@ export function registerWorkflowTools(server: McpServer) {
 
         const workflowHistory: PageOfWorkflowHistory = response.data;
         return jsonResponse(
-          relinkWorkflowHistoryPage(workflowId, workflowHistory),
+          addSchemaMetadataByType(
+            relinkWorkflowHistoryPage(workflowId, workflowHistory),
+            "PageOfWorkflowHistory",
+          ),
         );
       } catch (error) {
         return handleError(error);
@@ -128,7 +136,12 @@ export function registerWorkflowTools(server: McpServer) {
         });
 
         const workflow: WorkflowVersionDetails = response.data;
-        return jsonResponse(relinkWorkflowVersion(workflow));
+        return jsonResponse(
+          addSchemaMetadataByType(
+            relinkWorkflowVersion(workflow),
+            "WorkflowVersionDetails",
+          ),
+        );
       } catch (error: any) {
         if (error?.httpStatus === 410 && workflowVersion === "PUBLISHED") {
           return textResponse("This project has not been published");

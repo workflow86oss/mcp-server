@@ -59,7 +59,12 @@ export function registerSessionTools(server: McpServer) {
           }
         }
 
-        return jsonResponse(relinkSessionPage(response.data));
+        return jsonResponse(
+          addSchemaMetadataByType(
+            relinkSessionPage(response.data),
+            "PageOfSessionSummary",
+          ),
+        );
       } catch (error) {
         return handleError(error);
       }
@@ -84,7 +89,12 @@ export function registerSessionTools(server: McpServer) {
           },
         });
 
-        return jsonResponse(relinkSessionResult(response.data));
+        return jsonResponse(
+          addSchemaMetadataByType(
+            relinkSessionResult(response.data),
+            "SessionResult",
+          ),
+        );
       } catch (error) {
         return handleError(error);
       }

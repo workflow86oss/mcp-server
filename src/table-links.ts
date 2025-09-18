@@ -1,6 +1,4 @@
 import { PageOfTableSummary, TableDetails, TableSummary } from "./client";
-import { addSchemaMetadataByType } from "./schema";
-import { PageOfTableSummarySchema } from "./client/schemas.gen";
 import { ToolCall } from "./links";
 
 export function relinkTablePage(page: PageOfTableSummary): Record<string, any> {
@@ -21,15 +19,11 @@ export function relinkTablePage(page: PageOfTableSummary): Record<string, any> {
       },
     };
   }
-  return addSchemaMetadataByType(
-    {
-      tables: page._embedded.map(relinkTableSummary),
-      "@pageNumber": page._pageNumber,
-      "@links": links,
-    },
-    PageOfTableSummarySchema,
-    "tables",
-  );
+  return {
+    tables: page._embedded.map(relinkTableSummary),
+    "@pageNumber": page._pageNumber,
+    "@links": links,
+  };
 }
 
 export function relinkTableSummary(

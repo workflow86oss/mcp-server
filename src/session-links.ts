@@ -10,15 +10,6 @@ import {
   PageOfTableSummary,
   TableSummary,
 } from "./client";
-import { addSchemaMetadataByType } from "./schema";
-import {
-  PageOfWorkflowSummarySchema,
-  PageOfWorkflowHistorySchema,
-  WorkflowVersionDetailsSchema,
-  PageOfSessionSummarySchema,
-  SessionResultSchema,
-  PageOfTableSummarySchema,
-} from "./client/schemas.gen";
 import { ToolCall } from "./links";
 
 export function relinkSessionPage(
@@ -44,15 +35,11 @@ export function relinkSessionPage(
     };
   }
 
-  return addSchemaMetadataByType(
-    {
-      session: sessions._embedded.map(relinkSessionSummary),
-      "@pageNumber": sessions._pageNumber,
-      "@links": links,
-    },
-    PageOfSessionSummarySchema,
-    "session",
-  );
+  return {
+    session: sessions._embedded.map(relinkSessionSummary),
+    "@pageNumber": sessions._pageNumber,
+    "@links": links,
+  };
 }
 
 function relinkSessionSummary(session: SessionSummary): Record<string, any> {
@@ -111,14 +98,11 @@ export function relinkSessionResult(
   );
 
   const { _links, ...sessionWithoutLinks } = sessionResult;
-  return addSchemaMetadataByType(
-    {
-      ...sessionWithoutLinks,
-      componentResults: relinkedComponentResults,
-      "@links": links,
-    },
-    SessionResultSchema,
-  );
+  return {
+    ...sessionWithoutLinks,
+    componentResults: relinkedComponentResults,
+    "@links": links,
+  };
 }
 
 function getWorkflowId(url: string): string {
