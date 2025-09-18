@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
 import { client } from "./client/client.gen.js";
 import { version } from "../package.json";
 import { registerWorkflowTools } from "./workflow-tools.js";
 import { registerSessionTools } from "./session-tools.js";
 import { registerTableTools } from "./table-tools.js";
 import { registerTasksTools } from "./tasks-tools";
+import { registerComponentTools } from "./component-tools";
 
 // Polyfill ReadableStream if not available
 if (typeof globalThis.ReadableStream === "undefined") {
@@ -50,6 +50,7 @@ registerWorkflowTools(server);
 registerSessionTools(server);
 registerTasksTools(server);
 registerTableTools(server);
+registerComponentTools(server);
 
 async function main() {
   console.error(

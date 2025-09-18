@@ -10,15 +10,6 @@ import {
   PageOfTableSummary,
   TableSummary,
 } from "./client";
-import { addSchemaMetadataByType } from "./schema";
-import {
-  PageOfWorkflowSummarySchema,
-  PageOfWorkflowHistorySchema,
-  WorkflowVersionDetailsSchema,
-  PageOfSessionSummarySchema,
-  SessionResultSchema,
-  PageOfTableSummarySchema,
-} from "./client/schemas.gen";
 import { ToolCall } from "./links";
 import { relinkTableSummary } from "./table-links";
 
@@ -42,15 +33,11 @@ export function relinkWorkflowPage(
       },
     };
   }
-  return addSchemaMetadataByType(
-    {
-      workflows: page._embedded.map(relinkWorkflowSummary),
-      "@pageNumber": page._pageNumber,
-      "@links": links,
-    },
-    PageOfWorkflowSummarySchema,
-    "workflows",
-  );
+  return {
+    workflows: page._embedded.map(relinkWorkflowSummary),
+    "@pageNumber": page._pageNumber,
+    "@links": links,
+  };
 }
 
 function relinkWorkflowSummary(workflow: WorkflowSummary): Record<string, any> {
@@ -117,18 +104,14 @@ export function relinkWorkflowHistoryPage(
       },
     };
   }
-  return addSchemaMetadataByType(
-    {
-      workflowId,
-      history: page._embedded.map((entry) =>
-        relinkWorkflowHistory(workflowId, entry),
-      ),
-      "@pageNumber": page._pageNumber,
-      "@links": links,
-    },
-    PageOfWorkflowHistorySchema,
-    "history",
-  );
+  return {
+    workflowId,
+    history: page._embedded.map((entry) =>
+      relinkWorkflowHistory(workflowId, entry),
+    ),
+    "@pageNumber": page._pageNumber,
+    "@links": links,
+  };
 }
 
 function relinkWorkflowHistory(
@@ -170,18 +153,24 @@ export function relinkWorkflowVersion(
       sessionMode: "TEST",
     },
   };
+  if (workflow.status === "DRAFT") {
+    links["delete-component"] = {
+      name: "delete-component",
+      arguments: {
+        workflowId: workflow.workflowId,
+        componentId: "{{components.componentId}}",
+      },
+    };
+  }
 
   const { _links, tables, ...result } = workflow;
   let tableRecord = undefined;
   if (tables && tables.length > 0) {
     tableRecord = tables.map(relinkTableSummary);
   }
-  return addSchemaMetadataByType(
-    {
-      ...result,
-      tables: tableRecord,
-      "@links": links,
-    },
-    WorkflowVersionDetailsSchema,
-  );
+  return {
+    ...result,
+    tables: tableRecord,
+    "@links": links,
+  };
 }

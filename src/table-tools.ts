@@ -52,7 +52,12 @@ export function registerTableTools(server: McpServer) {
           }
         }
 
-        return jsonResponse(relinkTablePage(response.data));
+        return jsonResponse(
+          addSchemaMetadataByType(
+            relinkTablePage(response.data),
+            "PageOfTableSummary",
+          ),
+        );
       } catch (error) {
         return handleError(error);
       }

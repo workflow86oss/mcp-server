@@ -71,10 +71,6 @@ export type RunWorkflowResponse = {
    */
   sessionMode?: "PROD" | "TEST";
   /**
-   * URL to poll for session progress details
-   */
-  sessionUrl?: string;
-  /**
    * UUID identifier of the workflow started (echoed)
    */
   workflowId?: string;
@@ -86,6 +82,14 @@ export type RunWorkflowResponse = {
    * UUID identifier of the component started (echoed)
    */
   componentId?: string;
+  /**
+   * The URL to view this workflow in a browser (requires login)
+   */
+  workflowAppViewUrl?: string;
+  /**
+   * The URL to view this session in a browser (requires login)
+   */
+  sessionAppViewUrl?: string;
   /**
    * Normalized values of the placeholders provided in the input
    */
@@ -146,19 +150,6 @@ export type PublishWorkflowResponse = {
 };
 
 /**
- * Response for generate-workflow-plan API that generates a workflow edit plan
- */
-export type GenerateWorkflowResponse = {
-  /**
-   * Session ID created for polling the result. Present when success is true
-   */
-  sessionId?: string;
-  _links?: {
-    [key: string]: string;
-  };
-};
-
-/**
  * Array of column definitions
  */
 export type CreateColumnCommand = {
@@ -210,6 +201,10 @@ export type TableDetails = {
    * The name of the Workflow86 Table
    */
   name: string;
+  /**
+   * The URL to view this table in a browser (requires login)
+   */
+  tableAppViewUrl?: string;
   /**
    * The columns in the schema of this Table
    */
@@ -266,11 +261,11 @@ export type ComponentResult = {
   /**
    * The URL of any form waiting to be submitted to complete this Component
    */
-  pendingFormUrl?: string;
+  pendingFormAppViewUrl?: string;
   /**
    * The URL of any form that has been submitted as part of this Component's execution
    */
-  submittedFormUrl?: string;
+  submittedFormAppViewUrl?: string;
   /**
    * Timestamp when the component execution started
    */
@@ -322,6 +317,14 @@ export type SessionResult = {
    */
   workflowVersion: number;
   /**
+   * The URL to view this workflow in a browser (requires login)
+   */
+  workflowAppViewUrl?: string;
+  /**
+   * The URL to view this session in a browser (requires login)
+   */
+  sessionAppViewUrl?: string;
+  /**
    * Timestamp when the session was started
    */
   startedAt: string;
@@ -351,10 +354,6 @@ export type RetryWorkflowResponse = {
    */
   sessionMode?: "PROD" | "TEST";
   /**
-   * URL to poll for session progress details
-   */
-  sessionUrl?: string;
-  /**
    * UUID identifier of the workflow started (echoed)
    */
   workflowId?: string;
@@ -366,6 +365,14 @@ export type RetryWorkflowResponse = {
    * UUID identifier of the component started (echoed)
    */
   componentId?: string;
+  /**
+   * The URL to view this workflow in a browser (requires login)
+   */
+  workflowAppViewUrl?: string;
+  /**
+   * The URL to view this session in a browser (requires login)
+   */
+  sessionAppViewUrl?: string;
   /**
    * UUID identifier of the thread being retried. Defaults to 'root' if no thread is given or needed
    */
@@ -388,6 +395,10 @@ export type PageOfWorkflowSummary = {
    * True iff this page is the final page
    */
   _lastPage: boolean;
+  /**
+   * Total number of results matching the query
+   */
+  get_totalCount?: number;
   _links: {
     [key: string]: string;
   };
@@ -499,6 +510,10 @@ export type WorkflowVersionDetails = {
    * The tables referenced by this workflow
    */
   tables: Array<TableDetails>;
+  /**
+   * The URL to view this workflow in a browser (requires login)
+   */
+  workflowAppViewUrl: string;
   _links: {
     [key: string]: string;
   };
@@ -517,6 +532,10 @@ export type PageOfSessionSummary = {
    * True iff this page is the final page
    */
   _lastPage: boolean;
+  /**
+   * Total number of results matching the query
+   */
+  get_totalCount?: number;
   _links: {
     [key: string]: string;
   };
@@ -553,6 +572,14 @@ export type SessionSummary = {
    */
   workflowVersion: number;
   /**
+   * The URL to view this workflow in a browser (requires login)
+   */
+  workflowAppViewUrl?: string;
+  /**
+   * The URL to view this session in a browser (requires login)
+   */
+  sessionAppViewUrl?: string;
+  /**
    * Timestamp when the session was started
    */
   startedAt: string;
@@ -578,6 +605,10 @@ export type PageOfWorkflowHistory = {
    * True iff this page is the final page
    */
   _lastPage: boolean;
+  /**
+   * Total number of results matching the query
+   */
+  get_totalCount?: number;
   _links: {
     [key: string]: string;
   };
@@ -608,79 +639,32 @@ export type WorkflowHistory = {
   };
 };
 
-/**
- * Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation
- */
-export type GetWorkflowPlanResponse = {
+export type PageOfTaskSummary = {
   /**
-   * Indicates if the request was processed successfully
+   * The page of response data as an array
    */
-  success?: boolean;
+  _embedded: Array<TaskSummary>;
   /**
-   * Current status of the workflow plan generation
+   * The zero-indexed page number of the response data
    */
-  status?: "IN_PROGRESS" | "SUCCESS";
+  _pageNumber: number;
   /**
-   * The ID of the workflow being generated/edited, if applicable
+   * True iff this page is the final page
    */
-  workflowId?: string;
-  response?: WorkflowPlanResponseDto;
+  _lastPage: boolean;
   /**
-   * Error message if the operation failed
+   * Total number of results matching the query
    */
-  error?: string;
-  /**
-   * Navigation links for workflow operations
-   */
-  _links?: {
+  get_totalCount?: number;
+  _links: {
     [key: string]: string;
   };
 };
 
 /**
- * Parsed AI response with structured workflow plan or questions
- */
-export type WorkflowPlanResponseDto = {
-  chatTitle?: string;
-  action?: string;
-  ambiguity?: string;
-  questions?: JsonNode;
-  assume?: JsonNode;
-  explanation?: string;
-  editActionsSummary?: JsonNode;
-  newPlaceholders?: JsonNode;
-  obsoletePlaceholders?: JsonNode;
-  newComponents?: JsonNode;
-  updateComponents?: JsonNode;
-  removeComponents?: JsonNode;
-  newDatabases?: JsonNode;
-  removeDatabases?: JsonNode;
-  updatedDatabases?: JsonNode;
-  end?: boolean;
-};
-
-export type LastTaskDto = {
-  lastTaskId?: string;
-  lastAssignedOnDate?: string;
-};
-
-export type TaskDateFilter = {
-  startDate?: string;
-  endDate?: string;
-};
-
-export type TaskQueryBody = {
-  queryString?: string;
-  workflowId?: string;
-  dateFilter?: TaskDateFilter;
-  statusToInclude?: Array<string>;
-  lastTask?: LastTaskDto;
-};
-
-/**
  * A summary of a task being requested. Usually comes in a list of these.
  */
-export type TaskSummaryDto = {
+export type TaskSummary = {
   /**
    * The name of the task
    */
@@ -689,10 +673,6 @@ export type TaskSummaryDto = {
    * The description of the task
    */
   taskDescription?: string;
-  /**
-   * The HTTP URL that will link the user to the task
-   */
-  taskUrl?: string;
   /**
    * The workflow ID of the workflow that sent this task
    */
@@ -705,29 +685,14 @@ export type TaskSummaryDto = {
    * The session ID of the session of the workflow that assigned this task
    */
   sessionId?: string;
-};
-
-export type TokenisePageOfTaskSummaryDto = {
   /**
-   * The page of response data as an array
+   * The URL to open this form session in a browser (requires login)
    */
-  _embedded: Array<TaskSummaryDto>;
+  formSessionAppViewUrl?: string;
   /**
-   * The zero-indexed page number of the response data
+   * The URL to open this task in a browser (requires login)
    */
-  _pageNumber: number;
-  /**
-   * True iff this page is the final page
-   */
-  _lastPage: boolean;
-  /**
-   * Total number of results matching the query
-   */
-  totalCount?: number;
-  initialQuery?: TaskQueryBody;
-  _links: {
-    [key: string]: string;
-  };
+  taskAppViewUrl?: string;
 };
 
 export type PageOfTableSummary = {
@@ -743,6 +708,10 @@ export type PageOfTableSummary = {
    * True iff this page is the final page
    */
   _lastPage: boolean;
+  /**
+   * Total number of results matching the query
+   */
+  get_totalCount?: number;
   _links: {
     [key: string]: string;
   };
@@ -760,6 +729,10 @@ export type TableSummary = {
    * The name of the Workflow86 Table
    */
   name: string;
+  /**
+   * The URL to view this table in a browser (requires login)
+   */
+  tableAppViewUrl?: string;
   _links: {
     [key: string]: string;
   };
@@ -768,18 +741,18 @@ export type TableSummary = {
 /**
  * The page of response data as an array
  */
-export type FormSummaryDto = {
+export type FormSummary = {
   formName?: string;
-  formUrl?: string;
+  formAppViewUrl?: string;
   workflowId?: string;
   workflowName?: string;
 };
 
-export type PageOfFormSummaryDto = {
+export type PageOfFormSummary = {
   /**
    * The page of response data as an array
    */
-  _embedded: Array<FormSummaryDto>;
+  _embedded: Array<FormSummary>;
   /**
    * The zero-indexed page number of the response data
    */
@@ -788,6 +761,10 @@ export type PageOfFormSummaryDto = {
    * True iff this page is the final page
    */
   _lastPage: boolean;
+  /**
+   * Total number of results matching the query
+   */
+  get_totalCount?: number;
   _links: {
     [key: string]: string;
   };
@@ -970,54 +947,6 @@ export type PublishWorkflowResponses = {
 
 export type PublishWorkflowResponse2 =
   PublishWorkflowResponses[keyof PublishWorkflowResponses];
-
-export type GenerateWorkflowPlanData = {
-  body?: {
-    [key: string]: unknown;
-  };
-  path?: never;
-  query: {
-    workflowId?: string;
-    userRequirement: string;
-  };
-  url: "/v1/workflow/generate-workflow-plan";
-};
-
-export type GenerateWorkflowPlanErrors = {
-  /**
-   * General validation errors
-   */
-  400: StandardWorkflow86Exception;
-  /**
-   * No API Key header provided
-   */
-  401: StandardWorkflow86Exception;
-  /**
-   * The provided API Key was invalid, or deleted
-   */
-  403: StandardWorkflow86Exception;
-  /**
-   * Entity not found, or deleted
-   */
-  410: StandardWorkflow86Exception;
-  /**
-   * All unexpected errors, and outages
-   */
-  500: StandardWorkflow86Exception;
-};
-
-export type GenerateWorkflowPlanError =
-  GenerateWorkflowPlanErrors[keyof GenerateWorkflowPlanErrors];
-
-export type GenerateWorkflowPlanResponses = {
-  /**
-   * OK
-   */
-  200: GenerateWorkflowResponse;
-};
-
-export type GenerateWorkflowPlanResponse =
-  GenerateWorkflowPlanResponses[keyof GenerateWorkflowPlanResponses];
 
 export type ListTablesData = {
   body?: never;
@@ -1584,51 +1513,6 @@ export type GetWorkflowHistoryResponses = {
 export type GetWorkflowHistoryResponse =
   GetWorkflowHistoryResponses[keyof GetWorkflowHistoryResponses];
 
-export type GetWorkflowPlanData = {
-  body?: never;
-  path?: never;
-  query: {
-    sessionId: string;
-  };
-  url: "/v1/workflow/get-workflow-plan";
-};
-
-export type GetWorkflowPlanErrors = {
-  /**
-   * General validation errors
-   */
-  400: StandardWorkflow86Exception;
-  /**
-   * No API Key header provided
-   */
-  401: StandardWorkflow86Exception;
-  /**
-   * The provided API Key was invalid, or deleted
-   */
-  403: StandardWorkflow86Exception;
-  /**
-   * Entity not found, or deleted
-   */
-  410: StandardWorkflow86Exception;
-  /**
-   * All unexpected errors, and outages
-   */
-  500: StandardWorkflow86Exception;
-};
-
-export type GetWorkflowPlanError =
-  GetWorkflowPlanErrors[keyof GetWorkflowPlanErrors];
-
-export type GetWorkflowPlanResponses = {
-  /**
-   * OK
-   */
-  200: GetWorkflowPlanResponse;
-};
-
-export type GetWorkflowPlanResponse2 =
-  GetWorkflowPlanResponses[keyof GetWorkflowPlanResponses];
-
 export type ListTasksData = {
   body?: never;
   path?: never;
@@ -1690,7 +1574,7 @@ export type ListTasksResponses = {
   /**
    * OK
    */
-  200: TokenisePageOfTaskSummaryDto;
+  200: PageOfTaskSummary;
 };
 
 export type ListTasksResponse = ListTasksResponses[keyof ListTasksResponses];
@@ -1797,10 +1681,53 @@ export type ListFormsResponses = {
   /**
    * OK
    */
-  200: PageOfFormSummaryDto;
+  200: PageOfFormSummary;
 };
 
 export type ListFormsResponse = ListFormsResponses[keyof ListFormsResponses];
+
+export type DeleteComponentData = {
+  body?: never;
+  path: {
+    workflowId: string;
+    componentId: string;
+  };
+  query?: never;
+  url: "/v1/workflow/{workflowId}/component/{componentId}";
+};
+
+export type DeleteComponentErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type DeleteComponentError =
+  DeleteComponentErrors[keyof DeleteComponentErrors];
+
+export type DeleteComponentResponses = {
+  /**
+   * OK
+   */
+  200: unknown;
+};
 
 export type ClientOptions = {
   baseUrl: `${string}://rest.workflow86.com` | (string & {});

@@ -71,6 +71,9 @@ import type {
   ListFormsData,
   ListFormsResponses,
   ListFormsErrors,
+  DeleteComponentData,
+  DeleteComponentResponses,
+  DeleteComponentErrors,
 } from "./types.gen";
 import { client } from "./client.gen";
 
@@ -677,6 +680,29 @@ export const listForms = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/forms",
+    ...options,
+  });
+};
+
+/**
+ * Delete Component
+ * Deletes a component from a draft workflow, removing all links to and from the component.
+ */
+export const deleteComponent = <ThrowOnError extends boolean = false>(
+  options: Options<DeleteComponentData, ThrowOnError>,
+) => {
+  return (options.client ?? client).delete<
+    DeleteComponentResponses,
+    DeleteComponentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/{workflowId}/component/{componentId}",
     ...options,
   });
 };

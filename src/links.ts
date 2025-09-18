@@ -1,25 +1,3 @@
-import {
-  PageOfSessionSummary,
-  PageOfWorkflowHistory,
-  PageOfWorkflowSummary,
-  SessionSummary,
-  WorkflowHistory,
-  WorkflowSummary,
-  WorkflowVersionDetails,
-  SessionResult,
-  PageOfTableSummary,
-  TableSummary,
-} from "./client";
-import { addSchemaMetadataByType } from "./schema";
-import {
-  PageOfWorkflowSummarySchema,
-  PageOfWorkflowHistorySchema,
-  WorkflowVersionDetailsSchema,
-  PageOfSessionSummarySchema,
-  SessionResultSchema,
-  PageOfTableSummarySchema,
-} from "./client/schemas.gen";
-
 /*
 This class provides functionality related to removing HATEOAS metadata (_links, _pageNumber...) from Public API Responses and replacing them
 with MCP Tool Call style @links, @pageNumber etc.

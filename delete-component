@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+WORKFLOW_ID=$1
+COMPONENT_ID=$2
+
+if [ -z "$WORKFLOW_ID" ] || [ -z "$COMPONENT_ID" ]; then
+  echo "Usage: $0 <workflow-id> <component-id>"
+  echo "Example: $0 \"123e4567-e89b-12d3-a456-426614174000\" \"550e8400-e29b-41d4-a716-446655440000\""
+  exit 1
+fi
+
+# Build the arguments JSON
+ARGS="{\"workflowId\":\"$WORKFLOW_ID\",\"componentId\":\"$COMPONENT_ID\"}"
+
+./exec.sh "delete-component" "$ARGS"

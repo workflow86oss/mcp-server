@@ -1,11 +1,11 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
-  FormSummaryDto,
+  FormSummary,
   listForms,
   listTasks,
-  PageOfFormSummaryDto,
-  TokenisePageOfTaskSummaryDto,
+  PageOfFormSummary,
+  PageOfTaskSummary,
 } from "./client";
 import { client } from "./client/client.gen";
 import { handleError, jsonResponse, textResponse, zodPageNumber } from "./util";
@@ -91,7 +91,7 @@ export function registerTasksTools(server: McpServer) {
           query: query,
         });
 
-        const taskResponse: TokenisePageOfTaskSummaryDto = response.data;
+        const taskResponse: PageOfTaskSummary = response.data;
         const tasks = taskResponse?._embedded || [];
         if (tasks.length === 0) {
           if (!lastTaskToken) {
@@ -133,8 +133,8 @@ export function registerTasksTools(server: McpServer) {
           },
         });
 
-        const formsResponse: PageOfFormSummaryDto = response.data;
-        const forms: FormSummaryDto[] = formsResponse?._embedded || [];
+        const formsResponse: PageOfFormSummary = response.data;
+        const forms: FormSummary[] = formsResponse?._embedded || [];
         if (forms.length === 0) {
           if (pageNumber === 0) {
             return textResponse("There are no forms available for this user");

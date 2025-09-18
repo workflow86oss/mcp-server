@@ -106,10 +106,6 @@ export const RunWorkflowResponseSchema = {
       description: "The execution mode of session started",
       enum: ["PROD", "TEST"],
     },
-    sessionUrl: {
-      type: "string",
-      description: "URL to poll for session progress details",
-    },
     workflowId: {
       type: "string",
       description: "UUID identifier of the workflow started (echoed)",
@@ -122,6 +118,15 @@ export const RunWorkflowResponseSchema = {
     componentId: {
       type: "string",
       description: "UUID identifier of the component started (echoed)",
+    },
+    workflowAppViewUrl: {
+      type: "string",
+      description:
+        "The URL to view this workflow in a browser (requires login)",
+    },
+    sessionAppViewUrl: {
+      type: "string",
+      description: "The URL to view this session in a browser (requires login)",
     },
     placeholderValues: {
       type: "object",
@@ -214,29 +219,6 @@ export const PublishWorkflowResponseSchema = {
   },
 } as const;
 
-export const GenerateWorkflowResponseSchema = {
-  type: "object",
-  properties: {
-    sessionId: {
-      type: "string",
-      description:
-        "Session ID created for polling the result. Present when success is true",
-    },
-    _links: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
-      },
-    },
-  },
-  description:
-    "Response for generate-workflow-plan API that generates a workflow edit plan",
-  example: `Success: {
-  "sessionId": "3aa378d1-c45f-448f-b543-d5490000742a"
-}
-`,
-} as const;
-
 export const CreateColumnCommandSchema = {
   required: ["columnName", "columnType"],
   type: "object",
@@ -304,6 +286,10 @@ export const TableDetailsSchema = {
     name: {
       type: "string",
       description: "The name of the Workflow86 Table",
+    },
+    tableAppViewUrl: {
+      type: "string",
+      description: "The URL to view this table in a browser (requires login)",
     },
     columns: {
       type: "array",
@@ -388,12 +374,12 @@ export const ComponentResultSchema = {
           "The resultIds of the following results in the result graph",
       },
     },
-    pendingFormUrl: {
+    pendingFormAppViewUrl: {
       type: "string",
       description:
         "The URL of any form waiting to be submitted to complete this Component",
     },
-    submittedFormUrl: {
+    submittedFormAppViewUrl: {
       type: "string",
       description:
         "The URL of any form that has been submitted as part of this Component's execution",
@@ -467,6 +453,15 @@ export const SessionResultSchema = {
         "The integer version of the workflow this session belongs to",
       format: "int32",
     },
+    workflowAppViewUrl: {
+      type: "string",
+      description:
+        "The URL to view this workflow in a browser (requires login)",
+    },
+    sessionAppViewUrl: {
+      type: "string",
+      description: "The URL to view this session in a browser (requires login)",
+    },
     startedAt: {
       type: "string",
       description: "Timestamp when the session was started",
@@ -527,10 +522,6 @@ export const RetryWorkflowResponseSchema = {
       description: "The execution mode of session started",
       enum: ["PROD", "TEST"],
     },
-    sessionUrl: {
-      type: "string",
-      description: "URL to poll for session progress details",
-    },
     workflowId: {
       type: "string",
       description: "UUID identifier of the workflow started (echoed)",
@@ -543,6 +534,15 @@ export const RetryWorkflowResponseSchema = {
     componentId: {
       type: "string",
       description: "UUID identifier of the component started (echoed)",
+    },
+    workflowAppViewUrl: {
+      type: "string",
+      description:
+        "The URL to view this workflow in a browser (requires login)",
+    },
+    sessionAppViewUrl: {
+      type: "string",
+      description: "The URL to view this session in a browser (requires login)",
     },
     threadId: {
       type: "string",
@@ -584,6 +584,11 @@ export const PageOfWorkflowSummarySchema = {
     _lastPage: {
       type: "boolean",
       description: "True iff this page is the final page",
+    },
+    get_totalCount: {
+      type: "integer",
+      description: "Total number of results matching the query",
+      format: "int64",
     },
     _links: {
       type: "object",
@@ -721,6 +726,7 @@ export const WorkflowVersionDetailsSchema = {
     "status",
     "tables",
     "version",
+    "workflowAppViewUrl",
     "workflowId",
   ],
   type: "object",
@@ -761,6 +767,11 @@ export const WorkflowVersionDetailsSchema = {
         $ref: "#/components/schemas/TableDetails",
       },
     },
+    workflowAppViewUrl: {
+      type: "string",
+      description:
+        "The URL to view this workflow in a browser (requires login)",
+    },
     _links: {
       type: "object",
       additionalProperties: {
@@ -789,6 +800,11 @@ export const PageOfSessionSummarySchema = {
     _lastPage: {
       type: "boolean",
       description: "True iff this page is the final page",
+    },
+    get_totalCount: {
+      type: "integer",
+      description: "Total number of results matching the query",
+      format: "int64",
     },
     _links: {
       type: "object",
@@ -842,6 +858,15 @@ export const SessionSummarySchema = {
         "The integer version of the workflow this session belongs to",
       format: "int32",
     },
+    workflowAppViewUrl: {
+      type: "string",
+      description:
+        "The URL to view this workflow in a browser (requires login)",
+    },
+    sessionAppViewUrl: {
+      type: "string",
+      description: "The URL to view this session in a browser (requires login)",
+    },
     startedAt: {
       type: "string",
       description: "Timestamp when the session was started",
@@ -881,6 +906,11 @@ export const PageOfWorkflowHistorySchema = {
     _lastPage: {
       type: "boolean",
       description: "True iff this page is the final page",
+    },
+    get_totalCount: {
+      type: "integer",
+      description: "Total number of results matching the query",
+      format: "int64",
     },
     _links: {
       type: "object",
@@ -923,149 +953,41 @@ export const WorkflowHistorySchema = {
   description: "The page of response data as an array",
 } as const;
 
-export const GetWorkflowPlanResponseSchema = {
+export const PageOfTaskSummarySchema = {
+  required: ["_embedded", "_lastPage", "_links", "_pageNumber"],
   type: "object",
   properties: {
-    success: {
+    _embedded: {
+      type: "array",
+      description: "The page of response data as an array",
+      items: {
+        $ref: "#/components/schemas/TaskSummary",
+      },
+    },
+    _pageNumber: {
+      type: "integer",
+      description: "The zero-indexed page number of the response data",
+      format: "int32",
+    },
+    _lastPage: {
       type: "boolean",
-      description: "Indicates if the request was processed successfully",
+      description: "True iff this page is the final page",
     },
-    status: {
-      type: "string",
-      description: "Current status of the workflow plan generation",
-      enum: ["IN_PROGRESS", "SUCCESS", "IN_PROGRESS", "SUCCESS"],
-    },
-    workflowId: {
-      type: "string",
-      description:
-        "The ID of the workflow being generated/edited, if applicable",
-    },
-    response: {
-      $ref: "#/components/schemas/WorkflowPlanResponseDto",
-    },
-    error: {
-      type: "string",
-      description: "Error message if the operation failed",
+    get_totalCount: {
+      type: "integer",
+      description: "Total number of results matching the query",
+      format: "int64",
     },
     _links: {
       type: "object",
       additionalProperties: {
         type: "string",
-        description: "Navigation links for workflow operations",
-      },
-      description: "Navigation links for workflow operations",
-    },
-  },
-  description:
-    "Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation",
-  example:
-    'In Progress: {\\n  \\"success\\": true,\\n  \\"status\\": \\"IN_PROGRESS\\"\\n}\\nSuccess with Questions: {\\n  \\"success\\": true,\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Property Inspection\\\\\\",\\\\\\"action\\\\\\":\\\\\\"question\\\\\\",\\\\\\"questions\\\\\\":[\\\\\\"Which calendar system?\\\\\\",\\\\\\"How to receive requests?\\\\\\"]}\\n}\\nSuccess with Plan: {\\n  \\"success\\": true,\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Lead Capture\\\\\\",\\\\\\"action\\\\\\":\\\\\\"propose\\\\\\",\\\\\\"newComponents\\\\\\":[...]}\\n}',
-} as const;
-
-export const WorkflowPlanResponseDtoSchema = {
-  type: "object",
-  properties: {
-    chatTitle: {
-      type: "string",
-    },
-    action: {
-      type: "string",
-    },
-    ambiguity: {
-      type: "string",
-    },
-    questions: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    assume: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    explanation: {
-      type: "string",
-    },
-    editActionsSummary: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    newPlaceholders: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    obsoletePlaceholders: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    newComponents: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    updateComponents: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    removeComponents: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    newDatabases: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    removeDatabases: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    updatedDatabases: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    end: {
-      type: "boolean",
-    },
-  },
-  description: "Parsed AI response with structured workflow plan or questions",
-} as const;
-
-export const LastTaskDtoSchema = {
-  type: "object",
-  properties: {
-    lastTaskId: {
-      type: "string",
-    },
-    lastAssignedOnDate: {
-      type: "string",
-    },
-  },
-} as const;
-
-export const TaskDateFilterSchema = {
-  type: "object",
-  properties: {
-    startDate: {
-      type: "string",
-    },
-    endDate: {
-      type: "string",
-    },
-  },
-} as const;
-
-export const TaskQueryBodySchema = {
-  type: "object",
-  properties: {
-    queryString: {
-      type: "string",
-    },
-    workflowId: {
-      type: "string",
-    },
-    dateFilter: {
-      $ref: "#/components/schemas/TaskDateFilter",
-    },
-    statusToInclude: {
-      type: "array",
-      items: {
-        type: "string",
       },
     },
-    lastTask: {
-      $ref: "#/components/schemas/LastTaskDto",
-    },
   },
 } as const;
 
-export const TaskSummaryDtoSchema = {
+export const TaskSummarySchema = {
   type: "object",
   properties: {
     taskName: {
@@ -1075,10 +997,6 @@ export const TaskSummaryDtoSchema = {
     taskDescription: {
       type: "string",
       description: "The description of the task",
-    },
-    taskUrl: {
-      type: "string",
-      description: "The HTTP URL that will link the user to the task",
     },
     workflowId: {
       type: "string",
@@ -1093,6 +1011,15 @@ export const TaskSummaryDtoSchema = {
       description:
         "The session ID of the session of the workflow that assigned this task",
     },
+    formSessionAppViewUrl: {
+      type: "string",
+      description:
+        "The URL to open this form session in a browser (requires login)",
+    },
+    taskAppViewUrl: {
+      type: "string",
+      description: "The URL to open this task in a browser (requires login)",
+    },
   },
   description:
     "A summary of a task being requested. Usually comes in a list of these.",
@@ -1104,43 +1031,6 @@ export const TaskSummaryDtoSchema = {
     workflowId: "5fc4c4f9-cef0-44d5-861c-c0af00008b28",
     workflowName: "Document Review Process",
     sessionId: "3aa378d1-c45f-448f-b543-d5490000742a",
-  },
-} as const;
-
-export const TokenisePageOfTaskSummaryDtoSchema = {
-  required: ["_embedded", "_lastPage", "_links", "_pageNumber"],
-  type: "object",
-  properties: {
-    _embedded: {
-      type: "array",
-      description: "The page of response data as an array",
-      items: {
-        $ref: "#/components/schemas/TaskSummaryDto",
-      },
-    },
-    _pageNumber: {
-      type: "integer",
-      description: "The zero-indexed page number of the response data",
-      format: "int32",
-    },
-    _lastPage: {
-      type: "boolean",
-      description: "True iff this page is the final page",
-    },
-    totalCount: {
-      type: "integer",
-      description: "Total number of results matching the query",
-      format: "int64",
-    },
-    initialQuery: {
-      $ref: "#/components/schemas/TaskQueryBody",
-    },
-    _links: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
-      },
-    },
   },
 } as const;
 
@@ -1164,6 +1054,11 @@ export const PageOfTableSummarySchema = {
       type: "boolean",
       description: "True iff this page is the final page",
     },
+    get_totalCount: {
+      type: "integer",
+      description: "Total number of results matching the query",
+      format: "int64",
+    },
     _links: {
       type: "object",
       additionalProperties: {
@@ -1185,6 +1080,10 @@ export const TableSummarySchema = {
       type: "string",
       description: "The name of the Workflow86 Table",
     },
+    tableAppViewUrl: {
+      type: "string",
+      description: "The URL to view this table in a browser (requires login)",
+    },
     _links: {
       type: "object",
       additionalProperties: {
@@ -1195,13 +1094,13 @@ export const TableSummarySchema = {
   description: "The page of response data as an array",
 } as const;
 
-export const FormSummaryDtoSchema = {
+export const FormSummarySchema = {
   type: "object",
   properties: {
     formName: {
       type: "string",
     },
-    formUrl: {
+    formAppViewUrl: {
       type: "string",
     },
     workflowId: {
@@ -1214,7 +1113,7 @@ export const FormSummaryDtoSchema = {
   description: "The page of response data as an array",
 } as const;
 
-export const PageOfFormSummaryDtoSchema = {
+export const PageOfFormSummarySchema = {
   required: ["_embedded", "_lastPage", "_links", "_pageNumber"],
   type: "object",
   properties: {
@@ -1222,7 +1121,7 @@ export const PageOfFormSummaryDtoSchema = {
       type: "array",
       description: "The page of response data as an array",
       items: {
-        $ref: "#/components/schemas/FormSummaryDto",
+        $ref: "#/components/schemas/FormSummary",
       },
     },
     _pageNumber: {
@@ -1233,6 +1132,11 @@ export const PageOfFormSummaryDtoSchema = {
     _lastPage: {
       type: "boolean",
       description: "True iff this page is the final page",
+    },
+    get_totalCount: {
+      type: "integer",
+      description: "Total number of results matching the query",
+      format: "int64",
     },
     _links: {
       type: "object",
