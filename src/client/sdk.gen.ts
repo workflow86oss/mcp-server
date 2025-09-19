@@ -14,6 +14,9 @@ import type {
   PublishWorkflowData,
   PublishWorkflowResponses,
   PublishWorkflowErrors,
+  GenerateWorkflowPlanData,
+  GenerateWorkflowPlanResponses,
+  GenerateWorkflowPlanErrors,
   ListTablesData,
   ListTablesResponses,
   CreateTableData,
@@ -54,6 +57,9 @@ import type {
   GetWorkflowHistoryData,
   GetWorkflowHistoryResponses,
   GetWorkflowHistoryErrors,
+  GetWorkflowPlanData,
+  GetWorkflowPlanResponses,
+  GetWorkflowPlanErrors,
   ListTasksData,
   ListTasksResponses,
   ListTasksErrors,
@@ -184,6 +190,33 @@ export const publishWorkflow = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/publish",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Generate Workflow Edit Plan
+ * Generate a workflow edit plan using AI. Takes a workflow ID (optional, leave blank for new workflow) and user requirement description to create an edit plan. Returns a session ID that can be used to poll for the generated plan results.
+ */
+export const generateWorkflowPlan = <ThrowOnError extends boolean = false>(
+  options: Options<GenerateWorkflowPlanData, ThrowOnError>,
+) => {
+  return (options.client ?? client).post<
+    GenerateWorkflowPlanResponses,
+    GenerateWorkflowPlanErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/generate-workflow-plan",
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -533,6 +566,29 @@ export const getWorkflowHistory = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/history",
+    ...options,
+  });
+};
+
+/**
+ * Get Workflow Plan
+ * Retrieve the status and results of a workflow plan generation using the session ID. Returns the current status (in_progress, success) and the latest AI response containing the plan or questions.
+ */
+export const getWorkflowPlan = <ThrowOnError extends boolean = false>(
+  options: Options<GetWorkflowPlanData, ThrowOnError>,
+) => {
+  return (options.client ?? client).get<
+    GetWorkflowPlanResponses,
+    GetWorkflowPlanErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/get-workflow-plan",
     ...options,
   });
 };
