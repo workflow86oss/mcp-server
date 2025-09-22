@@ -8,6 +8,8 @@ import {
   rerunWorkflow,
   publishWorkflow,
   unpublishWorkflow,
+  generateWorkflowPlan,
+  getWorkflowPlan,
 } from "./client/sdk.gen.js";
 import {
   PageOfWorkflowHistory,
@@ -294,6 +296,76 @@ export function registerWorkflowTools(server: McpServer) {
 
         return jsonResponse(
           addSchemaMetadataByType(response.data, "UnpublishWorkflowResponse"),
+        );
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "generate-workflow-plan",
+    "Generate a workflow edit plan using AI. Takes a workflow ID (optional, leave blank for new workflow) and user requirement description to create an edit plan. Returns a session ID that can be used to poll for the generated plan results.",
+    {
+      workflowId: z
+        .string()
+        .optional()
+        .describe(
+          "The ID of an existing workflow to edit, or leave blank for new workflow",
+        ),
+      userRequirement: z
+        .string()
+        .describe(
+          "Description of what the workflow should do or how it should be modified",
+        ),
+      context: z
+        .record(z.string(), z.unknown())
+        .optional()
+        .describe(
+          "Optional context object with additional information for the AI",
+        ),
+    },
+    async ({ workflowId, userRequirement, context }) => {
+      try {
+        const response = await generateWorkflowPlan({
+          client: client,
+          throwOnError: true,
+          query: {
+            workflowId,
+            userRequirement,
+          },
+          body: context,
+        });
+
+        return jsonResponse(
+          addSchemaMetadataByType(response.data, "GenerateWorkflowResponse"),
+        );
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "get-workflow-plan",
+    "Retrieve the status and results of a workflow plan generation using the session ID. Returns the current status (in_progress, success) and the latest AI response containing the plan or questions.",
+    {
+      sessionId: z
+        .string()
+        .describe("Session ID returned from generate-workflow-plan"),
+    },
+    async ({ sessionId }) => {
+      try {
+        const response = await getWorkflowPlan({
+          client: client,
+          throwOnError: true,
+          query: {
+            sessionId,
+          },
+        });
+
+        return jsonResponse(
+          addSchemaMetadataByType(response.data, "GetWorkflowPlanResponse"),
         );
       } catch (error) {
         return handleError(error);

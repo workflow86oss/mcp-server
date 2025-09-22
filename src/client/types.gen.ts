@@ -150,6 +150,19 @@ export type PublishWorkflowResponse = {
 };
 
 /**
+ * Response for generate-workflow-plan API that generates a workflow edit plan
+ */
+export type GenerateWorkflowResponse = {
+  /**
+   * Session ID created for polling the result. Present when success is true
+   */
+  sessionId?: string;
+  _links?: {
+    [key: string]: string;
+  };
+};
+
+/**
  * Array of column definitions
  */
 export type CreateColumnCommand = {
@@ -639,6 +652,49 @@ export type WorkflowHistory = {
   };
 };
 
+/**
+ * Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation
+ */
+export type GetWorkflowPlanResponse = {
+  /**
+   * Current status of the workflow plan generation
+   */
+  status?: "IN_PROGRESS" | "SUCCESS";
+  /**
+   * The ID of the workflow being generated/edited, if applicable
+   */
+  workflowId?: string;
+  response?: WorkflowPlanResponseDto;
+  /**
+   * Navigation links for workflow operations
+   */
+  _links?: {
+    [key: string]: string;
+  };
+};
+
+/**
+ * Parsed AI response with structured workflow plan or questions
+ */
+export type WorkflowPlanResponseDto = {
+  chatTitle?: string;
+  action?: string;
+  ambiguity?: string;
+  questions?: JsonNode;
+  assume?: JsonNode;
+  explanation?: string;
+  editActionsSummary?: JsonNode;
+  newPlaceholders?: JsonNode;
+  obsoletePlaceholders?: JsonNode;
+  newComponents?: JsonNode;
+  updateComponents?: JsonNode;
+  removeComponents?: JsonNode;
+  newDatabases?: JsonNode;
+  removeDatabases?: JsonNode;
+  updatedDatabases?: JsonNode;
+  end?: boolean;
+};
+
 export type PageOfTaskSummary = {
   /**
    * The page of response data as an array
@@ -947,6 +1003,54 @@ export type PublishWorkflowResponses = {
 
 export type PublishWorkflowResponse2 =
   PublishWorkflowResponses[keyof PublishWorkflowResponses];
+
+export type GenerateWorkflowPlanData = {
+  body?: {
+    [key: string]: unknown;
+  };
+  path?: never;
+  query: {
+    workflowId?: string;
+    userRequirement: string;
+  };
+  url: "/v1/workflow/generate-workflow-plan";
+};
+
+export type GenerateWorkflowPlanErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type GenerateWorkflowPlanError =
+  GenerateWorkflowPlanErrors[keyof GenerateWorkflowPlanErrors];
+
+export type GenerateWorkflowPlanResponses = {
+  /**
+   * OK
+   */
+  200: GenerateWorkflowResponse;
+};
+
+export type GenerateWorkflowPlanResponse =
+  GenerateWorkflowPlanResponses[keyof GenerateWorkflowPlanResponses];
 
 export type ListTablesData = {
   body?: never;
@@ -1512,6 +1616,51 @@ export type GetWorkflowHistoryResponses = {
 
 export type GetWorkflowHistoryResponse =
   GetWorkflowHistoryResponses[keyof GetWorkflowHistoryResponses];
+
+export type GetWorkflowPlanData = {
+  body?: never;
+  path?: never;
+  query: {
+    sessionId: string;
+  };
+  url: "/v1/workflow/get-workflow-plan";
+};
+
+export type GetWorkflowPlanErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type GetWorkflowPlanError =
+  GetWorkflowPlanErrors[keyof GetWorkflowPlanErrors];
+
+export type GetWorkflowPlanResponses = {
+  /**
+   * OK
+   */
+  200: GetWorkflowPlanResponse;
+};
+
+export type GetWorkflowPlanResponse2 =
+  GetWorkflowPlanResponses[keyof GetWorkflowPlanResponses];
 
 export type ListTasksData = {
   body?: never;

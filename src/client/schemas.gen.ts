@@ -219,6 +219,29 @@ export const PublishWorkflowResponseSchema = {
   },
 } as const;
 
+export const GenerateWorkflowResponseSchema = {
+  type: "object",
+  properties: {
+    sessionId: {
+      type: "string",
+      description:
+        "Session ID created for polling the result. Present when success is true",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
+  },
+  description:
+    "Response for generate-workflow-plan API that generates a workflow edit plan",
+  example: `Success: {
+  "sessionId": "3aa378d1-c45f-448f-b543-d5490000742a"
+}
+`,
+} as const;
+
 export const CreateColumnCommandSchema = {
   required: ["columnName", "columnType"],
   type: "object",
@@ -951,6 +974,92 @@ export const WorkflowHistorySchema = {
     },
   },
   description: "The page of response data as an array",
+} as const;
+
+export const GetWorkflowPlanResponseSchema = {
+  type: "object",
+  properties: {
+    status: {
+      type: "string",
+      description: "Current status of the workflow plan generation",
+      enum: ["IN_PROGRESS", "SUCCESS", "IN_PROGRESS", "SUCCESS"],
+    },
+    workflowId: {
+      type: "string",
+      description:
+        "The ID of the workflow being generated/edited, if applicable",
+    },
+    response: {
+      $ref: "#/components/schemas/WorkflowPlanResponseDto",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+        description: "Navigation links for workflow operations",
+      },
+      description: "Navigation links for workflow operations",
+    },
+  },
+  description:
+    "Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation",
+  example:
+    'In Progress: {\\n  \\"status\\": \\"IN_PROGRESS\\"\\n}\\nSuccess with Questions: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Property Inspection\\\\\\",\\\\\\"action\\\\\\":\\\\\\"question\\\\\\",\\\\\\"questions\\\\\\":[\\\\\\"Which calendar system?\\\\\\",\\\\\\"How to receive requests?\\\\\\"]}\\n}\\nSuccess with Plan: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Lead Capture\\\\\\",\\\\\\"action\\\\\\":\\\\\\"propose\\\\\\",\\\\\\"newComponents\\\\\\":[...]}\\n}',
+} as const;
+
+export const WorkflowPlanResponseDtoSchema = {
+  type: "object",
+  properties: {
+    chatTitle: {
+      type: "string",
+    },
+    action: {
+      type: "string",
+    },
+    ambiguity: {
+      type: "string",
+    },
+    questions: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    assume: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    explanation: {
+      type: "string",
+    },
+    editActionsSummary: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    newPlaceholders: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    obsoletePlaceholders: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    newComponents: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    updateComponents: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    removeComponents: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    newDatabases: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    removeDatabases: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    updatedDatabases: {
+      $ref: "#/components/schemas/JsonNode",
+    },
+    end: {
+      type: "boolean",
+    },
+  },
+  description: "Parsed AI response with structured workflow plan or questions",
 } as const;
 
 export const PageOfTaskSummarySchema = {
