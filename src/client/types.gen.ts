@@ -657,10 +657,6 @@ export type WorkflowHistory = {
  */
 export type GetWorkflowPlanResponse = {
   /**
-   * Indicates if the request was processed successfully
-   */
-  success?: boolean;
-  /**
    * Current status of the workflow plan generation
    */
   status?: "IN_PROGRESS" | "SUCCESS";
@@ -669,10 +665,6 @@ export type GetWorkflowPlanResponse = {
    */
   workflowId?: string;
   response?: WorkflowPlanResponseDto;
-  /**
-   * Error message if the operation failed
-   */
-  error?: string;
   /**
    * Navigation links for workflow operations
    */

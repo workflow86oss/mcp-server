@@ -979,10 +979,6 @@ export const WorkflowHistorySchema = {
 export const GetWorkflowPlanResponseSchema = {
   type: "object",
   properties: {
-    success: {
-      type: "boolean",
-      description: "Indicates if the request was processed successfully",
-    },
     status: {
       type: "string",
       description: "Current status of the workflow plan generation",
@@ -996,10 +992,6 @@ export const GetWorkflowPlanResponseSchema = {
     response: {
       $ref: "#/components/schemas/WorkflowPlanResponseDto",
     },
-    error: {
-      type: "string",
-      description: "Error message if the operation failed",
-    },
     _links: {
       type: "object",
       additionalProperties: {
@@ -1012,7 +1004,7 @@ export const GetWorkflowPlanResponseSchema = {
   description:
     "Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation",
   example:
-    'In Progress: {\\n  \\"success\\": true,\\n  \\"status\\": \\"IN_PROGRESS\\"\\n}\\nSuccess with Questions: {\\n  \\"success\\": true,\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Property Inspection\\\\\\",\\\\\\"action\\\\\\":\\\\\\"question\\\\\\",\\\\\\"questions\\\\\\":[\\\\\\"Which calendar system?\\\\\\",\\\\\\"How to receive requests?\\\\\\"]}\\n}\\nSuccess with Plan: {\\n  \\"success\\": true,\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Lead Capture\\\\\\",\\\\\\"action\\\\\\":\\\\\\"propose\\\\\\",\\\\\\"newComponents\\\\\\":[...]}\\n}',
+    'In Progress: {\\n  \\"status\\": \\"IN_PROGRESS\\"\\n}\\nSuccess with Questions: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Property Inspection\\\\\\",\\\\\\"action\\\\\\":\\\\\\"question\\\\\\",\\\\\\"questions\\\\\\":[\\\\\\"Which calendar system?\\\\\\",\\\\\\"How to receive requests?\\\\\\"]}\\n}\\nSuccess with Plan: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Lead Capture\\\\\\",\\\\\\"action\\\\\\":\\\\\\"propose\\\\\\",\\\\\\"newComponents\\\\\\":[...]}\\n}',
 } as const;
 
 export const WorkflowPlanResponseDtoSchema = {
