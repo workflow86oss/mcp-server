@@ -2,6 +2,9 @@
 
 import type { Options as ClientOptions, Client, TDataShape } from "./client";
 import type {
+  UpdateWorkflowDetailsData,
+  UpdateWorkflowDetailsResponses,
+  UpdateWorkflowDetailsErrors,
   UnpublishWorkflowData,
   UnpublishWorkflowResponses,
   UnpublishWorkflowErrors,
@@ -92,6 +95,33 @@ export type Options<
    * used to access values that aren't defined as part of the SDK function.
    */
   meta?: Record<string, unknown>;
+};
+
+/**
+ * Update Workflow Details
+ * Update workflow name and/or description. Only provided fields will be updated, omitted fields will remain unchanged.
+ */
+export const updateWorkflowDetails = <ThrowOnError extends boolean = false>(
+  options: Options<UpdateWorkflowDetailsData, ThrowOnError>,
+) => {
+  return (options.client ?? client).put<
+    UpdateWorkflowDetailsResponses,
+    UpdateWorkflowDetailsErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/{workflowId}/details",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
 };
 
 /**
