@@ -10,6 +10,7 @@ import {
   unpublishWorkflow,
   generateWorkflowPlan,
   getWorkflowPlan,
+  updateWorkflowDetails,
 } from "./client/sdk.gen.js";
 import {
   PageOfWorkflowHistory,
@@ -366,6 +367,50 @@ export function registerWorkflowTools(server: McpServer) {
 
         return jsonResponse(
           addSchemaMetadataByType(response.data, "GetWorkflowPlanResponse"),
+        );
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "update-workflow-details",
+    "Update workflow name and/or description. Only provided fields will be updated, omitted fields will remain unchanged.",
+    {
+      workflowId: z.string().describe("The ID of the workflow to update"),
+      workflowName: z
+        .string()
+        .optional()
+        .describe(
+          "Optional new name for the workflow. If not provided, the name will not be changed",
+        ),
+      workflowDescription: z
+        .string()
+        .optional()
+        .describe(
+          "Optional new description for the workflow. If not provided, the description will not be changed",
+        ),
+    },
+    async ({ workflowId, workflowName, workflowDescription }) => {
+      try {
+        const response = await updateWorkflowDetails({
+          client: client,
+          throwOnError: true,
+          path: {
+            workflowId,
+          },
+          body: {
+            workflowName,
+            workflowDescription,
+          },
+        });
+
+        return jsonResponse(
+          addSchemaMetadataByType(
+            response.data,
+            "UpdateWorkflowDetailsResponse",
+          ),
         );
       } catch (error) {
         return handleError(error);
