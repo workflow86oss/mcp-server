@@ -124,10 +124,10 @@ export function registerWorkflowTools(server: McpServer) {
         .describe("The ID of the workflow to get the details of"),
       workflowVersion: z
         .string()
-        .default("PUBLISHED")
-        .describe("PUBLISHED, DRAFT, or an integer workflow version"),
+        .default("DEFAULT")
+        .describe("DEFAULT, PUBLISHED, DRAFT, or an integer workflow version"),
     },
-    async ({ workflowId, workflowVersion = "PUBLISHED" }) => {
+    async ({ workflowId, workflowVersion = "DEFAULT" }) => {
       try {
         const response = await getWorkflowVersion({
           client: client,
@@ -335,7 +335,7 @@ export function registerWorkflowTools(server: McpServer) {
             workflowId,
             userRequirement,
           },
-          body: context,
+          body: context ? JSON.stringify(context) : undefined,
         });
 
         return jsonResponse(
@@ -360,8 +360,8 @@ export function registerWorkflowTools(server: McpServer) {
         const response = await getWorkflowPlan({
           client: client,
           throwOnError: true,
-          query: {
-            sessionId,
+          path: {
+            planSessionId: sessionId,
           },
         });
 

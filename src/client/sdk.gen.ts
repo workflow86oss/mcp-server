@@ -246,7 +246,7 @@ export const generateWorkflowPlan = <ThrowOnError extends boolean = false>(
         type: "apiKey",
       },
     ],
-    url: "/v1/workflow/generate-workflow-plan",
+    url: "/v1/workflow-plan/generate",
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -618,7 +618,7 @@ export const getWorkflowPlan = <ThrowOnError extends boolean = false>(
         type: "apiKey",
       },
     ],
-    url: "/v1/workflow/get-workflow-plan",
+    url: "/v1/workflow-plan/{planSessionId}",
     ...options,
   });
 };

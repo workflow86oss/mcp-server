@@ -59,6 +59,14 @@ export const UpdateWorkflowDetailsResponseSchema = {
       type: "string",
       description: "The current description of the workflow",
     },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+        description: "Navigation links for workflow operations",
+      },
+      description: "Navigation links for workflow operations",
+    },
   },
   description: "Response for workflow details update operation",
   example: {
@@ -1021,6 +1029,157 @@ export const WorkflowHistorySchema = {
   description: "The page of response data as an array",
 } as const;
 
+export const ComponentPlanDtoSchema = {
+  type: "object",
+  properties: {
+    componentId: {
+      type: "integer",
+      format: "int32",
+    },
+    componentType: {
+      type: "string",
+    },
+    componentTitle: {
+      type: "string",
+    },
+    componentDescription: {
+      type: "string",
+    },
+    inputPlaceholders: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    outputPlaceholders: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    path: {
+      type: "string",
+    },
+    previousComponents: {
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+      },
+    },
+    nextComponents: {
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+      },
+    },
+    parentBranchPath: {
+      type: "integer",
+      format: "int32",
+    },
+    childPaths: {
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+      },
+    },
+    pathCondition: {
+      type: "string",
+    },
+    mergeCondition: {
+      type: "string",
+    },
+    triggerStartComponent: {
+      type: "integer",
+      format: "int32",
+    },
+    triggerEndComponent: {
+      type: "integer",
+      format: "int32",
+    },
+    infiniteLoopCheck: {
+      type: "boolean",
+    },
+    credential: {
+      type: "string",
+    },
+    downstreamForms: {
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+      },
+    },
+    componentDatabase: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    componentDatabaseCols: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    updateRowIdSource: {
+      type: "string",
+    },
+    updateRowId: {
+      type: "string",
+    },
+  },
+  description:
+    "Use delete-component to remove unwanted components from draft workflows",
+} as const;
+
+export const DatabaseColumnPlanDtoSchema = {
+  type: "object",
+  properties: {
+    databaseColumnId: {
+      type: "string",
+    },
+    databaseColumnName: {
+      type: "string",
+    },
+    databaseColumnType: {
+      type: "string",
+    },
+  },
+} as const;
+
+export const DatabasePlanDtoSchema = {
+  type: "object",
+  properties: {
+    databaseID: {
+      type: "string",
+    },
+    databaseName: {
+      type: "string",
+    },
+    componentLink: {
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+      },
+    },
+    columns: {
+      type: "array",
+      items: {
+        $ref: "#/components/schemas/DatabaseColumnPlanDto",
+      },
+    },
+    existing: {
+      type: "boolean",
+    },
+  },
+  description:
+    "Use add-column, rename-column, or delete-column to modify existing tables",
+} as const;
+
 export const GetWorkflowPlanResponseSchema = {
   type: "object",
   properties: {
@@ -1037,6 +1196,9 @@ export const GetWorkflowPlanResponseSchema = {
     response: {
       $ref: "#/components/schemas/WorkflowPlanResponseDto",
     },
+    sessionId: {
+      type: "string",
+    },
     _links: {
       type: "object",
       additionalProperties: {
@@ -1049,7 +1211,118 @@ export const GetWorkflowPlanResponseSchema = {
   description:
     "Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation",
   example:
-    'In Progress: {\\n  \\"status\\": \\"IN_PROGRESS\\"\\n}\\nSuccess with Questions: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Property Inspection\\\\\\",\\\\\\"action\\\\\\":\\\\\\"question\\\\\\",\\\\\\"questions\\\\\\":[\\\\\\"Which calendar system?\\\\\\",\\\\\\"How to receive requests?\\\\\\"]}\\n}\\nSuccess with Plan: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Lead Capture\\\\\\",\\\\\\"action\\\\\\":\\\\\\"propose\\\\\\",\\\\\\"newComponents\\\\\\":[...]}\\n}',
+    'In Progress: {\\n  \\"status\\": \\"IN_PROGRESS\\",\\n  \\"sessionId\\": \\"abc123-def456-ghi789\\"\\n}\\nSuccess with Questions: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"sessionId\\": \\"abc123-def456-ghi789\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Property Inspection\\\\\\",\\\\\\"action\\\\\\":\\\\\\"question\\\\\\",\\\\\\"questions\\\\\\":[\\\\\\"Which calendar system?\\\\\\",\\\\\\"How to receive requests?\\\\\\"]}\\n}\\nSuccess with Plan: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"sessionId\\": \\"abc123-def456-ghi789\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Lead Capture\\\\\\",\\\\\\"action\\\\\\":\\\\\\"propose\\\\\\",\\\\\\"newComponents\\\\\\":[...]}\\n}',
+} as const;
+
+export const UpdateComponentPlanDtoSchema = {
+  type: "object",
+  properties: {
+    componentId: {
+      type: "integer",
+      format: "int32",
+    },
+    componentType: {
+      type: "string",
+    },
+    componentTitle: {
+      type: "string",
+    },
+    componentDescription: {
+      type: "string",
+    },
+    inputPlaceholders: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    outputPlaceholders: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    path: {
+      type: "string",
+    },
+    previousComponents: {
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+      },
+    },
+    nextComponents: {
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+      },
+    },
+    parentBranchPath: {
+      type: "integer",
+      format: "int32",
+    },
+    childPaths: {
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+      },
+    },
+    pathCondition: {
+      type: "string",
+    },
+    mergeCondition: {
+      type: "string",
+    },
+    triggerStartComponent: {
+      type: "integer",
+      format: "int32",
+    },
+    triggerEndComponent: {
+      type: "integer",
+      format: "int32",
+    },
+    infiniteLoopCheck: {
+      type: "boolean",
+    },
+    credential: {
+      type: "string",
+    },
+    downstreamForms: {
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+      },
+    },
+    componentDatabase: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    componentDatabaseCols: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    updateRowIdSource: {
+      type: "string",
+    },
+    updateRowId: {
+      type: "string",
+    },
+    editInstructions: {
+      type: "string",
+    },
+    editConnectionsOnly: {
+      type: "boolean",
+    },
+  },
+  description: "Use generate-component tool to update existing components",
 } as const;
 
 export const WorkflowPlanResponseDtoSchema = {
@@ -1068,43 +1341,95 @@ export const WorkflowPlanResponseDtoSchema = {
       type: "string",
     },
     questions: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description:
+        "Ask questions to the user. Use mcp_workflow86_generate-workflow-plan with additional context to address any clarifying questions",
+      items: {
+        type: "string",
+        description:
+          "Ask questions to the user. Use mcp_workflow86_generate-workflow-plan with additional context to address any clarifying questions",
+      },
     },
     assume: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Assumptions in the generated plan.",
+      items: {
+        type: "string",
+        description: "Assumptions in the generated plan.",
+      },
     },
     explanation: {
       type: "string",
     },
     editActionsSummary: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Summary of actions to implement the plan.",
+      items: {
+        type: "string",
+        description: "Summary of actions to implement the plan.",
+      },
     },
     newPlaceholders: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Placeholders that will be created.",
+      items: {
+        type: "string",
+        description: "Placeholders that will be created.",
+      },
     },
     obsoletePlaceholders: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Placeholders that are now obsolete.",
+      items: {
+        type: "string",
+        description: "Placeholders that are now obsolete.",
+      },
     },
     newComponents: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Use generate-component tool to build new components",
+      items: {
+        $ref: "#/components/schemas/ComponentPlanDto",
+      },
     },
     updateComponents: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Use generate-component tool to update existing components",
+      items: {
+        $ref: "#/components/schemas/UpdateComponentPlanDto",
+      },
     },
     removeComponents: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description:
+        "Use delete-component to remove unwanted components from draft workflows",
+      items: {
+        $ref: "#/components/schemas/ComponentPlanDto",
+      },
     },
     newDatabases: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description:
+        "Use create-table to create each database, then add-column configuring columns",
+      items: {
+        $ref: "#/components/schemas/DatabasePlanDto",
+      },
     },
     removeDatabases: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description:
+        "No direct tool available - database removal must be done manually in Workflow86 UI",
+      items: {
+        $ref: "#/components/schemas/DatabasePlanDto",
+      },
     },
     updatedDatabases: {
-      $ref: "#/components/schemas/JsonNode",
-    },
-    end: {
-      type: "boolean",
+      type: "array",
+      description:
+        "Use add-column, rename-column, or delete-column to modify existing tables",
+      items: {
+        $ref: "#/components/schemas/DatabasePlanDto",
+      },
     },
   },
   description: "Parsed AI response with structured workflow plan or questions",
