@@ -748,6 +748,7 @@ export type GetWorkflowPlanResponse = {
    */
   workflowId?: string;
   response?: WorkflowPlanResponseDto;
+  sessionId?: string;
   /**
    * Navigation links for workflow operations
    */
@@ -1664,7 +1665,7 @@ export type GetWorkflowVersionData = {
   path: {
     workflowId: string;
     /**
-     * PUBLISHED, DRAFT, or an integer workflow version
+     * DEFAULT, PUBLISHED, DRAFT, or an integer workflow version
      */
     workflowVersion: string;
   };

@@ -1196,6 +1196,9 @@ export const GetWorkflowPlanResponseSchema = {
     response: {
       $ref: "#/components/schemas/WorkflowPlanResponseDto",
     },
+    sessionId: {
+      type: "string",
+    },
     _links: {
       type: "object",
       additionalProperties: {
@@ -1208,7 +1211,7 @@ export const GetWorkflowPlanResponseSchema = {
   description:
     "Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation",
   example:
-    'In Progress: {\\n  \\"status\\": \\"IN_PROGRESS\\"\\n}\\nSuccess with Questions: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Property Inspection\\\\\\",\\\\\\"action\\\\\\":\\\\\\"question\\\\\\",\\\\\\"questions\\\\\\":[\\\\\\"Which calendar system?\\\\\\",\\\\\\"How to receive requests?\\\\\\"]}\\n}\\nSuccess with Plan: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Lead Capture\\\\\\",\\\\\\"action\\\\\\":\\\\\\"propose\\\\\\",\\\\\\"newComponents\\\\\\":[...]}\\n}',
+    'In Progress: {\\n  \\"status\\": \\"IN_PROGRESS\\",\\n  \\"sessionId\\": \\"abc123-def456-ghi789\\"\\n}\\nSuccess with Questions: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"sessionId\\": \\"abc123-def456-ghi789\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Property Inspection\\\\\\",\\\\\\"action\\\\\\":\\\\\\"question\\\\\\",\\\\\\"questions\\\\\\":[\\\\\\"Which calendar system?\\\\\\",\\\\\\"How to receive requests?\\\\\\"]}\\n}\\nSuccess with Plan: {\\n  \\"status\\": \\"SUCCESS\\",\\n  \\"workflowId\\": \\"69cac94a-2fac-4dcc-98e7-5dfc5a051fbe\\",\\n  \\"sessionId\\": \\"abc123-def456-ghi789\\",\\n  \\"response\\": {\\\\\\"chatTitle\\\\\\":\\\\\\"Lead Capture\\\\\\",\\\\\\"action\\\\\\":\\\\\\"propose\\\\\\",\\\\\\"newComponents\\\\\\":[...]}\\n}',
 } as const;
 
 export const UpdateComponentPlanDtoSchema = {
