@@ -691,6 +691,51 @@ export type WorkflowHistory = {
 };
 
 /**
+ * Use delete-component to remove unwanted components from draft workflows
+ */
+export type ComponentPlanDto = {
+  componentId?: number;
+  componentType?: string;
+  componentTitle?: string;
+  componentDescription?: string;
+  inputPlaceholders?: Array<string>;
+  outputPlaceholders?: Array<string>;
+  path?: string;
+  previousComponents?: Array<number>;
+  nextComponents?: Array<number>;
+  parentBranchPath?: number;
+  childPaths?: Array<number>;
+  pathCondition?: string;
+  mergeCondition?: string;
+  triggerStartComponent?: number;
+  triggerEndComponent?: number;
+  infiniteLoopCheck?: boolean;
+  credential?: string;
+  downstreamForms?: Array<number>;
+  componentDatabase?: Array<string>;
+  componentDatabaseCols?: Array<string>;
+  updateRowIdSource?: string;
+  updateRowId?: string;
+};
+
+export type DatabaseColumnPlanDto = {
+  databaseColumnId?: string;
+  databaseColumnName?: string;
+  databaseColumnType?: string;
+};
+
+/**
+ * Use add-column, rename-column, or delete-column to modify existing tables
+ */
+export type DatabasePlanDto = {
+  databaseID?: string;
+  databaseName?: string;
+  componentLink?: Array<number>;
+  columns?: Array<DatabaseColumnPlanDto>;
+  existing?: boolean;
+};
+
+/**
  * Response for get-workflow-plan API that retrieves the status and results of a workflow plan generation
  */
 export type GetWorkflowPlanResponse = {
@@ -709,6 +754,36 @@ export type GetWorkflowPlanResponse = {
   _links?: {
     [key: string]: string;
   };
+};
+
+/**
+ * Use generate-component tool to update existing components
+ */
+export type UpdateComponentPlanDto = {
+  componentId?: number;
+  componentType?: string;
+  componentTitle?: string;
+  componentDescription?: string;
+  inputPlaceholders?: Array<string>;
+  outputPlaceholders?: Array<string>;
+  path?: string;
+  previousComponents?: Array<number>;
+  nextComponents?: Array<number>;
+  parentBranchPath?: number;
+  childPaths?: Array<number>;
+  pathCondition?: string;
+  mergeCondition?: string;
+  triggerStartComponent?: number;
+  triggerEndComponent?: number;
+  infiniteLoopCheck?: boolean;
+  credential?: string;
+  downstreamForms?: Array<number>;
+  componentDatabase?: Array<string>;
+  componentDatabaseCols?: Array<string>;
+  updateRowIdSource?: string;
+  updateRowId?: string;
+  editInstructions?: string;
+  editConnectionsOnly?: boolean;
 };
 
 /**
@@ -740,12 +815,30 @@ export type WorkflowPlanResponseDto = {
    * Placeholders that are now obsolete.
    */
   obsoletePlaceholders?: Array<string>;
-  newComponents?: JsonNode;
-  updateComponents?: JsonNode;
-  removeComponents?: JsonNode;
-  newDatabases?: JsonNode;
-  removeDatabases?: JsonNode;
-  updatedDatabases?: JsonNode;
+  /**
+   * Use generate-component tool to build new components
+   */
+  newComponents?: Array<ComponentPlanDto>;
+  /**
+   * Use generate-component tool to update existing components
+   */
+  updateComponents?: Array<UpdateComponentPlanDto>;
+  /**
+   * Use delete-component to remove unwanted components from draft workflows
+   */
+  removeComponents?: Array<ComponentPlanDto>;
+  /**
+   * Use create-table to create each database, then add-column configuring columns
+   */
+  newDatabases?: Array<DatabasePlanDto>;
+  /**
+   * No direct tool available - database removal must be done manually in Workflow86 UI
+   */
+  removeDatabases?: Array<DatabasePlanDto>;
+  /**
+   * Use add-column, rename-column, or delete-column to modify existing tables
+   */
+  updatedDatabases?: Array<DatabasePlanDto>;
 };
 
 export type PageOfTaskSummary = {
