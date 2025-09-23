@@ -719,19 +719,33 @@ export type WorkflowPlanResponseDto = {
   workflowName?: string;
   action?: string;
   ambiguity?: string;
-  questions?: JsonNode;
-  assume?: JsonNode;
+  /**
+   * Ask questions to the user. Use mcp_workflow86_generate-workflow-plan with additional context to address any clarifying questions
+   */
+  questions?: Array<string>;
+  /**
+   * Assumptions in the generated plan.
+   */
+  assume?: Array<string>;
   explanation?: string;
-  editActionsSummary?: JsonNode;
-  newPlaceholders?: JsonNode;
-  obsoletePlaceholders?: JsonNode;
+  /**
+   * Summary of actions to implement the plan.
+   */
+  editActionsSummary?: Array<string>;
+  /**
+   * Placeholders that will be created.
+   */
+  newPlaceholders?: Array<string>;
+  /**
+   * Placeholders that are now obsolete.
+   */
+  obsoletePlaceholders?: Array<string>;
   newComponents?: JsonNode;
   updateComponents?: JsonNode;
   removeComponents?: JsonNode;
   newDatabases?: JsonNode;
   removeDatabases?: JsonNode;
   updatedDatabases?: JsonNode;
-  end?: boolean;
 };
 
 export type PageOfTaskSummary = {
@@ -1089,15 +1103,13 @@ export type PublishWorkflowResponse2 =
   PublishWorkflowResponses[keyof PublishWorkflowResponses];
 
 export type GenerateWorkflowPlanData = {
-  body?: {
-    [key: string]: unknown;
-  };
+  body?: string;
   path?: never;
   query: {
     workflowId?: string;
     userRequirement: string;
   };
-  url: "/v1/workflow/generate-workflow-plan";
+  url: "/v1/workflow-plan/generate";
 };
 
 export type GenerateWorkflowPlanErrors = {
@@ -1559,7 +1571,7 @@ export type GetWorkflowVersionData = {
   path: {
     workflowId: string;
     /**
-     * DEFAULT, PUBLISHED, DRAFT, or an integer workflow version
+     * PUBLISHED, DRAFT, or an integer workflow version
      */
     workflowVersion: string;
   };
@@ -1703,11 +1715,11 @@ export type GetWorkflowHistoryResponse =
 
 export type GetWorkflowPlanData = {
   body?: never;
-  path?: never;
-  query: {
-    sessionId: string;
+  path: {
+    planSessionId: string;
   };
-  url: "/v1/workflow/get-workflow-plan";
+  query?: never;
+  url: "/v1/workflow-plan/{planSessionId}";
 };
 
 export type GetWorkflowPlanErrors = {

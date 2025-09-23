@@ -334,7 +334,7 @@ export function registerWorkflowTools(server: McpServer) {
             workflowId,
             userRequirement,
           },
-          body: context,
+          body: context ? JSON.stringify(context) : undefined,
         });
 
         return jsonResponse(
@@ -359,8 +359,8 @@ export function registerWorkflowTools(server: McpServer) {
         const response = await getWorkflowPlan({
           client: client,
           throwOnError: true,
-          query: {
-            sessionId,
+          path: {
+            planSessionId: sessionId,
           },
         });
 

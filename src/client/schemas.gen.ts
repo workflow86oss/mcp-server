@@ -1076,22 +1076,49 @@ export const WorkflowPlanResponseDtoSchema = {
       type: "string",
     },
     questions: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description:
+        "Ask questions to the user. Use mcp_workflow86_generate-workflow-plan with additional context to address any clarifying questions",
+      items: {
+        type: "string",
+        description:
+          "Ask questions to the user. Use mcp_workflow86_generate-workflow-plan with additional context to address any clarifying questions",
+      },
     },
     assume: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Assumptions in the generated plan.",
+      items: {
+        type: "string",
+        description: "Assumptions in the generated plan.",
+      },
     },
     explanation: {
       type: "string",
     },
     editActionsSummary: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Summary of actions to implement the plan.",
+      items: {
+        type: "string",
+        description: "Summary of actions to implement the plan.",
+      },
     },
     newPlaceholders: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Placeholders that will be created.",
+      items: {
+        type: "string",
+        description: "Placeholders that will be created.",
+      },
     },
     obsoletePlaceholders: {
-      $ref: "#/components/schemas/JsonNode",
+      type: "array",
+      description: "Placeholders that are now obsolete.",
+      items: {
+        type: "string",
+        description: "Placeholders that are now obsolete.",
+      },
     },
     newComponents: {
       $ref: "#/components/schemas/JsonNode",
@@ -1110,9 +1137,6 @@ export const WorkflowPlanResponseDtoSchema = {
     },
     updatedDatabases: {
       $ref: "#/components/schemas/JsonNode",
-    },
-    end: {
-      type: "boolean",
     },
   },
   description: "Parsed AI response with structured workflow plan or questions",
