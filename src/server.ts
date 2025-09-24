@@ -142,7 +142,7 @@ registerComponentTools(server);
 async function main() {
   const maskedApiKey = getMaskedApiKey();
   console.error(
-    `Workflow86 MCP Server started on stdio (Node.js version: ${process.version}, baseUrl: ${baseUrl}, apiKey: ${maskedApiKey})`,
+    `Workflow86 MCP Server started on stdio (package version: ${version}, Node.js version: ${process.version}, baseUrl: ${baseUrl}, apiKey: ${maskedApiKey})`,
   );
 
   if (!process.env.W86_API_KEY && !process.env.W86_HEADERS) {
