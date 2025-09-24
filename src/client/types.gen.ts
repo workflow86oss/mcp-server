@@ -504,7 +504,7 @@ export type PageOfWorkflowSummary = {
    */
   _pageNumber: number;
   /**
-   * True iff this page is the final page
+   * True if this page is the final page
    */
   _lastPage: boolean;
   /**
@@ -559,7 +559,7 @@ export type PageOfSessionSummary = {
    */
   _pageNumber: number;
   /**
-   * True iff this page is the final page
+   * True if this page is the final page
    */
   _lastPage: boolean;
   /**
@@ -632,7 +632,7 @@ export type PageOfWorkflowHistory = {
    */
   _pageNumber: number;
   /**
-   * True iff this page is the final page
+   * True if this page is the final page
    */
   _lastPage: boolean;
   /**
@@ -831,7 +831,7 @@ export type PageOfTaskSummary = {
    */
   _pageNumber: number;
   /**
-   * True iff this page is the final page
+   * True if this page is the final page
    */
   _lastPage: boolean;
   /**
@@ -887,7 +887,7 @@ export type PageOfTableSummary = {
    */
   _pageNumber: number;
   /**
-   * True iff this page is the final page
+   * True if this page is the final page
    */
   _lastPage: boolean;
   /**
@@ -940,7 +940,7 @@ export type PageOfFormSummary = {
    */
   _pageNumber: number;
   /**
-   * True iff this page is the final page
+   * True if this page is the final page
    */
   _lastPage: boolean;
   /**
@@ -1556,6 +1556,14 @@ export type ListWorkflowsData = {
      */
     status?: "ALL" | "PUBLISHED";
     pageNumber?: number;
+    /**
+     * Field to sort by
+     */
+    orderBy?: "createdAt" | "updatedAt" | "name" | "lastUpdated";
+    /**
+     * Sort direction
+     */
+    orderDirection?: "ASC" | "DESC";
   };
   url: "/v1/workflow";
 };
