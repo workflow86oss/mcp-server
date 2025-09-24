@@ -44,35 +44,190 @@ export const Standard_Workflow86_ExceptionSchema = {
   },
 } as const;
 
-export const UpdateWorkflowDetailsResponseSchema = {
+export const ColumnDetailsSchema = {
+  required: ["columnId", "columnName", "columnType"],
   type: "object",
   properties: {
-    workflowId: {
+    columnId: {
       type: "string",
-      description: "The ID of the updated workflow",
+      description: "The UUID identifier of the column",
     },
-    workflowName: {
+    columnName: {
       type: "string",
-      description: "The current name of the workflow",
+      description: "The column name",
     },
-    workflowDescription: {
+    columnType: {
       type: "string",
-      description: "The current description of the workflow",
+      description: "The column type",
+      enum: ["DECIMAL", "VARCHAR2", "BOOLEAN", "DATETIME", "LIST"],
+    },
+  },
+  description: "The columns in the schema of this Table",
+} as const;
+
+export const ComponentDetailsSchema = {
+  required: [
+    "componentId",
+    "configuration",
+    "description",
+    "inputPlaceholders",
+    "name",
+    "nextComponents",
+    "type",
+    "validationErrors",
+  ],
+  type: "object",
+  properties: {
+    componentId: {
+      type: "string",
+      description: "UUID identifier of the Component",
+    },
+    type: {
+      type: "string",
+      description: "Type of the Component",
+    },
+    name: {
+      type: "string",
+      description: "Name of the Component",
+    },
+    description: {
+      type: "string",
+      description: "Description of the Component",
+    },
+    nextComponents: {
+      type: "array",
+      description:
+        "UUID IDs of the components that will be executed after this one",
+      items: {
+        type: "string",
+        description:
+          "UUID IDs of the components that will be executed after this one",
+      },
+    },
+    inputPlaceholders: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+        description: "Placeholders used as input by this component",
+      },
+      description: "Placeholders used as input by this component",
+    },
+    configuration: {
+      type: "object",
+      additionalProperties: {
+        type: "object",
+        description: "Component-type specific configuration structure",
+      },
+      description: "Component-type specific configuration structure",
+    },
+    validationErrors: {
+      type: "array",
+      description:
+        "Any Validation Errors from parsing this component configuration",
+      items: {
+        type: "string",
+        description:
+          "Any Validation Errors from parsing this component configuration",
+      },
+    },
+  },
+  description: "The components that make up this workflow",
+} as const;
+
+export const TableDetailsSchema = {
+  required: ["_links", "columns", "name", "tableId"],
+  type: "object",
+  properties: {
+    tableId: {
+      type: "string",
+      description: "The id of the Workflow86 Table",
+    },
+    name: {
+      type: "string",
+      description: "The name of the Workflow86 Table",
+    },
+    tableAppViewUrl: {
+      type: "string",
+      description: "The URL to view this table in a browser (requires login)",
+    },
+    columns: {
+      type: "array",
+      description: "The columns in the schema of this Table",
+      items: {
+        $ref: "#/components/schemas/ColumnDetails",
+      },
     },
     _links: {
       type: "object",
       additionalProperties: {
         type: "string",
-        description: "Navigation links for workflow operations",
       },
-      description: "Navigation links for workflow operations",
     },
   },
-  description: "Response for workflow details update operation",
-  example: {
-    workflowId: "12345-uuid",
-    workflowName: "Updated Workflow Name",
-    workflowDescription: "Updated workflow description",
+  description: "The tables referenced by this workflow",
+} as const;
+
+export const WorkflowVersionDetailsSchema = {
+  required: [
+    "_links",
+    "components",
+    "description",
+    "name",
+    "status",
+    "tables",
+    "version",
+    "workflowAppViewUrl",
+    "workflowId",
+  ],
+  type: "object",
+  properties: {
+    workflowId: {
+      type: "string",
+      description: "UUID identifier of this workflow version",
+    },
+    version: {
+      type: "integer",
+      description: "The integer version of this workflow version",
+      format: "int32",
+    },
+    status: {
+      type: "string",
+      description: "The lifecycle status of this workflow version",
+      enum: ["PUBLISHED", "DRAFT", "ARCHIVED", "DELETED"],
+    },
+    name: {
+      type: "string",
+      description: "The name of this workflow",
+    },
+    description: {
+      type: "string",
+      description: "The description of this workflow",
+    },
+    components: {
+      type: "array",
+      description: "The components that make up this workflow",
+      items: {
+        $ref: "#/components/schemas/ComponentDetails",
+      },
+    },
+    tables: {
+      type: "array",
+      description: "The tables referenced by this workflow",
+      items: {
+        $ref: "#/components/schemas/TableDetails",
+      },
+    },
+    workflowAppViewUrl: {
+      type: "string",
+      description:
+        "The URL to view this workflow in a browser (requires login)",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
   },
 } as const;
 
@@ -325,59 +480,6 @@ export const CreateTableCommandSchema = {
       description: "Array of column definitions",
       items: {
         $ref: "#/components/schemas/CreateColumnCommand",
-      },
-    },
-  },
-} as const;
-
-export const ColumnDetailsSchema = {
-  required: ["columnId", "columnName", "columnType"],
-  type: "object",
-  properties: {
-    columnId: {
-      type: "string",
-      description: "The UUID identifier of the column",
-    },
-    columnName: {
-      type: "string",
-      description: "The column name",
-    },
-    columnType: {
-      type: "string",
-      description: "The column type",
-      enum: ["DECIMAL", "VARCHAR2", "BOOLEAN", "DATETIME", "LIST"],
-    },
-  },
-  description: "The columns in the schema of this Table",
-} as const;
-
-export const TableDetailsSchema = {
-  required: ["_links", "columns", "name", "tableId"],
-  type: "object",
-  properties: {
-    tableId: {
-      type: "string",
-      description: "The id of the Workflow86 Table",
-    },
-    name: {
-      type: "string",
-      description: "The name of the Workflow86 Table",
-    },
-    tableAppViewUrl: {
-      type: "string",
-      description: "The URL to view this table in a browser (requires login)",
-    },
-    columns: {
-      type: "array",
-      description: "The columns in the schema of this Table",
-      items: {
-        $ref: "#/components/schemas/ColumnDetails",
-      },
-    },
-    _links: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
       },
     },
   },
@@ -722,139 +824,6 @@ export const WorkflowSummarySchema = {
     },
   },
   description: "The page of response data as an array",
-} as const;
-
-export const ComponentDetailsSchema = {
-  required: [
-    "componentId",
-    "configuration",
-    "description",
-    "inputPlaceholders",
-    "name",
-    "nextComponents",
-    "type",
-    "validationErrors",
-  ],
-  type: "object",
-  properties: {
-    componentId: {
-      type: "string",
-      description: "UUID identifier of the Component",
-    },
-    type: {
-      type: "string",
-      description: "Type of the Component",
-    },
-    name: {
-      type: "string",
-      description: "Name of the Component",
-    },
-    description: {
-      type: "string",
-      description: "Description of the Component",
-    },
-    nextComponents: {
-      type: "array",
-      description:
-        "UUID IDs of the components that will be executed after this one",
-      items: {
-        type: "string",
-        description:
-          "UUID IDs of the components that will be executed after this one",
-      },
-    },
-    inputPlaceholders: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
-        description: "Placeholders used as input by this component",
-      },
-      description: "Placeholders used as input by this component",
-    },
-    configuration: {
-      type: "object",
-      additionalProperties: {
-        type: "object",
-        description: "Component-type specific configuration structure",
-      },
-      description: "Component-type specific configuration structure",
-    },
-    validationErrors: {
-      type: "array",
-      description:
-        "Any Validation Errors from parsing this component configuration",
-      items: {
-        type: "string",
-        description:
-          "Any Validation Errors from parsing this component configuration",
-      },
-    },
-  },
-  description: "The components that make up this workflow",
-} as const;
-
-export const WorkflowVersionDetailsSchema = {
-  required: [
-    "_links",
-    "components",
-    "description",
-    "name",
-    "status",
-    "tables",
-    "version",
-    "workflowAppViewUrl",
-    "workflowId",
-  ],
-  type: "object",
-  properties: {
-    workflowId: {
-      type: "string",
-      description: "UUID identifier of this workflow version",
-    },
-    version: {
-      type: "integer",
-      description: "The integer version of this workflow version",
-      format: "int32",
-    },
-    status: {
-      type: "string",
-      description: "The lifecycle status of this workflow version",
-      enum: ["PUBLISHED", "DRAFT", "ARCHIVED", "DELETED"],
-    },
-    name: {
-      type: "string",
-      description: "The name of this workflow",
-    },
-    description: {
-      type: "string",
-      description: "The description of this workflow",
-    },
-    components: {
-      type: "array",
-      description: "The components that make up this workflow",
-      items: {
-        $ref: "#/components/schemas/ComponentDetails",
-      },
-    },
-    tables: {
-      type: "array",
-      description: "The tables referenced by this workflow",
-      items: {
-        $ref: "#/components/schemas/TableDetails",
-      },
-    },
-    workflowAppViewUrl: {
-      type: "string",
-      description:
-        "The URL to view this workflow in a browser (requires login)",
-    },
-    _links: {
-      type: "object",
-      additionalProperties: {
-        type: "string",
-      },
-    },
-  },
 } as const;
 
 export const PageOfSessionSummarySchema = {

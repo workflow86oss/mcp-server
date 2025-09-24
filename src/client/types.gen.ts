@@ -34,25 +34,126 @@ export type StandardWorkflow86Exception = {
 };
 
 /**
- * Response for workflow details update operation
+ * The columns in the schema of this Table
  */
-export type UpdateWorkflowDetailsResponse = {
+export type ColumnDetails = {
   /**
-   * The ID of the updated workflow
+   * The UUID identifier of the column
    */
-  workflowId?: string;
+  columnId: string;
   /**
-   * The current name of the workflow
+   * The column name
    */
-  workflowName?: string;
+  columnName: string;
   /**
-   * The current description of the workflow
+   * The column type
    */
-  workflowDescription?: string;
+  columnType: "DECIMAL" | "VARCHAR2" | "BOOLEAN" | "DATETIME" | "LIST";
+};
+
+/**
+ * The components that make up this workflow
+ */
+export type ComponentDetails = {
   /**
-   * Navigation links for workflow operations
+   * UUID identifier of the Component
    */
-  _links?: {
+  componentId: string;
+  /**
+   * Type of the Component
+   */
+  type: string;
+  /**
+   * Name of the Component
+   */
+  name: string;
+  /**
+   * Description of the Component
+   */
+  description: string;
+  /**
+   * UUID IDs of the components that will be executed after this one
+   */
+  nextComponents: Array<string>;
+  /**
+   * Placeholders used as input by this component
+   */
+  inputPlaceholders: {
+    [key: string]: string;
+  };
+  /**
+   * Component-type specific configuration structure
+   */
+  configuration: {
+    [key: string]: {
+      [key: string]: unknown;
+    };
+  };
+  /**
+   * Any Validation Errors from parsing this component configuration
+   */
+  validationErrors: Array<string>;
+};
+
+/**
+ * The tables referenced by this workflow
+ */
+export type TableDetails = {
+  /**
+   * The id of the Workflow86 Table
+   */
+  tableId: string;
+  /**
+   * The name of the Workflow86 Table
+   */
+  name: string;
+  /**
+   * The URL to view this table in a browser (requires login)
+   */
+  tableAppViewUrl?: string;
+  /**
+   * The columns in the schema of this Table
+   */
+  columns: Array<ColumnDetails>;
+  _links: {
+    [key: string]: string;
+  };
+};
+
+export type WorkflowVersionDetails = {
+  /**
+   * UUID identifier of this workflow version
+   */
+  workflowId: string;
+  /**
+   * The integer version of this workflow version
+   */
+  version: number;
+  /**
+   * The lifecycle status of this workflow version
+   */
+  status: "PUBLISHED" | "DRAFT" | "ARCHIVED" | "DELETED";
+  /**
+   * The name of this workflow
+   */
+  name: string;
+  /**
+   * The description of this workflow
+   */
+  description: string;
+  /**
+   * The components that make up this workflow
+   */
+  components: Array<ComponentDetails>;
+  /**
+   * The tables referenced by this workflow
+   */
+  tables: Array<TableDetails>;
+  /**
+   * The URL to view this workflow in a browser (requires login)
+   */
+  workflowAppViewUrl: string;
+  _links: {
     [key: string]: string;
   };
 };
@@ -223,46 +324,6 @@ export type CreateTableCommand = {
    * Array of column definitions
    */
   columns: Array<CreateColumnCommand>;
-};
-
-/**
- * The columns in the schema of this Table
- */
-export type ColumnDetails = {
-  /**
-   * The UUID identifier of the column
-   */
-  columnId: string;
-  /**
-   * The column name
-   */
-  columnName: string;
-  /**
-   * The column type
-   */
-  columnType: "DECIMAL" | "VARCHAR2" | "BOOLEAN" | "DATETIME" | "LIST";
-};
-
-export type TableDetails = {
-  /**
-   * The id of the Workflow86 Table
-   */
-  tableId: string;
-  /**
-   * The name of the Workflow86 Table
-   */
-  name: string;
-  /**
-   * The URL to view this table in a browser (requires login)
-   */
-  tableAppViewUrl?: string;
-  /**
-   * The columns in the schema of this Table
-   */
-  columns: Array<ColumnDetails>;
-  _links: {
-    [key: string]: string;
-  };
 };
 
 /**
@@ -483,88 +544,6 @@ export type WorkflowSummary = {
    * The integer version of this workflows current published version, if it has been published"
    */
   publishedVersion?: number;
-  _links: {
-    [key: string]: string;
-  };
-};
-
-/**
- * The components that make up this workflow
- */
-export type ComponentDetails = {
-  /**
-   * UUID identifier of the Component
-   */
-  componentId: string;
-  /**
-   * Type of the Component
-   */
-  type: string;
-  /**
-   * Name of the Component
-   */
-  name: string;
-  /**
-   * Description of the Component
-   */
-  description: string;
-  /**
-   * UUID IDs of the components that will be executed after this one
-   */
-  nextComponents: Array<string>;
-  /**
-   * Placeholders used as input by this component
-   */
-  inputPlaceholders: {
-    [key: string]: string;
-  };
-  /**
-   * Component-type specific configuration structure
-   */
-  configuration: {
-    [key: string]: {
-      [key: string]: unknown;
-    };
-  };
-  /**
-   * Any Validation Errors from parsing this component configuration
-   */
-  validationErrors: Array<string>;
-};
-
-export type WorkflowVersionDetails = {
-  /**
-   * UUID identifier of this workflow version
-   */
-  workflowId: string;
-  /**
-   * The integer version of this workflow version
-   */
-  version: number;
-  /**
-   * The lifecycle status of this workflow version
-   */
-  status: "PUBLISHED" | "DRAFT" | "ARCHIVED" | "DELETED";
-  /**
-   * The name of this workflow
-   */
-  name: string;
-  /**
-   * The description of this workflow
-   */
-  description: string;
-  /**
-   * The components that make up this workflow
-   */
-  components: Array<ComponentDetails>;
-  /**
-   * The tables referenced by this workflow
-   */
-  tables: Array<TableDetails>;
-  /**
-   * The URL to view this workflow in a browser (requires login)
-   */
-  workflowAppViewUrl: string;
   _links: {
     [key: string]: string;
   };
@@ -1012,10 +991,10 @@ export type UpdateWorkflowDetailsResponses = {
   /**
    * OK
    */
-  200: UpdateWorkflowDetailsResponse;
+  200: WorkflowVersionDetails;
 };
 
-export type UpdateWorkflowDetailsResponse2 =
+export type UpdateWorkflowDetailsResponse =
   UpdateWorkflowDetailsResponses[keyof UpdateWorkflowDetailsResponses];
 
 export type UnpublishWorkflowData = {
