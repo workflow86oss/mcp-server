@@ -406,10 +406,11 @@ export function registerWorkflowTools(server: McpServer) {
           },
         });
 
+        const workflow: WorkflowVersionDetails = response.data;
         return jsonResponse(
           addSchemaMetadataByType(
-            response.data,
-            "UpdateWorkflowDetailsResponse",
+            relinkWorkflowVersion(workflow),
+            "WorkflowVersionDetails",
           ),
         );
       } catch (error) {
