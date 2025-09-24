@@ -45,8 +45,21 @@ export function registerWorkflowTools(server: McpServer) {
         .default("ALL")
         .describe("Optional parameter to filter results by publication status"),
       pageNumber: zodPageNumber,
+      orderBy: z
+        .enum(["createdAt", "name", "lastModified"])
+        .default("name")
+        .describe("Field to sort by"),
+      orderDirection: z
+        .enum(["ASC", "DESC"])
+        .default("ASC")
+        .describe("Sort direction"),
     },
-    async ({ status = "ALL", pageNumber = 0 }) => {
+    async ({
+      status = "ALL",
+      pageNumber = 0,
+      orderBy = "name",
+      orderDirection = "ASC",
+    }) => {
       try {
         const response = await listWorkflows({
           client: client,
@@ -54,6 +67,8 @@ export function registerWorkflowTools(server: McpServer) {
           query: {
             status,
             pageNumber,
+            orderBy,
+            orderDirection,
           },
         });
 

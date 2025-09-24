@@ -1559,7 +1559,7 @@ export type ListWorkflowsData = {
     /**
      * Field to sort by
      */
-    orderBy?: "createdAt" | "updatedAt" | "name" | "lastUpdated";
+    orderBy?: "createdAt" | "lastModified" | "name";
     /**
      * Sort direction
      */
