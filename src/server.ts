@@ -28,14 +28,54 @@ if (typeof globalThis.fetch === "undefined") {
 
 const baseUrl = process.env.W86_DOMAIN ?? "https://rest.workflow86.com";
 
+let resolvedHeaders: any;
+if (process.env.W86_HEADERS) {
+  console.error("!!Using custom headers!!");
+  resolvedHeaders = JSON.parse(process.env.W86_HEADERS);
+} else {
+  resolvedHeaders = {
+    "x-api-key": process.env.W86_API_KEY,
+  };
+}
 client.setConfig({
   baseUrl,
-  headers: process.env.W86_HEADERS
-    ? JSON.parse(process.env.W86_HEADERS)
-    : {
-        "x-api-key": process.env.W86_API_KEY,
-      },
+  headers: resolvedHeaders,
 });
+
+function getMaskedApiKey(): string {
+  try {
+    let key: string | undefined;
+    if (resolvedHeaders) {
+      if (resolvedHeaders instanceof Headers) {
+        key = resolvedHeaders.get("x-api-key") ?? undefined;
+        if (!key) {
+          // fallback: scan all headers
+          for (const [k, v] of (resolvedHeaders as Headers).entries()) {
+            if (k.toLowerCase() === "x-api-key") {
+              key = v;
+              break;
+            }
+          }
+        }
+      } else if (typeof resolvedHeaders === "object") {
+        for (const k of Object.keys(resolvedHeaders)) {
+          if (k.toLowerCase() === "x-api-key") {
+            key = String((resolvedHeaders as Record<string, unknown>)[k]);
+            break;
+          }
+        }
+      }
+    }
+    if (!key && process.env.W86_API_KEY) {
+      key = String(process.env.W86_API_KEY);
+    }
+    if (!key) return "<none>";
+    if (key.length <= 8) return `${key[0]}***${key[key.length - 1]}`;
+    return `${key.slice(0, 4)}...${key.slice(-4)}`;
+  } catch {
+    return "<unknown>";
+  }
+}
 
 const server = new McpServer({
   name: "workflow86",
@@ -46,6 +86,53 @@ const server = new McpServer({
   },
 });
 
+// Interceptor: log every tool invocation to stderr
+function attachConsoleToolLoggingInterceptor(s: McpServer) {
+  const originalTool = (s as any).tool.bind(s) as any;
+  (s as any).tool = (name: string, ...rest: any[]) => {
+    if (!rest || rest.length === 0) {
+      return originalTool(name, ...rest);
+    }
+    const originalCb = rest[rest.length - 1];
+    if (typeof originalCb !== "function") {
+      return originalTool(name, ...rest);
+    }
+    const wrappedCb = async (...cbArgs: any[]) => {
+      const start = Date.now();
+      const extra = cbArgs.length === 2 ? cbArgs[1] : cbArgs[0];
+      const args = cbArgs.length === 2 ? cbArgs[0] : undefined;
+      // Always log to stderr to avoid corrupting stdio transport
+      try {
+        console.error(
+          `[tool] start name=${name} apiKey=${getMaskedApiKey()}`,
+          args ?? {},
+        );
+      } catch {}
+      try {
+        const result = await originalCb(...cbArgs);
+        try {
+          console.error(
+            `[tool] success name=${name} durationMs=${Date.now() - start}`,
+          );
+        } catch {}
+        return result;
+      } catch (err) {
+        try {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error(
+            `[tool] error name=${name} durationMs=${Date.now() - start}: ${msg}`,
+          );
+        } catch {}
+        throw err;
+      }
+    };
+    rest[rest.length - 1] = wrappedCb;
+    return originalTool(name, ...rest);
+  };
+}
+
+attachConsoleToolLoggingInterceptor(server);
+
 registerWorkflowTools(server);
 registerSessionTools(server);
 registerTasksTools(server);
@@ -53,8 +140,7 @@ registerTableTools(server);
 registerComponentTools(server);
 
 async function main() {
-  const apiKey = String(process.env.W86_API_KEY);
-  const maskedApiKey = `${apiKey.slice(0, 4)}...${apiKey.slice(-4)}`;
+  const maskedApiKey = getMaskedApiKey();
   console.error(
     `Workflow86 MCP Server started on stdio (Node.js version: ${process.version}, baseUrl: ${baseUrl}, apiKey: ${maskedApiKey})`,
   );
