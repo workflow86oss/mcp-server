@@ -761,7 +761,7 @@ export const PageOfWorkflowSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description: "True iff this page is the final page",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
@@ -844,7 +844,7 @@ export const PageOfSessionSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description: "True iff this page is the final page",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
@@ -950,7 +950,7 @@ export const PageOfWorkflowHistorySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description: "True iff this page is the final page",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
@@ -1422,7 +1422,7 @@ export const PageOfTaskSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description: "True iff this page is the final page",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
@@ -1503,7 +1503,7 @@ export const PageOfTableSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description: "True iff this page is the final page",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
@@ -1582,7 +1582,7 @@ export const PageOfFormSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description: "True iff this page is the final page",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",

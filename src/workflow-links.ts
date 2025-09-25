@@ -16,7 +16,7 @@ import { relinkTableSummary } from "./table-links";
 export function relinkWorkflowPage(
   page: PageOfWorkflowSummary,
 ): Record<string, any> {
-  const links: Record<string, ToolCall> = {};
+  const links: Record<string, ToolCall | string> = {};
   if (page._pageNumber > 0) {
     links.previousPage = {
       name: "list-workflows",
@@ -26,6 +26,8 @@ export function relinkWorkflowPage(
     };
   }
   if (!page._lastPage) {
+    links.nextStepInstruction =
+      "Call nextPage if no other action is requested prior";
     links.nextPage = {
       name: "list-workflows",
       arguments: {
