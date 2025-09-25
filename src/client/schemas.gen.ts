@@ -768,6 +768,11 @@ export const PageOfWorkflowSummarySchema = {
       description: "Total number of results matching the query",
       format: "int64",
     },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
+    },
     _links: {
       type: "object",
       additionalProperties: {
@@ -850,6 +855,11 @@ export const PageOfSessionSummarySchema = {
       type: "integer",
       description: "Total number of results matching the query",
       format: "int64",
+    },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
     },
     _links: {
       type: "object",
@@ -956,6 +966,11 @@ export const PageOfWorkflowHistorySchema = {
       type: "integer",
       description: "Total number of results matching the query",
       format: "int64",
+    },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
     },
     _links: {
       type: "object",
@@ -1429,6 +1444,11 @@ export const PageOfTaskSummarySchema = {
       description: "Total number of results matching the query",
       format: "int64",
     },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
+    },
     _links: {
       type: "object",
       additionalProperties: {
@@ -1510,6 +1530,11 @@ export const PageOfTableSummarySchema = {
       description: "Total number of results matching the query",
       format: "int64",
     },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
+    },
     _links: {
       type: "object",
       additionalProperties: {
@@ -1588,6 +1613,11 @@ export const PageOfFormSummarySchema = {
       type: "integer",
       description: "Total number of results matching the query",
       format: "int64",
+    },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
     },
     _links: {
       type: "object",
