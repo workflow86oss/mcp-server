@@ -511,6 +511,10 @@ export type PageOfWorkflowSummary = {
    * Total number of results matching the query
    */
   get_totalCount?: number;
+  /**
+   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
+   */
+  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -566,6 +570,10 @@ export type PageOfSessionSummary = {
    * Total number of results matching the query
    */
   get_totalCount?: number;
+  /**
+   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
+   */
+  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -639,6 +647,10 @@ export type PageOfWorkflowHistory = {
    * Total number of results matching the query
    */
   get_totalCount?: number;
+  /**
+   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
+   */
+  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -838,6 +850,10 @@ export type PageOfTaskSummary = {
    * Total number of results matching the query
    */
   get_totalCount?: number;
+  /**
+   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
+   */
+  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -894,6 +910,10 @@ export type PageOfTableSummary = {
    * Total number of results matching the query
    */
   get_totalCount?: number;
+  /**
+   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
+   */
+  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -947,6 +967,10 @@ export type PageOfFormSummary = {
    * Total number of results matching the query
    */
   get_totalCount?: number;
+  /**
+   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
+   */
+  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -1559,7 +1583,7 @@ export type ListWorkflowsData = {
     /**
      * Field to sort by
      */
-    orderBy?: "createdAt" | "lastModified" | "name";
+    orderBy?: "lastModified" | "name";
     /**
      * Sort direction
      */
