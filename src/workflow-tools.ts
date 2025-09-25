@@ -46,7 +46,7 @@ export function registerWorkflowTools(server: McpServer) {
         .describe("Optional parameter to filter results by publication status"),
       pageNumber: zodPageNumber,
       orderBy: z
-        .enum(["createdAt", "name", "lastModified"])
+        .enum(["name", "lastModified"])
         .default("name")
         .describe("Field to sort by"),
       orderDirection: z
