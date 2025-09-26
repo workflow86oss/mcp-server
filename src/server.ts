@@ -8,6 +8,7 @@ import { registerSessionTools } from "./session-tools.js";
 import { registerTableTools } from "./table-tools.js";
 import { registerTasksTools } from "./tasks-tools";
 import { registerComponentTools } from "./component-tools";
+import { getMaskedSecret } from "./util.js";
 
 // Polyfill ReadableStream if not available
 if (typeof globalThis.ReadableStream === "undefined") {
@@ -42,40 +43,46 @@ client.setConfig({
   headers: resolvedHeaders,
 });
 
-function getMaskedApiKey(): string {
-  try {
-    let key: string | undefined;
-    if (resolvedHeaders) {
-      if (resolvedHeaders instanceof Headers) {
-        key = resolvedHeaders.get("x-api-key") ?? undefined;
-        if (!key) {
-          // fallback: scan all headers
-          for (const [k, v] of (resolvedHeaders as Headers).entries()) {
-            if (k.toLowerCase() === "x-api-key") {
-              key = v;
-              break;
-            }
-          }
+// Normalize empty/opaque API errors into useful messages for clients
+try {
+  client.interceptors.error.use(
+    (error: unknown, response: Response, request: Request) => {
+      const status = response?.status;
+      const statusText = response?.statusText || "";
+      let path = "";
+      try {
+        path = new URL(request.url).pathname;
+      } catch {}
+
+      const hasMeaning =
+        (typeof error === "string" && error.trim().length > 0) ||
+        (error &&
+          typeof error === "object" &&
+          Object.keys(error as any).length > 0);
+
+      if (!hasMeaning) {
+        let hint = "";
+        if (status === 401 || status === 403) {
+          hint = " - Unauthorized: missing or invalid API key";
+        } else if (status === 404) {
+          hint = " - Not found";
+        } else if (status === 429) {
+          hint = " - Rate limited";
         }
-      } else if (typeof resolvedHeaders === "object") {
-        for (const k of Object.keys(resolvedHeaders)) {
-          if (k.toLowerCase() === "x-api-key") {
-            key = String((resolvedHeaders as Record<string, unknown>)[k]);
-            break;
-          }
+        return `HTTP ${status} ${statusText} from ${path || "/"} (empty body)${hint}`.trim();
+      }
+
+      if (error && typeof error === "object") {
+        try {
+          return JSON.stringify(error);
+        } catch {
+          return String(error);
         }
       }
-    }
-    if (!key && process.env.W86_API_KEY) {
-      key = String(process.env.W86_API_KEY);
-    }
-    if (!key) return "<none>";
-    if (key.length <= 8) return `${key[0]}***${key[key.length - 1]}`;
-    return `${key.slice(0, 4)}...${key.slice(-4)}`;
-  } catch {
-    return "<unknown>";
-  }
-}
+      return String(error ?? "Unknown error");
+    },
+  );
+} catch {}
 
 const server = new McpServer({
   name: "workflow86",
@@ -104,17 +111,24 @@ function attachConsoleToolLoggingInterceptor(s: McpServer) {
       // Always log to stderr to avoid corrupting stdio transport
       try {
         console.error(
-          `[tool] start name=${name} apiKey=${getMaskedApiKey()}`,
+          `[tool] start name=${name} apiKey=${getMaskedSecret(resolvedHeaders, process.env.W86_API_KEY, "x-api-key")}`,
           args ?? {},
         );
-      } catch {}
+      } catch (logErr) {
+        console.warn(`[tool] warn: failed to log start for ${name}:`, logErr);
+      }
       try {
         const result = await originalCb(...cbArgs);
         try {
           console.error(
             `[tool] success name=${name} durationMs=${Date.now() - start}`,
           );
-        } catch {}
+        } catch (logErr) {
+          console.warn(
+            `[tool] warn: failed to log success for ${name}:`,
+            logErr,
+          );
+        }
         return result;
       } catch (err) {
         try {
@@ -122,7 +136,9 @@ function attachConsoleToolLoggingInterceptor(s: McpServer) {
           console.error(
             `[tool] error name=${name} durationMs=${Date.now() - start}: ${msg}`,
           );
-        } catch {}
+        } catch (logErr) {
+          console.warn(`[tool] warn: failed to log error for ${name}:`, logErr);
+        }
         throw err;
       }
     };
@@ -140,9 +156,8 @@ registerTableTools(server);
 registerComponentTools(server);
 
 async function main() {
-  const maskedApiKey = getMaskedApiKey();
   console.error(
-    `Workflow86 MCP Server started on stdio (package version: ${version}, Node.js version: ${process.version}, baseUrl: ${baseUrl}, apiKey: ${maskedApiKey})`,
+    `Workflow86 MCP Server started on stdio (package version: ${version}, Node.js version: ${process.version}, baseUrl: ${baseUrl})`,
   );
 
   if (!process.env.W86_API_KEY && !process.env.W86_HEADERS) {
