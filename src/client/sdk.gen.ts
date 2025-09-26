@@ -17,6 +17,9 @@ import type {
   PublishWorkflowData,
   PublishWorkflowResponses,
   PublishWorkflowErrors,
+  GenerateComponentData,
+  GenerateComponentResponses,
+  GenerateComponentErrors,
   GenerateWorkflowPlanData,
   GenerateWorkflowPlanResponses,
   GenerateWorkflowPlanErrors,
@@ -220,6 +223,33 @@ export const publishWorkflow = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/workflow/{workflowId}/publish",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Generate Component
+ * Generate or edit a workflow component using AI. When workflowId and componentId are provided, edits an existing component. When only workflowId is provided, creates a new component in the existing workflow. Returns a session ID that can be used to poll for the generation results.
+ */
+export const generateComponent = <ThrowOnError extends boolean = false>(
+  options: Options<GenerateComponentData, ThrowOnError>,
+) => {
+  return (options.client ?? client).post<
+    GenerateComponentResponses,
+    GenerateComponentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/workflow/{workflowId}/generate-component",
     ...options,
     headers: {
       "Content-Type": "application/json",
