@@ -3,7 +3,7 @@ import { z } from "zod";
 import { client } from "./client/client.gen.js";
 import { textResponse, jsonResponse, handleError } from "./util.js";
 import { deleteComponent, generateComponent } from "./client";
-import {addSchemaMetadataByType} from "./schema";
+import { addSchemaMetadataByType } from "./schema";
 
 export function registerComponentTools(server: McpServer) {
   server.tool(
@@ -59,7 +59,7 @@ export function registerComponentTools(server: McpServer) {
         });
 
         return jsonResponse(
-            addSchemaMetadataByType(response.data, "GenerateWorkflowResponse"),
+          addSchemaMetadataByType(response.data, "GenerateWorkflowResponse"),
         );
       } catch (error) {
         return handleError(error);

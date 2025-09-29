@@ -761,13 +761,17 @@ export const PageOfWorkflowSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description:
-        "True if this page is the final page, false if there are more pages",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
       description: "Total number of results matching the query",
       format: "int64",
+    },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
     },
     _links: {
       type: "object",
@@ -845,13 +849,17 @@ export const PageOfSessionSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description:
-        "True if this page is the final page, false if there are more pages",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
       description: "Total number of results matching the query",
       format: "int64",
+    },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
     },
     _links: {
       type: "object",
@@ -952,13 +960,17 @@ export const PageOfWorkflowHistorySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description:
-        "True if this page is the final page, false if there are more pages",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
       description: "Total number of results matching the query",
       format: "int64",
+    },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
     },
     _links: {
       type: "object",
@@ -1425,13 +1437,17 @@ export const PageOfTaskSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description:
-        "True if this page is the final page, false if there are more pages",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
       description: "Total number of results matching the query",
       format: "int64",
+    },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
     },
     _links: {
       type: "object",
@@ -1507,13 +1523,17 @@ export const PageOfTableSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description:
-        "True if this page is the final page, false if there are more pages",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
       description: "Total number of results matching the query",
       format: "int64",
+    },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
     },
     _links: {
       type: "object",
@@ -1587,13 +1607,17 @@ export const PageOfFormSummarySchema = {
     },
     _lastPage: {
       type: "boolean",
-      description:
-        "True if this page is the final page, false if there are more pages",
+      description: "True if this page is the final page",
     },
     get_totalCount: {
       type: "integer",
       description: "Total number of results matching the query",
       format: "int64",
+    },
+    hasMorePages: {
+      type: "boolean",
+      description:
+        "True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false",
     },
     _links: {
       type: "object",
