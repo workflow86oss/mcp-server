@@ -69,9 +69,7 @@ describe("Workflow Tools Module Tests", () => {
       expect(typeof response["@hasMorePages"]).toBe("boolean");
       expect(response).toHaveProperty("@links");
       expect(response).toHaveProperty("@schema");
-      expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(
-        false,
-      );
+      expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(false);
       expect(response["@schema"]).toHaveProperty("workflows");
 
       const workflows = response.workflows || [];
@@ -212,9 +210,7 @@ describe("Workflow Tools Module Tests", () => {
       expect(response).toHaveProperty("@hasMorePages");
       expect(response).toHaveProperty("@links");
       expect(response).toHaveProperty("@schema");
-      expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(
-        false,
-      );
+      expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(false);
 
       const history = response.history || [];
       history.forEach((version: any) => {

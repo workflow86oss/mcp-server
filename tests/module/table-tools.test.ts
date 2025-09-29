@@ -39,9 +39,7 @@ describe("Table Tools Module Tests", () => {
       expect(typeof response["@hasMorePages"]).toBe("boolean");
       expect(response).toHaveProperty("@links");
       expect(response).toHaveProperty("@schema");
-      expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(
-        false,
-      );
+      expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(false);
 
       const tables = response.tables || [];
       tables.forEach((table: any) => {
