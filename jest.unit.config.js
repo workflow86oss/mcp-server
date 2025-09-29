@@ -12,4 +12,5 @@ module.exports = {
     '!src/**/*.d.ts',
   ],
   setupFilesAfterEnv: ['<rootDir>/tests/unit/test-setup.ts'],
+  watchman: false,
 };

@@ -36,6 +36,7 @@ export function relinkWorkflowPage(
   return {
     workflows: page._embedded.map(relinkWorkflowSummary),
     "@pageNumber": page._pageNumber,
+    "@hasMorePages": !page._lastPage,
     "@links": links,
   };
 }
@@ -110,6 +111,7 @@ export function relinkWorkflowHistoryPage(
       relinkWorkflowHistory(workflowId, entry),
     ),
     "@pageNumber": page._pageNumber,
+    "@hasMorePages": !page._lastPage,
     "@links": links,
   };
 }

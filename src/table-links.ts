@@ -22,6 +22,7 @@ export function relinkTablePage(page: PageOfTableSummary): Record<string, any> {
   return {
     tables: page._embedded.map(relinkTableSummary),
     "@pageNumber": page._pageNumber,
+    "@hasMorePages": !page._lastPage,
     "@links": links,
   };
 }

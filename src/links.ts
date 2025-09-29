@@ -1,6 +1,6 @@
 /*
-This class provides functionality related to removing HATEOAS metadata (_links, _pageNumber...) from Public API Responses and replacing them
-with MCP Tool Call style @links, @pageNumber etc.
+This class provides functionality related to removing HATEOAS metadata (_links, _pageNumber, _lastPage...) from Public API Responses and replacing them
+with MCP Tool Call style @links, @pageNumber, @hasMorePages etc.
 
 It's perfectly fine to either parse required information out of the HATEOAS _links or from the response (although the
 response is weakly preferred as it is less likely to evolve).

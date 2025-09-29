@@ -119,11 +119,6 @@ function resolveRef(ref: string): any {
 }
 
 /**
- * Fields to filter out from schema descriptions (internal fields that are replaced)
- */
-const FILTERED_FIELDS = new Set(["_pageNumber", "_lastPage", "_links"]);
-
-/**
  * Extract property descriptions from a schema object, including nested properties
  */
 export function getPropertyDescriptions(schema: any): Record<string, any> {
@@ -131,8 +126,7 @@ export function getPropertyDescriptions(schema: any): Record<string, any> {
 
   if (schema?.properties) {
     for (const [key, prop] of Object.entries(schema.properties)) {
-      // Skip internal fields that are replaced with @ versions
-      if (FILTERED_FIELDS.has(key)) {
+      if (key.includes("_") && key !== "_embedded") {
         continue;
       }
 
