@@ -23,6 +23,7 @@ describe("Response Structure Validation", () => {
                   },
                 ],
                 "@pageNumber": 0,
+                "@hasMorePages": false,
                 "@links": {},
                 "@schema": {
                   workflows: {},
@@ -43,7 +44,13 @@ describe("Response Structure Validation", () => {
       // Parse and validate JSON content
       const parsedContent = JSON.parse(mockResponse.result.content[0].text);
       expect(parsedContent).toHaveProperty("@schema");
+      expect(parsedContent).toHaveProperty("@hasMorePages");
+      expect(typeof parsedContent["@hasMorePages"]).toBe("boolean");
       expect(parsedContent["@schema"]).not.toHaveProperty("typeName");
+      // Ensure no underscore-prefixed fields are present
+      expect(Object.keys(parsedContent).some((k) => k.startsWith("_"))).toBe(
+        false,
+      );
     });
 
     it("should validate get-workflow response structure", () => {

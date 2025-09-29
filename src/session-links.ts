@@ -38,6 +38,7 @@ export function relinkSessionPage(
   return {
     session: sessions._embedded.map(relinkSessionSummary),
     "@pageNumber": sessions._pageNumber,
+    "@hasMorePages": !sessions._lastPage,
     "@links": links,
   };
 }

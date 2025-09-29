@@ -36,10 +36,13 @@ describe("Workflow link relinking", () => {
 
       expect(result).toHaveProperty("workflows");
       expect(result).toHaveProperty("@pageNumber", 0);
+      expect(result).toHaveProperty("@hasMorePages", false);
       expect(result).toHaveProperty("@links");
       expect(result.workflows[0]).toHaveProperty("@links");
       expect(result).not.toHaveProperty("@schema");
       expect(result.workflows[0]).not.toHaveProperty("@schema");
+      // Ensure no underscore-prefixed fields leak into MCP response
+      expect(Object.keys(result).some((k) => k.startsWith("_"))).toBe(false);
     });
 
     it("should handle pagination links correctly", () => {
@@ -56,6 +59,8 @@ describe("Workflow link relinking", () => {
       expect(result["@links"]).toHaveProperty("nextPage");
       expect(result["@links"].previousPage.arguments.pageNumber).toBe(0);
       expect(result["@links"].nextPage.arguments.pageNumber).toBe(2);
+      expect(result).toHaveProperty("@hasMorePages", true);
+      expect(Object.keys(result).some((k) => k.startsWith("_"))).toBe(false);
     });
   });
 
@@ -103,9 +108,11 @@ describe("Workflow link relinking", () => {
       expect(result).toHaveProperty("history");
       expect(result).toHaveProperty("@links");
       expect(result).toHaveProperty("@pageNumber", 0);
+      expect(result).toHaveProperty("@hasMorePages", false);
       expect(result.history[0]).toHaveProperty("@links");
       expect(result).not.toHaveProperty("@schema");
       expect(result.history[0]).not.toHaveProperty("@schema");
+      expect(Object.keys(result).some((k) => k.startsWith("_"))).toBe(false);
     });
   });
 });

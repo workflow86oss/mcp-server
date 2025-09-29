@@ -65,8 +65,13 @@ describe("Workflow Tools Module Tests", () => {
 
       const response = JSON.parse(result.content![0].text!);
       expect(response).toHaveProperty("@pageNumber");
+      expect(response).toHaveProperty("@hasMorePages");
+      expect(typeof response["@hasMorePages"]).toBe("boolean");
       expect(response).toHaveProperty("@links");
       expect(response).toHaveProperty("@schema");
+      expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(
+        false,
+      );
       expect(response["@schema"]).toHaveProperty("workflows");
 
       const workflows = response.workflows || [];
@@ -97,6 +102,8 @@ describe("Workflow Tools Module Tests", () => {
 
       expect(allResponse).toBeDefined();
       expect(publishedResponse).toBeDefined();
+      expect(allResponse).toHaveProperty("@hasMorePages");
+      expect(publishedResponse).toHaveProperty("@hasMorePages");
 
       const publishedWorkflows = publishedResponse.workflows || [];
       publishedWorkflows.forEach((workflow: any) => {
@@ -114,6 +121,7 @@ describe("Workflow Tools Module Tests", () => {
       const firstPage = JSON.parse(result.content![0].text!);
 
       expect(firstPage["@pageNumber"]).toBe(0);
+      expect(firstPage).toHaveProperty("@hasMorePages");
       if (firstPage["@links"]?.nextPage) {
         expect(firstPage["@links"].nextPage.arguments.pageNumber).toBe(1);
       }
@@ -201,8 +209,12 @@ describe("Workflow Tools Module Tests", () => {
 
       expect(response).toBeDefined();
       expect(response).toHaveProperty("@pageNumber");
+      expect(response).toHaveProperty("@hasMorePages");
       expect(response).toHaveProperty("@links");
       expect(response).toHaveProperty("@schema");
+      expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(
+        false,
+      );
 
       const history = response.history || [];
       history.forEach((version: any) => {
@@ -222,6 +234,7 @@ describe("Workflow Tools Module Tests", () => {
       const firstPage = JSON.parse(result.content![0].text!);
 
       expect(firstPage["@pageNumber"]).toBe(0);
+      expect(firstPage).toHaveProperty("@hasMorePages");
     });
   });
 

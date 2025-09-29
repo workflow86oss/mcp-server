@@ -35,10 +35,15 @@ describe("Table Tools Module Tests", () => {
       // Validate response structure
       expect(response).toBeDefined();
       expect(response).toHaveProperty("@pageNumber");
+      expect(response).toHaveProperty("@hasMorePages");
+      expect(typeof response["@hasMorePages"]).toBe("boolean");
       expect(response).toHaveProperty("@links");
       expect(response).toHaveProperty("@schema");
+      expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(
+        false,
+      );
 
-      const tables = response._embedded || [];
+      const tables = response.tables || [];
       tables.forEach((table: any) => {
         expect(table).toHaveProperty("tableId");
         expect(table).toHaveProperty("name");
@@ -58,7 +63,12 @@ describe("Table Tools Module Tests", () => {
 
       if (!isPlainTextResponse(response)) {
         expect(response["@pageNumber"]).toBe(0);
+        expect(response).toHaveProperty("@hasMorePages");
+        expect(typeof response["@hasMorePages"]).toBe("boolean");
         expect(response).toHaveProperty("@links");
+        expect(Object.keys(response).some((k) => k.startsWith("_"))).toBe(
+          false,
+        );
 
         // Test pagination structure
         if (response["@links"]?.nextPage) {
@@ -80,7 +90,7 @@ describe("Table Tools Module Tests", () => {
       const response = parseResponse(responseText);
 
       if (!isPlainTextResponse(response)) {
-        const tables = response._embedded || [];
+        const tables = response.tables || [];
         expect(Array.isArray(tables)).toBe(true);
         expect(tables.length).toBe(0);
       }

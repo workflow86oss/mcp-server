@@ -29,11 +29,14 @@ describe("Session link relinking", () => {
       const result = relinkSessionPage(mockSessionPage);
 
       expect(result).toHaveProperty("@pageNumber", 0);
+      expect(result).toHaveProperty("@hasMorePages", false);
       expect(result).toHaveProperty("@links");
       expect(result).toHaveProperty("session");
       expect(result.session[0]).toHaveProperty("@links");
       expect(result).not.toHaveProperty("@schema");
       expect(result.session[0]).not.toHaveProperty("@schema");
+      // Ensure no underscore-prefixed fields leak into MCP response
+      expect(Object.keys(result).some((k) => k.startsWith("_"))).toBe(false);
     });
   });
 });

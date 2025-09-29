@@ -504,17 +504,13 @@ export type PageOfWorkflowSummary = {
    */
   _pageNumber: number;
   /**
-   * True if this page is the final page
+   * True if this page is the final page, false if there are more pages
    */
   _lastPage: boolean;
   /**
    * Total number of results matching the query
    */
   get_totalCount?: number;
-  /**
-   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
-   */
-  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -563,17 +559,13 @@ export type PageOfSessionSummary = {
    */
   _pageNumber: number;
   /**
-   * True if this page is the final page
+   * True if this page is the final page, false if there are more pages
    */
   _lastPage: boolean;
   /**
    * Total number of results matching the query
    */
   get_totalCount?: number;
-  /**
-   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
-   */
-  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -640,17 +632,13 @@ export type PageOfWorkflowHistory = {
    */
   _pageNumber: number;
   /**
-   * True if this page is the final page
+   * True if this page is the final page, false if there are more pages
    */
   _lastPage: boolean;
   /**
    * Total number of results matching the query
    */
   get_totalCount?: number;
-  /**
-   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
-   */
-  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -843,17 +831,13 @@ export type PageOfTaskSummary = {
    */
   _pageNumber: number;
   /**
-   * True if this page is the final page
+   * True if this page is the final page, false if there are more pages
    */
   _lastPage: boolean;
   /**
    * Total number of results matching the query
    */
   get_totalCount?: number;
-  /**
-   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
-   */
-  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -903,17 +887,13 @@ export type PageOfTableSummary = {
    */
   _pageNumber: number;
   /**
-   * True if this page is the final page
+   * True if this page is the final page, false if there are more pages
    */
   _lastPage: boolean;
   /**
    * Total number of results matching the query
    */
   get_totalCount?: number;
-  /**
-   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
-   */
-  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };
@@ -960,17 +940,13 @@ export type PageOfFormSummary = {
    */
   _pageNumber: number;
   /**
-   * True if this page is the final page
+   * True if this page is the final page, false if there are more pages
    */
   _lastPage: boolean;
   /**
    * Total number of results matching the query
    */
   get_totalCount?: number;
-  /**
-   * True if there are more pages available beyond this one. Keep proceeding to the next page until hasMorePages is false
-   */
-  hasMorePages?: boolean;
   _links: {
     [key: string]: string;
   };

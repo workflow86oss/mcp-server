@@ -12,4 +12,5 @@ module.exports = {
     '!src/**/*.d.ts',
   ],
   globalSetup: "<rootDir>/tests/module/precheck.ts",
+  watchman: false,
 };
