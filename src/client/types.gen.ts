@@ -302,6 +302,37 @@ export type GenerateWorkflowResponse = {
 };
 
 /**
+ * Response for apply-workflow-plan-skeleton API that applies the workflow skeleton and returns component generation instructions
+ */
+export type ApplyWorkflowSkeletonResponse = {
+  /**
+   * Session ID used for polling and tracking
+   */
+  sessionId?: string;
+  /**
+   * Workflow ID where the skeleton was applied
+   */
+  workflowId?: string;
+  /**
+   * List of components with their build/edit instructions for generation
+   */
+  componentGenerateInstructions?: Array<ComponentBuildEditInstructions>;
+  _links?: {
+    [key: string]: {
+      [key: string]: unknown;
+    };
+  };
+};
+
+/**
+ * List of components with their build/edit instructions for generation
+ */
+export type ComponentBuildEditInstructions = {
+  componentId?: string;
+  instructions?: string;
+};
+
+/**
  * Array of column definitions
  */
 export type CreateColumnCommand = {
@@ -1223,6 +1254,51 @@ export type GenerateComponentResponses = {
 
 export type GenerateComponentResponse =
   GenerateComponentResponses[keyof GenerateComponentResponses];
+
+export type ApplyWorkflowPlanSkeletonData = {
+  body?: never;
+  path: {
+    sessionId: string;
+  };
+  query?: never;
+  url: "/v1/workflow-plan/{sessionId}/apply-workflow-plan-skeleton";
+};
+
+export type ApplyWorkflowPlanSkeletonErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type ApplyWorkflowPlanSkeletonError =
+  ApplyWorkflowPlanSkeletonErrors[keyof ApplyWorkflowPlanSkeletonErrors];
+
+export type ApplyWorkflowPlanSkeletonResponses = {
+  /**
+   * OK
+   */
+  200: ApplyWorkflowSkeletonResponse;
+};
+
+export type ApplyWorkflowPlanSkeletonResponse =
+  ApplyWorkflowPlanSkeletonResponses[keyof ApplyWorkflowPlanSkeletonResponses];
 
 export type GenerateWorkflowPlanData = {
   body?: string;

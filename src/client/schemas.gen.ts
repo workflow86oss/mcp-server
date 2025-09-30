@@ -450,6 +450,61 @@ export const GenerateWorkflowResponseSchema = {
 `,
 } as const;
 
+export const ApplyWorkflowSkeletonResponseSchema = {
+  type: "object",
+  properties: {
+    sessionId: {
+      type: "string",
+      description: "Session ID used for polling and tracking",
+    },
+    workflowId: {
+      type: "string",
+      description: "Workflow ID where the skeleton was applied",
+    },
+    componentGenerateInstructions: {
+      type: "array",
+      description:
+        "List of components with their build/edit instructions for generation",
+      items: {
+        $ref: "#/components/schemas/ComponentBuildEditInstructions",
+      },
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "object",
+      },
+    },
+  },
+  description:
+    "Response for apply-workflow-plan-skeleton API that applies the workflow skeleton and returns component generation instructions",
+  example: `Success: {
+  "sessionId": "3aa378d1-c45f-448f-b543-d5490000742a",
+  "workflowId": "8bb489e2-d56g-559g-c654-e6501111853b",
+  "componentGenerateInstructions": [
+    {
+      "componentId": "comp-123",
+      "instructions": "Create a REST API component"
+    }
+  ]
+}
+`,
+} as const;
+
+export const ComponentBuildEditInstructionsSchema = {
+  type: "object",
+  properties: {
+    componentId: {
+      type: "string",
+    },
+    instructions: {
+      type: "string",
+    },
+  },
+  description:
+    "List of components with their build/edit instructions for generation",
+} as const;
+
 export const CreateColumnCommandSchema = {
   required: ["columnName", "columnType"],
   type: "object",
