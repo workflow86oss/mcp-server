@@ -752,7 +752,7 @@ export type GetWorkflowPlanResponse = {
   /**
    * Current status of the workflow plan generation
    */
-  status?: "IN_PROGRESS" | "SUCCESS";
+  status?: "IN_PROGRESS" | "SUCCESS" | "ERROR";
   /**
    * The ID of the workflow being generated/edited, if applicable
    */
@@ -958,12 +958,20 @@ export type GetGeneratedComponentResponse = {
   /**
    * Current status of the component generation
    */
-  status?: "IN_PROGRESS" | "SUCCESS";
+  status?: "IN_PROGRESS" | "SUCCESS" | "ERROR";
   /**
    * The ID of the workflow containing the generated component
    */
   workflowId?: string;
+  /**
+   * The ID of the generated or edited component
+   */
+  componentId?: string;
   sessionId?: string;
+  /**
+   * Error message if component generation failed
+   */
+  error?: string;
   /**
    * Navigation links for component generation operations
    */

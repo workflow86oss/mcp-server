@@ -1213,7 +1213,7 @@ export const GetWorkflowPlanResponseSchema = {
     status: {
       type: "string",
       description: "Current status of the workflow plan generation",
-      enum: ["IN_PROGRESS", "SUCCESS", "IN_PROGRESS", "SUCCESS"],
+      enum: ["IN_PROGRESS", "SUCCESS", "ERROR", "IN_PROGRESS", "SUCCESS"],
     },
     workflowId: {
       type: "string",
@@ -1611,14 +1611,29 @@ export const GetGeneratedComponentResponseSchema = {
     status: {
       type: "string",
       description: "Current status of the component generation",
-      enum: ["IN_PROGRESS", "SUCCESS", "IN_PROGRESS", "SUCCESS"],
+      enum: [
+        "IN_PROGRESS",
+        "SUCCESS",
+        "ERROR",
+        "IN_PROGRESS",
+        "SUCCESS",
+        "ERROR",
+      ],
     },
     workflowId: {
       type: "string",
       description: "The ID of the workflow containing the generated component",
     },
+    componentId: {
+      type: "string",
+      description: "The ID of the generated or edited component",
+    },
     sessionId: {
       type: "string",
+    },
+    error: {
+      type: "string",
+      description: "Error message if component generation failed",
     },
     _links: {
       type: "object",
@@ -1638,7 +1653,14 @@ export const GetGeneratedComponentResponseSchema = {
 Success: {
   "status": "SUCCESS",
   "workflowId": "69cac94a-2fac-4dcc-98e7-5dfc5a051fbe",
+  "componentId": "12345678-abcd-1234-abcd-123456789abc",
   "sessionId": "abc123-def456-ghi789"
+}
+Error: {
+  "status": "ERROR",
+  "sessionId": "abc123-def456-ghi789",
+  "workflowId": "69cac94a-2fac-4dcc-98e7-5dfc5a051fbe",
+  "error": "Component generation failed: Invalid component type"
 }`,
 } as const;
 

@@ -2,7 +2,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { client } from "./client/client.gen.js";
 import { textResponse, jsonResponse, handleError } from "./util.js";
-import { deleteComponent, generateComponent, getGeneratedComponent } from "./client";
+import {
+  deleteComponent,
+  generateComponent,
+  getGeneratedComponent,
+} from "./client";
 import { addSchemaMetadataByType } from "./schema";
 
 export function registerComponentTools(server: McpServer) {
@@ -80,7 +84,10 @@ export function registerComponentTools(server: McpServer) {
         });
 
         return jsonResponse(
-          addSchemaMetadataByType(response.data, "GetGeneratedComponentResponse"),
+          addSchemaMetadataByType(
+            response.data,
+            "GetGeneratedComponentResponse",
+          ),
         );
       } catch (error) {
         return handleError(error);
