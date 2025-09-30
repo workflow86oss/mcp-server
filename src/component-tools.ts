@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { client } from "./client/client.gen.js";
 import { textResponse, jsonResponse, handleError } from "./util.js";
-import { deleteComponent, generateComponent } from "./client";
+import { deleteComponent, generateComponent, getGeneratedComponent } from "./client";
 import { addSchemaMetadataByType } from "./schema";
 
 export function registerComponentTools(server: McpServer) {
@@ -60,6 +60,27 @@ export function registerComponentTools(server: McpServer) {
 
         return jsonResponse(
           addSchemaMetadataByType(response.data, "GenerateWorkflowResponse"),
+        );
+      } catch (error) {
+        return handleError(error);
+      }
+    },
+  );
+
+  server.tool(
+    "get-generated-component",
+    "Retrieve the status of a component generation using the session ID. Returns the current status (in_progress, success) and navigation links to the workflow or to re-poll.",
+    {
+      sessionId: z.string().describe("Session ID from generate-component"),
+    },
+    async ({ sessionId }) => {
+      try {
+        const response = await getGeneratedComponent({
+          path: { sessionId },
+        });
+
+        return jsonResponse(
+          addSchemaMetadataByType(response.data, "GetGeneratedComponentResponse"),
         );
       } catch (error) {
         return handleError(error);
