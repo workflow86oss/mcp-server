@@ -450,6 +450,61 @@ export const GenerateWorkflowResponseSchema = {
 `,
 } as const;
 
+export const ApplyWorkflowSkeletonResponseSchema = {
+  type: "object",
+  properties: {
+    sessionId: {
+      type: "string",
+      description: "Session ID used for polling and tracking",
+    },
+    workflowId: {
+      type: "string",
+      description: "Workflow ID where the skeleton was applied",
+    },
+    componentGenerateInstructions: {
+      type: "array",
+      description:
+        "List of components with their build/edit instructions for generation",
+      items: {
+        $ref: "#/components/schemas/ComponentBuildEditInstructions",
+      },
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "object",
+      },
+    },
+  },
+  description:
+    "Response for apply-workflow-plan-skeleton API that applies the workflow skeleton structure and returns component generation instructions. This creates the workflow structure with empty component placeholders. Each component must be fleshed out by calling generate-component with the provided instructions.",
+  example: `Success: {
+  "sessionId": "3aa378d1-c45f-448f-b543-d5490000742a",
+  "workflowId": "8bb489e2-d56g-559g-c654-e6501111853b",
+  "componentGenerateInstructions": [
+    {
+      "componentId": "comp-123",
+      "instructions": "Create a REST API component"
+    }
+  ]
+}
+`,
+} as const;
+
+export const ComponentBuildEditInstructionsSchema = {
+  type: "object",
+  properties: {
+    componentId: {
+      type: "string",
+    },
+    instructions: {
+      type: "string",
+    },
+  },
+  description:
+    "List of components with their build/edit instructions for generation",
+} as const;
+
 export const CreateColumnCommandSchema = {
   required: ["columnName", "columnType"],
   type: "object",
@@ -1158,7 +1213,7 @@ export const GetWorkflowPlanResponseSchema = {
     status: {
       type: "string",
       description: "Current status of the workflow plan generation",
-      enum: ["IN_PROGRESS", "SUCCESS", "IN_PROGRESS", "SUCCESS"],
+      enum: ["IN_PROGRESS", "SUCCESS", "ERROR", "IN_PROGRESS", "SUCCESS"],
     },
     workflowId: {
       type: "string",
@@ -1548,6 +1603,65 @@ export const TableSummarySchema = {
     },
   },
   description: "The page of response data as an array",
+} as const;
+
+export const GetGeneratedComponentResponseSchema = {
+  type: "object",
+  properties: {
+    status: {
+      type: "string",
+      description: "Current status of the component generation",
+      enum: [
+        "IN_PROGRESS",
+        "SUCCESS",
+        "ERROR",
+        "IN_PROGRESS",
+        "SUCCESS",
+        "ERROR",
+      ],
+    },
+    workflowId: {
+      type: "string",
+      description: "The ID of the workflow containing the generated component",
+    },
+    componentId: {
+      type: "string",
+      description: "The ID of the generated or edited component",
+    },
+    sessionId: {
+      type: "string",
+    },
+    error: {
+      type: "string",
+      description: "Error message if component generation failed",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+        description: "Navigation links for component generation operations",
+      },
+      description: "Navigation links for component generation operations",
+    },
+  },
+  description:
+    "Response for get-generated-component API that retrieves the status and results of a component generation",
+  example: `In Progress: {
+  "status": "IN_PROGRESS",
+  "sessionId": "abc123-def456-ghi789"
+}
+Success: {
+  "status": "SUCCESS",
+  "workflowId": "69cac94a-2fac-4dcc-98e7-5dfc5a051fbe",
+  "componentId": "12345678-abcd-1234-abcd-123456789abc",
+  "sessionId": "abc123-def456-ghi789"
+}
+Error: {
+  "status": "ERROR",
+  "sessionId": "abc123-def456-ghi789",
+  "workflowId": "69cac94a-2fac-4dcc-98e7-5dfc5a051fbe",
+  "error": "Component generation failed: Invalid component type"
+}`,
 } as const;
 
 export const FormSummarySchema = {
