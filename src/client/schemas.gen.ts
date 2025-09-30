@@ -1605,6 +1605,43 @@ export const TableSummarySchema = {
   description: "The page of response data as an array",
 } as const;
 
+export const GetGeneratedComponentResponseSchema = {
+  type: "object",
+  properties: {
+    status: {
+      type: "string",
+      description: "Current status of the component generation",
+      enum: ["IN_PROGRESS", "SUCCESS", "IN_PROGRESS", "SUCCESS"],
+    },
+    workflowId: {
+      type: "string",
+      description: "The ID of the workflow containing the generated component",
+    },
+    sessionId: {
+      type: "string",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+        description: "Navigation links for component generation operations",
+      },
+      description: "Navigation links for component generation operations",
+    },
+  },
+  description:
+    "Response for get-generated-component API that retrieves the status and results of a component generation",
+  example: `In Progress: {
+  "status": "IN_PROGRESS",
+  "sessionId": "abc123-def456-ghi789"
+}
+Success: {
+  "status": "SUCCESS",
+  "workflowId": "69cac94a-2fac-4dcc-98e7-5dfc5a051fbe",
+  "sessionId": "abc123-def456-ghi789"
+}`,
+} as const;
+
 export const FormSummarySchema = {
   type: "object",
   properties: {

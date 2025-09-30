@@ -952,6 +952,27 @@ export type TableSummary = {
 };
 
 /**
+ * Response for get-generated-component API that retrieves the status and results of a component generation
+ */
+export type GetGeneratedComponentResponse = {
+  /**
+   * Current status of the component generation
+   */
+  status?: "IN_PROGRESS" | "SUCCESS";
+  /**
+   * The ID of the workflow containing the generated component
+   */
+  workflowId?: string;
+  sessionId?: string;
+  /**
+   * Navigation links for component generation operations
+   */
+  _links?: {
+    [key: string]: string;
+  };
+};
+
+/**
  * The page of response data as an array
  */
 export type FormSummary = {
@@ -2093,6 +2114,51 @@ export type GetWorkflowSessionResponses = {
 
 export type GetWorkflowSessionResponse =
   GetWorkflowSessionResponses[keyof GetWorkflowSessionResponses];
+
+export type GetGeneratedComponentData = {
+  body?: never;
+  path: {
+    sessionId: string;
+  };
+  query?: never;
+  url: "/v1/generated-component/{sessionId}";
+};
+
+export type GetGeneratedComponentErrors = {
+  /**
+   * General validation errors
+   */
+  400: StandardWorkflow86Exception;
+  /**
+   * No API Key header provided
+   */
+  401: StandardWorkflow86Exception;
+  /**
+   * The provided API Key was invalid, or deleted
+   */
+  403: StandardWorkflow86Exception;
+  /**
+   * Entity not found, or deleted
+   */
+  410: StandardWorkflow86Exception;
+  /**
+   * All unexpected errors, and outages
+   */
+  500: StandardWorkflow86Exception;
+};
+
+export type GetGeneratedComponentError =
+  GetGeneratedComponentErrors[keyof GetGeneratedComponentErrors];
+
+export type GetGeneratedComponentResponses = {
+  /**
+   * OK
+   */
+  200: GetGeneratedComponentResponse;
+};
+
+export type GetGeneratedComponentResponse2 =
+  GetGeneratedComponentResponses[keyof GetGeneratedComponentResponses];
 
 export type ListFormsData = {
   body?: never;

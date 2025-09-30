@@ -77,6 +77,9 @@ import type {
   GetWorkflowSessionData,
   GetWorkflowSessionResponses,
   GetWorkflowSessionErrors,
+  GetGeneratedComponentData,
+  GetGeneratedComponentResponses,
+  GetGeneratedComponentErrors,
   ListFormsData,
   ListFormsResponses,
   ListFormsErrors,
@@ -744,6 +747,29 @@ export const getWorkflowSession = <ThrowOnError extends boolean = false>(
       },
     ],
     url: "/v1/session/{sessionId}",
+    ...options,
+  });
+};
+
+/**
+ * Get Generated Component
+ * Retrieve the status of a component generation using the session ID. Returns the current status (in_progress, success) and navigation links to the workflow or to re-poll.
+ */
+export const getGeneratedComponent = <ThrowOnError extends boolean = false>(
+  options: Options<GetGeneratedComponentData, ThrowOnError>,
+) => {
+  return (options.client ?? client).get<
+    GetGeneratedComponentResponses,
+    GetGeneratedComponentErrors,
+    ThrowOnError
+  >({
+    security: [
+      {
+        name: "x-api-key",
+        type: "apiKey",
+      },
+    ],
+    url: "/v1/generated-component/{sessionId}",
     ...options,
   });
 };
