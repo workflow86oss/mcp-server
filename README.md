@@ -53,6 +53,14 @@ If you don't already have the source run:
 ### Build
 `npm install && npm run build`
 
+### Tests and Coverage
+- Run unit tests: `npm test`
+- Run module tests: `npm run moduleTest`
+- Analyze coverage for module tests: `npm run moduleCoverage`
+  - Uses `c8` (V8 coverage) so child processes spawned by module tests are included
+  - First run `npm install` to ensure dev deps (c8) are installed
+  - HTML and lcov reports: `coverage/module/` (open `coverage/module/index.html`)
+
 ### Run with CLI
 This is particularly useful to get at logs easily if things are going wrong or for quick testing:
 

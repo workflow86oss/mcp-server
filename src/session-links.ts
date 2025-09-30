@@ -74,7 +74,7 @@ export function relinkSessionResult(
           arguments: {
             sessionId: sessionResult.sessionId,
             componentId: result.componentId,
-            thread: result.thread,
+            threadId: result.thread,
           },
         };
       }
@@ -85,7 +85,7 @@ export function relinkSessionResult(
           arguments: {
             sessionId: sessionResult.sessionId,
             componentId: result.componentId,
-            thread: result.thread,
+            threadId: result.thread,
           },
         };
       }

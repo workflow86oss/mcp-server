@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { client } from "./client/client.gen.js";
+import { client } from "./client/client.gen";
 import { version } from "../package.json";
 import { registerWorkflowTools } from "./workflow-tools.js";
 import { registerSessionTools } from "./session-tools.js";
@@ -60,26 +60,33 @@ try {
           typeof error === "object" &&
           Object.keys(error as any).length > 0);
 
+      // Always return a structured error so downstream can use httpStatus
       if (!hasMeaning) {
         let hint = "";
         if (status === 401 || status === 403) {
-          hint = " - Unauthorized: missing or invalid API key";
+          hint = "Unauthorized: missing or invalid API key";
         } else if (status === 404) {
-          hint = " - Not found";
+          hint = "Not found";
         } else if (status === 429) {
-          hint = " - Rate limited";
+          hint = "Rate limited";
         }
-        return `HTTP ${status} ${statusText} from ${path || "/"} (empty body)${hint}`.trim();
+        return {
+          httpStatus: status,
+          message:
+            `HTTP ${status} ${statusText} from ${path || "/"} (empty body)${hint ? ` - ${hint}` : ""}`.trim(),
+        };
       }
 
       if (error && typeof error === "object") {
+        let msg = "";
         try {
-          return JSON.stringify(error);
+          msg = JSON.stringify(error);
         } catch {
-          return String(error);
+          msg = String(error);
         }
+        return { httpStatus: status, message: msg };
       }
-      return String(error ?? "Unknown error");
+      return { httpStatus: status, message: String(error ?? "Unknown error") };
     },
   );
 } catch {}

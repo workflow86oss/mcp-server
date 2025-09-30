@@ -6,9 +6,9 @@ import {
   retryFailedComponent1,
   terminateComponent,
   terminateEntireSession,
-} from "./client/sdk.gen.js";
-import { SessionSummary } from "./client/types.gen.js";
-import { client } from "./client/client.gen.js";
+} from "./client/sdk.gen";
+import { SessionSummary } from "./client/types.gen";
+import { client } from "./client/client.gen";
 import { relinkSessionPage, relinkSessionResult } from "./session-links.js";
 import { addSchemaMetadataByType, createSchemaDescriber } from "./schema";
 import {

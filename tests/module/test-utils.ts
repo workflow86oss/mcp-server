@@ -1,8 +1,9 @@
 import { execSync } from "child_process";
 import * as path from "path";
 
-export const QUERY_TIMEOUT = 10000; // 5 Seconds seems to be too short on Github :(
-
+export const QUERY_TIMEOUT = 60000; // Increase to 60s to avoid network/API slowness timeouts
+export const DEV_CLIENT_ID = 838;
+export const PROD_CLIENT_ID = 328871;
 /**
  * Call a tool using the appropriate shell script
  */
@@ -173,12 +174,12 @@ export async function callTool(name: string, arguments_: Record<string, any>) {
   }
 
   // Execute the shell script
-  const env = { ...process.env, W86_WITH: "node" };
+  const env = { ...process.env, W86_WITH: "node", W86_SKIP_BUILD: "1" };
   const result = execSync(
     `"${scriptPath}" ${args.map((arg) => `"${arg}"`).join(" ")}`,
     {
       encoding: "utf8",
-      timeout: QUERY_TIMEOUT, // 5 second timeout
+      timeout: QUERY_TIMEOUT,
       cwd: rootDir,
       env,
     },
