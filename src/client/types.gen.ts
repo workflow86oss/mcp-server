@@ -302,7 +302,7 @@ export type GenerateWorkflowResponse = {
 };
 
 /**
- * Response for apply-workflow-plan-skeleton API that applies the workflow skeleton and returns component generation instructions
+ * Response for apply-workflow-plan-skeleton API that applies the workflow skeleton structure and returns component generation instructions. This creates the workflow structure with empty component placeholders. Each component must be fleshed out by calling generate-component with the provided instructions.
  */
 export type ApplyWorkflowSkeletonResponse = {
   /**

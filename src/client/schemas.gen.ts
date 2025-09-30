@@ -477,7 +477,7 @@ export const ApplyWorkflowSkeletonResponseSchema = {
     },
   },
   description:
-    "Response for apply-workflow-plan-skeleton API that applies the workflow skeleton and returns component generation instructions",
+    "Response for apply-workflow-plan-skeleton API that applies the workflow skeleton structure and returns component generation instructions. This creates the workflow structure with empty component placeholders. Each component must be fleshed out by calling generate-component with the provided instructions.",
   example: `Success: {
   "sessionId": "3aa378d1-c45f-448f-b543-d5490000742a",
   "workflowId": "8bb489e2-d56g-559g-c654-e6501111853b",
