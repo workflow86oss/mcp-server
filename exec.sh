@@ -7,7 +7,9 @@ PAYLOAD="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"n
 
 if [[ "${W86_WITH}" = "node" ]]; then
   COMMAND='node build/server.js'
-  npm run build
+  if [[ -z "${W86_SKIP_BUILD}" ]]; then
+    npm run build
+  fi
 elif [[ "${W86_WITH}" = "canary" ]]; then
   COMMAND='npx @npm-workflow86/mcp-server@canary'
 else

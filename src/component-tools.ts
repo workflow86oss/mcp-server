@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { client } from "./client/client.gen.js";
+import { client } from "./client/client.gen";
 import { textResponse, jsonResponse, handleError } from "./util.js";
 import { deleteComponent } from "./client";
 

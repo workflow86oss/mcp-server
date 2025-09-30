@@ -11,6 +11,9 @@ module.exports = {
     'src/**/*.ts',
     '!src/**/*.d.ts',
   ],
+  // Coverage configuration (enabled when running with --coverage)
+  coverageDirectory: '<rootDir>/coverage/module',
+  coverageReporters: ['text', 'text-summary', 'lcov', 'html'],
   globalSetup: "<rootDir>/tests/module/precheck.ts",
   watchman: false,
 };

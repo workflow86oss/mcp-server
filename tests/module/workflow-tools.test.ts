@@ -36,14 +36,18 @@ describe("Workflow Tools Module Tests", () => {
 
       // Clean up any inconsistent starting state
       if (publishedWorkflow?.published === false) {
-        console.log("Reset published workflow");
+        console.log(
+          "Resetting published workflow before test" + publishedWorkflowId,
+        );
         callTool("publish-workflow", {
           workflowId: publishedWorkflowId,
           comment: "Set to published at start of test",
         });
       }
       if (draftWorkflow?.published === true) {
-        console.log("Reset draft workflow");
+        console.log(
+          "Resetting unpublished workflow before test: " + draftWorkflowId,
+        );
         callTool("unpublish-workflow", { workflowId: draftWorkflowId });
       }
     } catch (error: any) {
