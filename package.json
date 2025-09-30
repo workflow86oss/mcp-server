@@ -18,6 +18,7 @@
     "@hey-api/openapi-ts": "^0.83.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.3",
+    "c8": "^9.1.0",
     "jest": "^30.0.5",
     "ts-jest": "^29.4.0",
     "typescript": "^5.8.3"
@@ -28,7 +29,9 @@
   "scripts": {
     "build": "tsc && chmod +x build/server.js",
     "test": "jest -c jest.unit.config.js",
-    "moduleTest": "jest -c jest.module.config.js",
+    "moduleTest": "npm run build && jest -c jest.module.config.js",
+    "moduleCoverage": "c8 -o coverage/module -r html -r lcov -r text -r text-summary --clean=false -- npm run moduleTest -- --runInBand",
+    "unitCoverage": "c8 -o coverage/unit -r html -r lcov -r text -r text-summary --clean=false -- npm test -- --runInBand",
     "format": "npx prettier --write \"{src,tests}/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "check": "npx prettier --check \"{src,tests}/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "genclient": "npx @hey-api/openapi-ts && npm run format",

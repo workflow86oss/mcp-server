@@ -7,13 +7,9 @@ import {
   renameColumn,
   addColumn,
   deleteColumn,
-} from "./client/sdk.gen.js";
-import {
-  ColumnDetails,
-  TableDetails,
-  TableSummary,
-} from "./client/types.gen.js";
-import { client } from "./client/client.gen.js";
+} from "./client/sdk.gen";
+import { ColumnDetails, TableDetails, TableSummary } from "./client/types.gen";
+import { client } from "./client/client.gen";
 import { addSchemaMetadataByType, schemaToZod } from "./schema";
 import {
   textResponse,

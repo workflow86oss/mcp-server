@@ -12,13 +12,13 @@ import {
   getWorkflowPlan,
   applyWorkflowPlanSkeleton,
   updateWorkflowDetails,
-} from "./client/sdk.gen.js";
+} from "./client/sdk.gen";
 import {
   PageOfWorkflowHistory,
   WorkflowSummary,
   WorkflowVersionDetails,
-} from "./client/types.gen.js";
-import { client } from "./client/client.gen.js";
+} from "./client/types.gen";
+import { client } from "./client/client.gen";
 import {
   relinkWorkflowHistoryPage,
   relinkWorkflowPage,

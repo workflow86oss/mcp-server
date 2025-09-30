@@ -1,0 +1,10 @@
+{
+  "exclude": [
+    "build/**",
+    "src/client/**",
+    "**/*.gen.ts",
+    "tests/**"
+  ],
+  "reporter": ["html", "lcov", "text", "text-summary"],
+  "all": true
+}
