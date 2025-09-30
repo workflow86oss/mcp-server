@@ -95,6 +95,12 @@ jobs:
           fi
           echo "✅ Ready to Tag"
 
+      - name: Run module test against Prod
+        env:
+          W86_DOMAIN: ${{secrets.PROD_DOMAIN}}
+          W86_API_KEY: ${{secrets.PROD_API_KEY}}
+        run: npm run moduleTest
+
       - name: Create version tag and publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
