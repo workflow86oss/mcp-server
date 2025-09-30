@@ -149,6 +149,35 @@ function attachConsoleToolLoggingInterceptor(s: McpServer) {
 
 attachConsoleToolLoggingInterceptor(server);
 
+// Interceptor: block tool invocation when no auth is configured
+function attachAuthGuardInterceptor(s: McpServer) {
+  const originalTool = (s as any).tool.bind(s) as any;
+  (s as any).tool = (name: string, ...rest: any[]) => {
+    if (!rest || rest.length === 0) {
+      return originalTool(name, ...rest);
+    }
+    const originalCallback = rest[rest.length - 1];
+    if (typeof originalCallback !== "function") {
+      return originalTool(name, ...rest);
+    }
+
+    const wrappedCallback = async (...callbackArgs: any[]) => {
+      // Only guard Workflow86 tools (i.e., all registered tools). MCP list-tools is not a tool call.
+      if (!(process.env.W86_API_KEY || process.env.W86_HEADERS)) {
+        const msg =
+          "Unauthorized: no Workflow86 auth configured. Set W86_API_KEY or W86_HEADERS to call this tool.";
+        throw new Error(msg);
+      }
+      return originalCallback(...callbackArgs);
+    };
+
+    rest[rest.length - 1] = wrappedCallback;
+    return originalTool(name, ...rest);
+  };
+}
+
+attachAuthGuardInterceptor(server);
+
 registerWorkflowTools(server);
 registerSessionTools(server);
 registerTasksTools(server);
@@ -160,9 +189,12 @@ async function main() {
     `Workflow86 MCP Server started on stdio (package version: ${version}, Node.js version: ${process.version}, baseUrl: ${baseUrl})`,
   );
 
+  // Allow startup without API key so MCP clients can list tools.
+  // Tool execution will be guarded per-call by an interceptor below.
   if (!process.env.W86_API_KEY && !process.env.W86_HEADERS) {
-    console.error("W86_API_KEY is not set");
-    process.exit(1);
+    console.error(
+      "W86_API_KEY is not set. Server will start for tool discovery only; Workflow86 tools will require an API key at call time.",
+    );
   }
   const transport = new StdioServerTransport();
   await server.connect(transport);

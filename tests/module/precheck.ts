@@ -23,27 +23,13 @@ Either W86_API_KEY or W86_HEADERS is required:
   W86_API_KEY: Your Workflow86 API key
   W86_HEADERS: Your Workflow86 headers (JSON format)
 
-Also required:
-  W86_DOMAIN: Workflow86 API domain (e.g., https://rest.workflow86.com)
+Optional:
+  W86_DOMAIN: Workflow86 API domain (defaults to https://rest.workflow86.com)
 
 Set the required environment variables:
 export W86_API_KEY="your-actual-api-key"
 # OR
 export W86_HEADERS='{"Authorization": "Bearer your-token"}'
-export W86_DOMAIN="https://rest.workflow86.com"
-
-Then run: npm run moduleTest`);
-  }
-
-  // Check for required W86_DOMAIN
-  if (!w86Domain) {
-    throw new Error(`❌ Module test environment check failed
-
-Missing required environment variable:
-  W86_DOMAIN: Workflow86 API domain (e.g., https://rest.workflow86.com)
-
-Set the required environment variables:
-export W86_DOMAIN="https://rest.workflow86.com"
 
 Then run: npm run moduleTest`);
   }

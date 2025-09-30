@@ -34,6 +34,8 @@ Normal users will only need to follow some fairly standard setup steps:
    ```bash
    node -v
    ```
+
+Note: The server will start even if `W86_API_KEY` is not set so MCP clients can discover available tools. However, calling any Workflow86 tool requires an API key (or custom `W86_HEADERS`). Without it, tool calls will fail with an authorization error.
 ### Test Integration
 #### Cursor
 Goto `Cursor` -> `Settings` -> `Cursor Settings` -> `Tools & Integrations`
