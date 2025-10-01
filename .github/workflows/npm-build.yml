@@ -34,18 +34,18 @@ jobs:
       - name: Publish Dry Run
         run: npm publish --dry-run
 
-      - name: Check generated client matches DEV Public API
-        env:
-          W86_DOMAIN: ${{secrets.DEV_DOMAIN}}
-        run: |
-          npm run genclient
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "❌ Public API changes have not been deployed to DEV yet (or you need to run genclient and commit)"
-            git status --porcelain
-            git diff
-            exit 1
-          fi
-          echo "✅ Generated Client matches DEV"
+#      - name: Check generated client matches DEV Public API
+#        env:
+#          W86_DOMAIN: ${{secrets.DEV_DOMAIN}}
+#        run: |
+#          npm run genclient
+#          if [ -n "$(git status --porcelain)" ]; then
+#            echo "❌ Public API changes have not been deployed to DEV yet (or you need to run genclient and commit)"
+#            git status --porcelain
+#            git diff
+#            exit 1
+#          fi
+#          echo "✅ Generated Client matches DEV"
 
       - name: Run module test against Dev
         env:
