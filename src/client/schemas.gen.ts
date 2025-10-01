@@ -427,23 +427,31 @@ export const PublishWorkflowResponseSchema = {
   },
 } as const;
 
-export const GenerateWorkflowResponseSchema = {
+export const GenerateComponentResponseSchema = {
   type: "object",
   properties: {
     sessionId: {
       type: "string",
+      description: "Session ID created for polling the result",
+    },
+    important: {
+      type: "string",
       description:
-        "Session ID created for polling the result. Present when success is true",
+        "IMPORTANT: Poll get-generated-component with the sessionId until status is SUCCESS before generating the next component. This ensures components are generated sequentially and allows each component to reference previously generated components.",
     },
     _links: {
       type: "object",
       additionalProperties: {
         type: "string",
+        description:
+          "IMPORTANT: Poll get-generated-component with the sessionId until status is SUCCESS before generating the next component. This ensures components are generated sequentially and allows each component to reference previously generated components.",
       },
+      description:
+        "IMPORTANT: Poll get-generated-component with the sessionId until status is SUCCESS before generating the next component. This ensures components are generated sequentially and allows each component to reference previously generated components.",
     },
   },
   description:
-    "Response for generate-workflow-plan API that generates a workflow edit plan",
+    "Response for generate-component API that initiates AI component generation or editing",
   example: `Success: {
   "sessionId": "3aa378d1-c45f-448f-b543-d5490000742a"
 }
@@ -464,7 +472,7 @@ export const ApplyWorkflowSkeletonResponseSchema = {
     componentGenerateInstructions: {
       type: "array",
       description:
-        "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component.",
+        "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders",
       items: {
         $ref: "#/components/schemas/ComponentBuildEditInstructions",
       },
@@ -502,7 +510,29 @@ export const ComponentBuildEditInstructionsSchema = {
     },
   },
   description:
-    "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component.",
+    "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders",
+} as const;
+
+export const GenerateWorkflowResponseSchema = {
+  type: "object",
+  properties: {
+    sessionId: {
+      type: "string",
+      description: "Session ID created for polling the result",
+    },
+    _links: {
+      type: "object",
+      additionalProperties: {
+        type: "string",
+      },
+    },
+  },
+  description:
+    "Response for generate-workflow-plan API that generates a workflow edit plan",
+  example: `Success: {
+  "sessionId": "3aa378d1-c45f-448f-b543-d5490000742a"
+}
+`,
 } as const;
 
 export const CreateColumnCommandSchema = {

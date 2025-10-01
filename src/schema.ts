@@ -156,7 +156,11 @@ export function getPropertyDescriptions(schema: any): Record<string, any> {
             const refSchema = resolveRef(typedProp.items.$ref);
             if (refSchema) {
               const nestedProps = getPropertyDescriptions(refSchema);
-              descriptions[key] = nestedProps;
+
+              descriptions[key] =
+                nestedProps && Object.keys(nestedProps).length > 0
+                  ? nestedProps
+                  : typedProp.description;
             } else {
               descriptions[key] = typedProp.description;
             }
