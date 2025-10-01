@@ -289,13 +289,20 @@ export type PublishWorkflowResponse = {
 };
 
 /**
- * Response for generate-workflow-plan API that generates a workflow edit plan
+ * Response for generate-component API that initiates AI component generation or editing
  */
-export type GenerateWorkflowResponse = {
+export type GenerateComponentResponse = {
   /**
-   * Session ID created for polling the result. Present when success is true
+   * Session ID created for polling the result
    */
   sessionId?: string;
+  /**
+   * IMPORTANT: Poll get-generated-component with the sessionId until status is SUCCESS before generating the next component. This ensures components are generated sequentially and allows each component to reference previously generated components.
+   */
+  important?: string;
+  /**
+   * IMPORTANT: Poll get-generated-component with the sessionId until status is SUCCESS before generating the next component. This ensures components are generated sequentially and allows each component to reference previously generated components.
+   */
   _links?: {
     [key: string]: string;
   };
@@ -314,7 +321,7 @@ export type ApplyWorkflowSkeletonResponse = {
    */
   workflowId?: string;
   /**
-   * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component.
+   * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders
    */
   componentGenerateInstructions?: Array<ComponentBuildEditInstructions>;
   _links?: {
@@ -325,11 +332,24 @@ export type ApplyWorkflowSkeletonResponse = {
 };
 
 /**
- * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component.
+ * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders
  */
 export type ComponentBuildEditInstructions = {
   componentId?: string;
   instructions?: string;
+};
+
+/**
+ * Response for generate-workflow-plan API that generates a workflow edit plan
+ */
+export type GenerateWorkflowResponse = {
+  /**
+   * Session ID created for polling the result
+   */
+  sessionId?: string;
+  _links?: {
+    [key: string]: string;
+  };
 };
 
 /**
@@ -1278,10 +1298,10 @@ export type GenerateComponentResponses = {
   /**
    * OK
    */
-  200: GenerateWorkflowResponse;
+  200: GenerateComponentResponse;
 };
 
-export type GenerateComponentResponse =
+export type GenerateComponentResponse2 =
   GenerateComponentResponses[keyof GenerateComponentResponses];
 
 export type ApplyWorkflowPlanSkeletonData = {
