@@ -443,11 +443,7 @@ export const GenerateComponentResponseSchema = {
       type: "object",
       additionalProperties: {
         type: "string",
-        description:
-          "IMPORTANT: Poll get-generated-component with the sessionId until status is SUCCESS before generating the next component. This ensures components are generated sequentially and allows each component to reference previously generated components.",
       },
-      description:
-        "IMPORTANT: Poll get-generated-component with the sessionId until status is SUCCESS before generating the next component. This ensures components are generated sequentially and allows each component to reference previously generated components.",
     },
   },
   description:
@@ -1252,6 +1248,11 @@ export const GetWorkflowPlanResponseSchema = {
     },
     sessionId: {
       type: "string",
+    },
+    important: {
+      type: "string",
+      description:
+        "IMPORTANT: Poll get-workflow-plan with the sessionId until status is SUCCESS. You must get the full and complete plan before generating any components or using the generate-component tool. The plan contains critical information for each component that must be exactly followed to build the workflow properly.",
     },
     _links: {
       type: "object",
