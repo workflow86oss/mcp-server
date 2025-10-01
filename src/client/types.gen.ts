@@ -302,37 +302,6 @@ export type GenerateWorkflowResponse = {
 };
 
 /**
- * Response for apply-workflow-plan-skeleton API that applies the workflow skeleton structure and returns component generation instructions. This creates the workflow structure with empty component placeholders. Each component must be fleshed out by calling generate-component with the provided instructions.
- */
-export type ApplyWorkflowSkeletonResponse = {
-  /**
-   * Session ID used for polling and tracking
-   */
-  sessionId?: string;
-  /**
-   * Workflow ID where the skeleton was applied
-   */
-  workflowId?: string;
-  /**
-   * List of components with their build/edit instructions for generation
-   */
-  componentGenerateInstructions?: Array<ComponentBuildEditInstructions>;
-  _links?: {
-    [key: string]: {
-      [key: string]: unknown;
-    };
-  };
-};
-
-/**
- * List of components with their build/edit instructions for generation
- */
-export type ComponentBuildEditInstructions = {
-  componentId?: string;
-  instructions?: string;
-};
-
-/**
  * Array of column definitions
  */
 export type CreateColumnCommand = {
@@ -752,7 +721,7 @@ export type GetWorkflowPlanResponse = {
   /**
    * Current status of the workflow plan generation
    */
-  status?: "IN_PROGRESS" | "SUCCESS" | "ERROR";
+  status?: "IN_PROGRESS" | "SUCCESS";
   /**
    * The ID of the workflow being generated/edited, if applicable
    */
@@ -947,35 +916,6 @@ export type TableSummary = {
    */
   tableAppViewUrl?: string;
   _links: {
-    [key: string]: string;
-  };
-};
-
-/**
- * Response for get-generated-component API that retrieves the status and results of a component generation
- */
-export type GetGeneratedComponentResponse = {
-  /**
-   * Current status of the component generation
-   */
-  status?: "IN_PROGRESS" | "SUCCESS" | "ERROR";
-  /**
-   * The ID of the workflow containing the generated component
-   */
-  workflowId?: string;
-  /**
-   * The ID of the generated or edited component
-   */
-  componentId?: string;
-  sessionId?: string;
-  /**
-   * Error message if component generation failed
-   */
-  error?: string;
-  /**
-   * Navigation links for component generation operations
-   */
-  _links?: {
     [key: string]: string;
   };
 };
@@ -1283,51 +1223,6 @@ export type GenerateComponentResponses = {
 
 export type GenerateComponentResponse =
   GenerateComponentResponses[keyof GenerateComponentResponses];
-
-export type ApplyWorkflowPlanSkeletonData = {
-  body?: never;
-  path: {
-    sessionId: string;
-  };
-  query?: never;
-  url: "/v1/workflow-plan/{sessionId}/apply-workflow-plan-skeleton";
-};
-
-export type ApplyWorkflowPlanSkeletonErrors = {
-  /**
-   * General validation errors
-   */
-  400: StandardWorkflow86Exception;
-  /**
-   * No API Key header provided
-   */
-  401: StandardWorkflow86Exception;
-  /**
-   * The provided API Key was invalid, or deleted
-   */
-  403: StandardWorkflow86Exception;
-  /**
-   * Entity not found, or deleted
-   */
-  410: StandardWorkflow86Exception;
-  /**
-   * All unexpected errors, and outages
-   */
-  500: StandardWorkflow86Exception;
-};
-
-export type ApplyWorkflowPlanSkeletonError =
-  ApplyWorkflowPlanSkeletonErrors[keyof ApplyWorkflowPlanSkeletonErrors];
-
-export type ApplyWorkflowPlanSkeletonResponses = {
-  /**
-   * OK
-   */
-  200: ApplyWorkflowSkeletonResponse;
-};
-
-export type ApplyWorkflowPlanSkeletonResponse =
-  ApplyWorkflowPlanSkeletonResponses[keyof ApplyWorkflowPlanSkeletonResponses];
 
 export type GenerateWorkflowPlanData = {
   body?: string;
@@ -2122,51 +2017,6 @@ export type GetWorkflowSessionResponses = {
 
 export type GetWorkflowSessionResponse =
   GetWorkflowSessionResponses[keyof GetWorkflowSessionResponses];
-
-export type GetGeneratedComponentData = {
-  body?: never;
-  path: {
-    sessionId: string;
-  };
-  query?: never;
-  url: "/v1/generated-component/{sessionId}";
-};
-
-export type GetGeneratedComponentErrors = {
-  /**
-   * General validation errors
-   */
-  400: StandardWorkflow86Exception;
-  /**
-   * No API Key header provided
-   */
-  401: StandardWorkflow86Exception;
-  /**
-   * The provided API Key was invalid, or deleted
-   */
-  403: StandardWorkflow86Exception;
-  /**
-   * Entity not found, or deleted
-   */
-  410: StandardWorkflow86Exception;
-  /**
-   * All unexpected errors, and outages
-   */
-  500: StandardWorkflow86Exception;
-};
-
-export type GetGeneratedComponentError =
-  GetGeneratedComponentErrors[keyof GetGeneratedComponentErrors];
-
-export type GetGeneratedComponentResponses = {
-  /**
-   * OK
-   */
-  200: GetGeneratedComponentResponse;
-};
-
-export type GetGeneratedComponentResponse2 =
-  GetGeneratedComponentResponses[keyof GetGeneratedComponentResponses];
 
 export type ListFormsData = {
   body?: never;
