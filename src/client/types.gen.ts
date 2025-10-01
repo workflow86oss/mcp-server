@@ -314,7 +314,7 @@ export type ApplyWorkflowSkeletonResponse = {
    */
   workflowId?: string;
   /**
-   * List of components with their build/edit instructions for generation
+   * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component.
    */
   componentGenerateInstructions?: Array<ComponentBuildEditInstructions>;
   _links?: {
@@ -325,7 +325,7 @@ export type ApplyWorkflowSkeletonResponse = {
 };
 
 /**
- * List of components with their build/edit instructions for generation
+ * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component.
  */
 export type ComponentBuildEditInstructions = {
   componentId?: string;
@@ -704,15 +704,15 @@ export type WorkflowHistory = {
  * Use delete-component to remove unwanted components from draft workflows
  */
 export type ComponentPlanDto = {
-  componentId?: number;
+  componentId?: string;
   componentType?: string;
   componentTitle?: string;
   componentDescription?: string;
   inputPlaceholders?: Array<string>;
   outputPlaceholders?: Array<string>;
   path?: string;
-  previousComponents?: Array<number>;
-  nextComponents?: Array<number>;
+  previousComponents?: Array<string>;
+  nextComponents?: Array<string>;
   parentBranchPath?: number;
   childPaths?: Array<number>;
   pathCondition?: string;
@@ -771,15 +771,15 @@ export type GetWorkflowPlanResponse = {
  * Use generate-component tool to update existing components
  */
 export type UpdateComponentPlanDto = {
-  componentId?: number;
+  componentId?: string;
   componentType?: string;
   componentTitle?: string;
   componentDescription?: string;
   inputPlaceholders?: Array<string>;
   outputPlaceholders?: Array<string>;
   path?: string;
-  previousComponents?: Array<number>;
-  nextComponents?: Array<number>;
+  previousComponents?: Array<string>;
+  nextComponents?: Array<string>;
   parentBranchPath?: number;
   childPaths?: Array<number>;
   pathCondition?: string;
