@@ -464,7 +464,7 @@ export const ApplyWorkflowSkeletonResponseSchema = {
     componentGenerateInstructions: {
       type: "array",
       description:
-        "List of components with their build/edit instructions for generation",
+        "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component.",
       items: {
         $ref: "#/components/schemas/ComponentBuildEditInstructions",
       },
@@ -502,7 +502,7 @@ export const ComponentBuildEditInstructionsSchema = {
     },
   },
   description:
-    "List of components with their build/edit instructions for generation",
+    "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component.",
 } as const;
 
 export const CreateColumnCommandSchema = {
@@ -1060,8 +1060,7 @@ export const ComponentPlanDtoSchema = {
   type: "object",
   properties: {
     componentId: {
-      type: "integer",
-      format: "int32",
+      type: "string",
     },
     componentType: {
       type: "string",
@@ -1090,15 +1089,13 @@ export const ComponentPlanDtoSchema = {
     previousComponents: {
       type: "array",
       items: {
-        type: "integer",
-        format: "int32",
+        type: "string",
       },
     },
     nextComponents: {
       type: "array",
       items: {
-        type: "integer",
-        format: "int32",
+        type: "string",
       },
     },
     parentBranchPath: {
@@ -1245,8 +1242,7 @@ export const UpdateComponentPlanDtoSchema = {
   type: "object",
   properties: {
     componentId: {
-      type: "integer",
-      format: "int32",
+      type: "string",
     },
     componentType: {
       type: "string",
@@ -1275,15 +1271,13 @@ export const UpdateComponentPlanDtoSchema = {
     previousComponents: {
       type: "array",
       items: {
-        type: "integer",
-        format: "int32",
+        type: "string",
       },
     },
     nextComponents: {
       type: "array",
       items: {
-        type: "integer",
-        format: "int32",
+        type: "string",
       },
     },
     parentBranchPath: {

@@ -65,7 +65,16 @@ export function registerComponentTools(server: McpServer) {
         return jsonResponse(
           addSchemaMetadataByType(response.data, "GenerateWorkflowResponse"),
         );
-      } catch (error) {
+      } catch (error: any) {
+        // Extract HTTP status from error response if available
+        const httpStatus = error?.response?.status || error?.status;
+        if (httpStatus) {
+          const message =
+            error?.response?.data?.message ||
+            error?.message ||
+            `HTTP ${httpStatus} error`;
+          return handleError({ httpStatus, message });
+        }
         return handleError(error);
       }
     },
@@ -89,7 +98,16 @@ export function registerComponentTools(server: McpServer) {
             "GetGeneratedComponentResponse",
           ),
         );
-      } catch (error) {
+      } catch (error: any) {
+        // Extract HTTP status from error response if available
+        const httpStatus = error?.response?.status || error?.status;
+        if (httpStatus) {
+          const message =
+            error?.response?.data?.message ||
+            error?.message ||
+            `HTTP ${httpStatus} error`;
+          return handleError({ httpStatus, message });
+        }
         return handleError(error);
       }
     },
