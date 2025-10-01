@@ -237,7 +237,7 @@ describe("Session Tools Module Tests", () => {
       ).rejects.toThrow();
     });
 
-    /* it("can terminate a specific component in a waiting session", async () => {
+    it("can terminate a specific component in a waiting session", async () => {
       expect(terminatableWorkflowId).toBeDefined();
 
       const components = await getWorkflowComponents(terminatableWorkflowId!);
@@ -265,7 +265,7 @@ describe("Session Tools Module Tests", () => {
         terminateComponentResult.content![0].text!,
       );
       expect(isPlainTextResponse(terminateComponentParsedResponse)).toBe(false);
-    });*/
+    });
   });
 
   describe("retry-failed-component", () => {
