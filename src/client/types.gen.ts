@@ -1175,55 +1175,6 @@ export type PublishWorkflowResponses = {
 export type PublishWorkflowResponse2 =
   PublishWorkflowResponses[keyof PublishWorkflowResponses];
 
-export type GenerateComponentData = {
-  body?: string;
-  path: {
-    workflowId: string;
-  };
-  query: {
-    componentId?: string;
-    type?: string;
-    userRequirement: string;
-  };
-  url: "/v1/workflow/{workflowId}/generate-component";
-};
-
-export type GenerateComponentErrors = {
-  /**
-   * General validation errors
-   */
-  400: StandardWorkflow86Exception;
-  /**
-   * No API Key header provided
-   */
-  401: StandardWorkflow86Exception;
-  /**
-   * The provided API Key was invalid, or deleted
-   */
-  403: StandardWorkflow86Exception;
-  /**
-   * Entity not found, or deleted
-   */
-  410: StandardWorkflow86Exception;
-  /**
-   * All unexpected errors, and outages
-   */
-  500: StandardWorkflow86Exception;
-};
-
-export type GenerateComponentError =
-  GenerateComponentErrors[keyof GenerateComponentErrors];
-
-export type GenerateComponentResponses = {
-  /**
-   * OK
-   */
-  200: GenerateWorkflowResponse;
-};
-
-export type GenerateComponentResponse =
-  GenerateComponentResponses[keyof GenerateComponentResponses];
-
 export type GenerateWorkflowPlanData = {
   body?: string;
   path?: never;
