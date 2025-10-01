@@ -472,7 +472,7 @@ export const ApplyWorkflowSkeletonResponseSchema = {
     componentGenerateInstructions: {
       type: "array",
       description:
-        "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders",
+        "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders. Components MUST be generated one at a time synchronously, waiting for each component generation to succeed before starting the next one.",
       items: {
         $ref: "#/components/schemas/ComponentBuildEditInstructions",
       },
@@ -510,7 +510,7 @@ export const ComponentBuildEditInstructionsSchema = {
     },
   },
   description:
-    "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders",
+    "List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders. Components MUST be generated one at a time synchronously, waiting for each component generation to succeed before starting the next one.",
 } as const;
 
 export const GenerateWorkflowResponseSchema = {

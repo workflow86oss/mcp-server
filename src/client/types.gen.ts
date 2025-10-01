@@ -321,7 +321,7 @@ export type ApplyWorkflowSkeletonResponse = {
    */
   workflowId?: string;
   /**
-   * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders
+   * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders. Components MUST be generated one at a time synchronously, waiting for each component generation to succeed before starting the next one.
    */
   componentGenerateInstructions?: Array<ComponentBuildEditInstructions>;
   _links?: {
@@ -332,7 +332,7 @@ export type ApplyWorkflowSkeletonResponse = {
 };
 
 /**
- * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders
+ * List of components with their build/edit instructions for generation. These instructions must be passed verbatim as the userRequirement parameter when calling generate-component for each component. ESPECIALLY the Input placeholders and Output placeholders. Components MUST be generated one at a time synchronously, waiting for each component generation to succeed before starting the next one.
  */
 export type ComponentBuildEditInstructions = {
   componentId?: string;

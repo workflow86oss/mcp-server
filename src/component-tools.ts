@@ -63,7 +63,7 @@ export function registerComponentTools(server: McpServer) {
         });
 
         return jsonResponse(
-          addSchemaMetadataByType(response.data, "GenerateWorkflowResponse"),
+          addSchemaMetadataByType(response.data, "GenerateComponentResponse"),
         );
       } catch (error: any) {
         // Extract HTTP status from error response if available
