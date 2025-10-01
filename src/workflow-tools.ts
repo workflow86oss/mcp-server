@@ -409,7 +409,10 @@ export function registerWorkflowTools(server: McpServer) {
         });
 
         return jsonResponse(
-          addSchemaMetadataByType(response.data, "GenerateWorkflowResponse"),
+          addSchemaMetadataByType(
+            response.data,
+            "ApplyWorkflowSkeletonResponse",
+          ),
         );
       } catch (error) {
         return handleError(error);
