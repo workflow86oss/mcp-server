@@ -300,9 +300,6 @@ export type GenerateComponentResponse = {
    * IMPORTANT: Poll get-generated-component with the sessionId until status is SUCCESS before generating the next component. This ensures components are generated sequentially and allows each component to reference previously generated components.
    */
   important?: string;
-  /**
-   * IMPORTANT: Poll get-generated-component with the sessionId until status is SUCCESS before generating the next component. This ensures components are generated sequentially and allows each component to reference previously generated components.
-   */
   _links?: {
     [key: string]: string;
   };
@@ -779,6 +776,10 @@ export type GetWorkflowPlanResponse = {
   workflowId?: string;
   response?: WorkflowPlanResponseDto;
   sessionId?: string;
+  /**
+   * IMPORTANT: Poll get-workflow-plan with the sessionId until status is SUCCESS. You must get the full and complete plan before generating any components or using the generate-component tool. The plan contains critical information for each component that must be exactly followed to build the workflow properly.
+   */
+  important?: string;
   /**
    * Navigation links for workflow operations
    */
