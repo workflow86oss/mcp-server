@@ -31,7 +31,7 @@ describe("component-tools", () => {
       path: { workflowId: "w-1", componentId: "c-1" },
     });
     expect(result).toEqual({
-      content: [{ type: "text", text: "Component componentId deleted" }],
+      content: [{ type: "text", text: "Component c-1 deleted" }],
     });
   });
 });

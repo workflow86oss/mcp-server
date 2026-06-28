@@ -24,7 +24,7 @@ Either W86_API_KEY or W86_HEADERS is required:
   W86_HEADERS: Your Workflow86 headers (JSON format)
 
 Optional:
-  W86_DOMAIN: Workflow86 API domain (defaults to https://rest.workflow86.com)
+  W86_DOMAIN: Workflow86 API domain (defaults to https://api.workflow86.com)
 
 Set the required environment variables:
 export W86_API_KEY="your-actual-api-key"

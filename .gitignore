@@ -6,3 +6,4 @@ package-lock.json
 .claude
 coverage
 .nyc_output
+src/client/schemas.gen.js

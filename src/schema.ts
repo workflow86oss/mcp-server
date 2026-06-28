@@ -1,9 +1,6 @@
 // This file provides schema description lookup functionality
-import * as schemas from "./client/schemas.gen";
-import { type } from "node:os";
+import * as schemas from "./client/schemas.gen.js";
 import { z, ZodTypeAny } from "zod";
-import { ZodType } from "zod/src/v3/types";
-import { JSONSchema } from "zod/v4/core/json-schema";
 
 // Type mapping from generated types to schema objects - used internally for $ref resolution
 // Dynamically build schema mapping from generated schemas

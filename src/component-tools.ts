@@ -1,13 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { client } from "./client/client.gen";
-import { textResponse, jsonResponse, handleError } from "./util.js";
-import {
-  deleteComponent,
-  generateComponent,
-  getGeneratedComponent,
-} from "./client";
-import { addSchemaMetadataByType } from "./schema";
+import { deleteComponent } from "./client";
+import { textResponse } from "./util.js";
 
 export function registerComponentTools(server: McpServer) {
   server.tool(
@@ -19,97 +13,7 @@ export function registerComponentTools(server: McpServer) {
     },
     async ({ workflowId, componentId }) => {
       await deleteComponent({ path: { workflowId, componentId } });
-      return textResponse("Component componentId deleted");
-    },
-  );
-
-  server.tool(
-    "generate-component",
-    "Generate or edit a workflow component using AI. When workflowId and componentId are provided, edits an existing component. When only workflowId is provided, creates a new component in the existing workflow. Returns a session ID that can be used to poll for the generation results.",
-    {
-      workflowId: z.string().describe("UUID identifier of the workflow"),
-      componentId: z
-        .string()
-        .optional()
-        .describe(
-          "UUID identifier of the component to edit (optional - if not provided, creates new component)",
-        ),
-      type: z
-        .string()
-        .optional()
-        .describe(
-          "Type of component to create (optional - only used when creating new component)",
-        ),
-      userRequirement: z
-        .string()
-        .describe(
-          "Description of what the component should do or how it should be modified",
-        ),
-      context: z
-        .string()
-        .optional()
-        .describe("Additional context for the AI generation (optional)"),
-    },
-    async ({ workflowId, componentId, type, userRequirement, context }) => {
-      try {
-        const response = await generateComponent({
-          path: { workflowId },
-          query: {
-            componentId,
-            type,
-            userRequirement,
-          },
-          body: context,
-        });
-
-        return jsonResponse(
-          addSchemaMetadataByType(response.data, "GenerateComponentResponse"),
-        );
-      } catch (error: any) {
-        // Extract HTTP status from error response if available
-        const httpStatus = error?.response?.status || error?.status;
-        if (httpStatus) {
-          const message =
-            error?.response?.data?.message ||
-            error?.message ||
-            `HTTP ${httpStatus} error`;
-          return handleError({ httpStatus, message });
-        }
-        return handleError(error);
-      }
-    },
-  );
-
-  server.tool(
-    "get-generated-component",
-    "Retrieve the status of a component generation using the session ID. Returns the current status (in_progress, success) and navigation links to the workflow or to re-poll.",
-    {
-      sessionId: z.string().describe("Session ID from generate-component"),
-    },
-    async ({ sessionId }) => {
-      try {
-        const response = await getGeneratedComponent({
-          path: { sessionId },
-        });
-
-        return jsonResponse(
-          addSchemaMetadataByType(
-            response.data,
-            "GetGeneratedComponentResponse",
-          ),
-        );
-      } catch (error: any) {
-        // Extract HTTP status from error response if available
-        const httpStatus = error?.response?.status || error?.status;
-        if (httpStatus) {
-          const message =
-            error?.response?.data?.message ||
-            error?.message ||
-            `HTTP ${httpStatus} error`;
-          return handleError({ httpStatus, message });
-        }
-        return handleError(error);
-      }
+      return textResponse(`Component ${componentId} deleted`);
     },
   );
 }

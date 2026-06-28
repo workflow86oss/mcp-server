@@ -36,6 +36,8 @@ Normal users will only need to follow some fairly standard setup steps:
    ```
 
 Note: The server will start even if `W86_API_KEY` is not set so MCP clients can discover available tools. However, calling any Workflow86 tool requires an API key (or custom `W86_HEADERS`). Without it, tool calls will fail with an authorization error.
+
+Optional: set `W86_DOMAIN` to point at a different API host (defaults to `https://api.workflow86.com`).
 ### Test Integration
 #### Cursor
 Goto `Cursor` -> `Settings` -> `Cursor Settings` -> `Tools & Integrations`
@@ -91,7 +93,7 @@ To configure a MCP Client to run against your local checkout put this config in 
 ```
 
 ### Regenerate Generated Client Code
-`src/client` contains a typescript client generated based on the OpenAPI spec at https://rest.workflow86.com/v3/api-docs. This client can be regenerated if it is not up to date with the OpenAPI spec published. To update it run:
+`src/client` contains a typescript client generated from the Public API OpenAPI spec at https://api.workflow86.com/v3/api-docs. To regenerate after API changes:
 
 ```bash
 npm run genclient
