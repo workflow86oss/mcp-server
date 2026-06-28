@@ -13,7 +13,7 @@ export function registerComponentTools(server: McpServer) {
     },
     async ({ workflowId, componentId }) => {
       await deleteComponent({ path: { workflowId, componentId } });
-      return textResponse("Component componentId deleted");
+      return textResponse(`Component ${componentId} deleted`);
     },
   );
 }

@@ -7,6 +7,8 @@ const tsPath = path.join(__dirname, "../src/client/schemas.gen.ts");
 const jsPath = path.join(__dirname, "../src/client/schemas.gen.js");
 
 const src = fs.readFileSync(tsPath, "utf8");
+// ponytail: naive regex TS→CJS — breaks if openapi-ts changes export syntax.
+// Upgrade path: emit schemas as JSON from genclient, or bundle schemas.gen.ts via esbuild only.
 const body = src
   .replace(/^\/\/[^\n]*\n/gm, "")
   .replace(/^export const /gm, "exports.")
