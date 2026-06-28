@@ -56,7 +56,7 @@ jobs:
 
       - name: Run module test against Dev
         env:
-          W86_DOMAIN: ${{secrets.DEV_DOMAIN}}
+          W86_DOMAIN: https://api-staging.workflow86.com
           W86_API_KEY: ${{secrets.DEV_API_KEY}}
         run: npm run moduleTest
 
@@ -111,7 +111,7 @@ jobs:
 
       - name: Run module test against Prod
         env:
-          W86_DOMAIN: ${{secrets.PROD_DOMAIN}}
+          W86_DOMAIN: https://api.workflow86.com
           W86_API_KEY: ${{secrets.PROD_API_KEY}}
         run: npm run moduleTest
 
