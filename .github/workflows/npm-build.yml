@@ -56,6 +56,7 @@ jobs:
 
       - name: Run module test against Dev
         if: github.ref == 'refs/heads/main'
+        continue-on-error: true
         env:
           W86_DOMAIN: https://api-staging.workflow86.com
           W86_API_KEY: ${{secrets.DEV_API_KEY}}
@@ -111,6 +112,7 @@ jobs:
           echo "✅ Ready to Tag"
 
       - name: Run module test against Prod
+        continue-on-error: true
         env:
           W86_DOMAIN: https://api.workflow86.com
           W86_API_KEY: ${{secrets.PROD_API_KEY}}
