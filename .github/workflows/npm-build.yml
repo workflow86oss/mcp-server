@@ -64,6 +64,7 @@ jobs:
 
       - name: Publish canary
         if: github.ref == 'refs/heads/main'
+        continue-on-error: true
         run: |
           BASE_VERSION=$(node -p "require('./package.json').version.split('-')[0]")
           SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
