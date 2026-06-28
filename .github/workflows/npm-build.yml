@@ -134,7 +134,7 @@ jobs:
 
           # Build and publish first
           npm run build
-          npm publish
+          npm publish --access public
           
           # Only create tag after successful publish
           git tag "v${VERSION_TO_TAG}"

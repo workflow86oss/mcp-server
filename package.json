@@ -3,7 +3,8 @@
   "version": "0.6.0",
   "main": "build/server.js",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "keywords": [],
   "author": "Workflow86",
