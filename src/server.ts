@@ -27,7 +27,7 @@ if (typeof globalThis.fetch === "undefined") {
   globalThis.FormData = FormData;
 }
 
-const baseUrl = process.env.W86_DOMAIN ?? "https://rest.workflow86.com";
+const baseUrl = process.env.W86_DOMAIN ?? "https://api.workflow86.com";
 
 let resolvedHeaders: any;
 if (process.env.W86_HEADERS) {

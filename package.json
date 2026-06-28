@@ -1,6 +1,6 @@
 {
   "name": "@npm-workflow86/mcp-server",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "main": "build/server.js",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -9,6 +9,9 @@
   "author": "Workflow86",
   "license": "MIT",
   "description": "MCP Server for workflow86.com",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.5",
     "undici": "^6.21.3",
@@ -19,6 +22,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.3",
     "c8": "^9.1.0",
+    "esbuild": "^0.25.0",
     "jest": "^30.0.5",
     "ts-jest": "^29.4.0",
     "typescript": "^5.8.3"
@@ -27,14 +31,14 @@
     "mcp-server": "build/server.js"
   },
   "scripts": {
-    "build": "tsc && chmod +x build/server.js",
+    "build": "node scripts/build.mjs",
     "test": "jest -c jest.unit.config.js",
     "moduleTest": "npm run build && jest -c jest.module.config.js",
     "moduleCoverage": "c8 -o coverage/module -r html -r lcov -r text -r text-summary --clean=false -- npm run moduleTest -- --runInBand",
     "unitCoverage": "c8 -o coverage/unit -r html -r lcov -r text -r text-summary --clean=false -- npm test -- --runInBand",
     "format": "npx prettier --write \"{src,tests}/**/*.{js,jsx,ts,tsx,css,md,json}\"",
     "check": "npx prettier --check \"{src,tests}/**/*.{js,jsx,ts,tsx,css,md,json}\"",
-    "genclient": "npx @hey-api/openapi-ts && npm run format",
+    "genclient": "npx @hey-api/openapi-ts && node scripts/sync-schemas-js.mjs && npm run format",
     "prep": "npm run format && npm run test"
   },
   "files": [
