@@ -55,6 +55,7 @@ jobs:
           echo "✅ Generated Client matches DEV"
 
       - name: Run module test against Dev
+        if: github.ref == 'refs/heads/main'
         env:
           W86_DOMAIN: https://api-staging.workflow86.com
           W86_API_KEY: ${{secrets.DEV_API_KEY}}
